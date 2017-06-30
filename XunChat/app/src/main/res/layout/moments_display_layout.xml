@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#3E3E40"
+        android:id="@+id/topMomentBar"
+        >
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/back_icon"
+            android:layout_centerVertical="true"
+            android:id="@+id/iv_moment_back"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Moment"
+            android:id="@+id/tv_moment"
+            android:textSize="20sp"
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@+id/iv_moment_back"
+            android:textColor="#fff"
+            />
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:id="@+id/iv_post_photo"
+            android:src="@drawable/ic_camera"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1017930926654",
+    "firebase_url": "https://xunchat-c871d.firebaseio.com",
+    "project_id": "xunchat-c871d",
+    "storage_bucket": "xunchat-c871d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1017930926654:android:a5d04b4b7fc64aea",
+        "android_client_info": {
+          "package_name": "com.example.xunhu.xunchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1017930926654-mmc3j19mdsv11f85sa90ngq1a7l8ir4u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCty8LgJmJrs69AtCPQFULcz_aEvcYK73g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

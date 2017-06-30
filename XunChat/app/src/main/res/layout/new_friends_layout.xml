@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#3E3E40"
+        android:id="@+id/topNewFriendsBar"
+        >
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginLeft="5dp"
+            android:src="@drawable/back_icon"
+            android:layout_centerVertical="true"
+            android:id="@+id/iv_new_friends_back"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Friends"
+            android:id="@+id/tv_new_request"
+            android:textSize="20sp"
+            android:layout_margin="10dp"
+            android:layout_toRightOf="@+id/iv_new_friends_back"
+            android:textColor="#fff"
+            />
+    </RelativeLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topNewFriendsBar"
+        android:background="#ffff"
+        android:id="@+id/fl_search_layout"
+        android:layout_marginTop="10dp"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:inputType="text"
+            android:hint="XunChat username"
+            android:textColorHint="#CCCFD4"
+            android:gravity="center"
+            android:id="@+id/et_search_username"
+            android:backgroundTint="#1E90FF"
+            />
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_gray_search"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_vertical"
+            />
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/fl_search_layout"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="New Friends"
+            android:layout_margin="5dp"
+            />
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lv_new_requests"
+            android:layout_below="@+id/fl_search_layout"
+            android:background="#ffff"
+            ></ListView>
+    </LinearLayout>
+
+
+</RelativeLayout>
