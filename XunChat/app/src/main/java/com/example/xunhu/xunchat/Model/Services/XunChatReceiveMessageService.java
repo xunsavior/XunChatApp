@@ -78,7 +78,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 new android.support.v7.app.NotificationCompat.Builder(XunApplication.getContext());
         notification.setAutoCancel(true);
         Uri alarmSound = RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), RingtoneManager.TYPE_NOTIFICATION);
-        notification.setSmallIcon(R.mipmap.ic_logo);
+        notification.setSmallIcon(R.mipmap.ic_small_logo);
         notification.setTicker(username+" has sent you a friend request");
         notification.setSound(alarmSound);
         notification.setWhen(System.currentTimeMillis());

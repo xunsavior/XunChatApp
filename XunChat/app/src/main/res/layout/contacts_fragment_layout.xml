@@ -42,6 +42,7 @@
             android:visibility="invisible"
             android:layout_toRightOf="@+id/tv_new_friends"
             android:layout_margin="10dp"
+            android:textStyle="bold"
             />
     </RelativeLayout>
     <ListView
