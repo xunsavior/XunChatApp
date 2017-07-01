@@ -53,6 +53,7 @@ public class ProfileActivity extends Activity {
     Button btnSendOrAdd;
     String type = "";
     public  static User user;
+    String profile_url="";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +91,11 @@ public class ProfileActivity extends Activity {
         switch (type){
             case "Add":
                 btnSendOrAdd.setText("Add");
+                profile_url = MainActivity.domain_url + user.getUrl();
                 break;
+            case "accept":
+                btnSendOrAdd.setText("Accept");
+                profile_url = user.getUrl();
             default:
                 break;
         }
@@ -104,7 +109,7 @@ public class ProfileActivity extends Activity {
         }else {
             ivGender.setImageResource(R.drawable.male_icon);
         }
-        ImageRequest imageRequest = new ImageRequest(MainActivity.domain_url + user.getUrl(), new Response.Listener<Bitmap>() {
+        ImageRequest imageRequest = new ImageRequest(profile_url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
                 ivProfileImage.setImageBitmap(response);

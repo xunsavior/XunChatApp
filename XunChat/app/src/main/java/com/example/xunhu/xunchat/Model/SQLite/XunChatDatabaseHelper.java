@@ -16,6 +16,11 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "isActive)";
     private static final String CREATE_FRIEND_REQUEST = "create table request ("+"request_id integer primary key autoincrement, "+
             "sender, "+
+            "sender_nickname, "+
+            "sender_age,"+
+            "sender_gender,"+
+            "sender_region,"+
+            "sender_whatsup,"+
             "isRead, "+
             "extras, "+
             "isAgreed, "+

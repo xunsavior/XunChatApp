@@ -36,6 +36,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by xunhu on 6/19/2017.
@@ -46,8 +47,8 @@ public class SubActivity extends Activity implements SearchFriendInterface {
 
     private ImageView ivBackImage;
     private ImageView ivCreatePost;
-    @BindView(R.id.iv_new_friends_back)  ImageView ivNewRequestBack;
-    @BindView(R.id.lv_new_requests)  ListView lvNewRequests;
+    ImageView ivNewRequestBack;
+    ListView lvNewRequests;
     private ImageView ivSearchFriend;
     private ListView lvSearchFriendsResults;
     private EditText etSearchFriends;
@@ -101,10 +102,10 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     }
     private void createNewFriendsView(){
         setContentView(R.layout.new_friends_layout);
-        ButterKnife.bind(this);
+        ivNewRequestBack = (ImageView) findViewById(R.id.iv_new_friends_back);
+        lvNewRequests = (ListView) findViewById(R.id.lv_new_requests);
         List<Request> list = new ArrayList<>();
         FriendRequestAdapter adapter = new FriendRequestAdapter(this,R.layout.friend_request_unit,list);
-        lvNewRequests.setAdapter(adapter);
         ivNewRequestBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +115,9 @@ public class SubActivity extends Activity implements SearchFriendInterface {
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("isRead","true");
-        Cursor cursor = database.rawQuery("select sender,extras,url,isAgreed,isRead,time from request where username=? order by time DESC",
+        Cursor cursor = database.rawQuery("select sender,extras,url,isAgreed,isRead,time," +
+                        "sender_nickname,sender_age,sender_gender,sender_region,sender_whatsup" +
+                        " from request where username=? order by time DESC",
                 new String[]{MainActivity.me.getUsername()});
         if (cursor.moveToFirst()){
             do {
@@ -123,11 +126,16 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 String url = cursor.getString(cursor.getColumnIndex("url"));
                 String isAgreed = cursor.getString(cursor.getColumnIndex("isAgreed"));
                 String isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-                Request request = new Request(sender,extras,isAgreed,url,isRead);
+                String senderNickname = cursor.getString(cursor.getColumnIndex("sender_nickname"));
+                String senderAge = cursor.getString(cursor.getColumnIndex("sender_age"));
+                String senderGender = cursor.getString(cursor.getColumnIndex("sender_gender"));
+                String senderRegion = cursor.getString(cursor.getColumnIndex("sender_region"));
+                String senderWhatsup = cursor.getString(cursor.getColumnIndex("sender_whatsup"));
+                Request request = new Request(sender,extras,isAgreed,url,isRead,senderNickname,senderAge,senderGender,senderRegion,senderWhatsup);
                 list.add(request);
-                adapter.notifyDataSetChanged();
             }while (cursor.moveToNext());
         }
+        lvNewRequests.setAdapter(adapter);
         //update is read
         database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"false"});
         cursor.close();

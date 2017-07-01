@@ -56,12 +56,19 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         switch (type){
             case FRIEND_REQUEST:
                 String sender_name = object.getString("sender_username");
-                String sender_profile_url = object.getString("sender_url");
+                String sender_nickname = object.getString("sender_nickname");
+                String sender_age = String.valueOf(object.getInt("sender_age"));
+                String sender_gender = object.getString("sender_gender");
+                String sender_region = object.getString("sender_region");
+                String sender_url = object.getString("sender_url");
+                String sender_whatsup = object.getString("sender_whatsup");
                 String sender_extra = object.getString("sender_extras");
                 String time = String.valueOf(System.currentTimeMillis());
-                storeFriendRequest(sender_name,sender_profile_url,sender_extra,time);
+                storeFriendRequest(sender_name,sender_nickname,
+                        sender_age,sender_gender,sender_region,
+                        sender_url,sender_whatsup,sender_extra,time);
                 sendFriendRequestBroadcast(sender_name);
-                createFriendRequestNotification(sender_name,sender_profile_url);
+                createFriendRequestNotification(sender_name,sender_url);
                 break;
             default:
                 break;
@@ -102,7 +109,10 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         });
         MySingleton.getmInstance(XunApplication.getContext()).addImageRequestToRequestQueue(imageRequest);
     }
-    public void storeFriendRequest(String sender,String url,String extras,String time){
+
+    public void storeFriendRequest(String sender,String sender_nickname,String sender_age,
+                                   String sender_gender,String sender_region,
+                                   String url,String sender_whatsup,String extras,String time){
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -117,6 +127,11 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         if (!me.isEmpty()){
             String sender_name = "";
             contentValues.put("sender",sender);
+            contentValues.put("sender_nickname",sender_nickname);
+            contentValues.put("sender_age",sender_age);
+            contentValues.put("sender_gender",sender_gender);
+            contentValues.put("sender_region",sender_region);
+            contentValues.put("sender_whatsup",sender_whatsup);
             contentValues.put("extras",extras);
             contentValues.put("isRead","false");
             contentValues.put("isAgreed","false");

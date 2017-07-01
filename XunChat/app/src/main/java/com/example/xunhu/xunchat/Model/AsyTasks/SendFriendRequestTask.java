@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestActionStatus;
 import com.example.xunhu.xunchat.View.MainActivity;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoInput(true);
             httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(8000);
+            httpURLConnection.setConnectTimeout(5000);
 
             JSONObject object = new JSONObject();
             object.put("sender_username",senderUsername);
@@ -87,7 +88,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-            return "Network Error";
+            return "Network Error "+e.getLocalizedMessage();
         } catch (JSONException e) {
             e.printStackTrace();
         } finally {
