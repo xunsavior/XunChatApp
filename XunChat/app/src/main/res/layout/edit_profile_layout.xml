@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/all_layouts"
+    android:background="#E1E0DE"
     >
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,8 +22,8 @@
             android:layout_centerInParent="true"
             />
         <ImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:id="@+id/iv_edit_image"
             android:scaleType="centerCrop"
             android:layout_marginTop="5dp"
@@ -48,7 +49,7 @@
         >
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Username"
             android:gravity="center"
@@ -58,7 +59,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Name"
             android:gravity="center"
@@ -83,7 +84,7 @@
         >
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Nickname"
             android:gravity="center"
@@ -93,7 +94,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Name"
             android:gravity="center"
@@ -117,15 +118,17 @@
         android:background="#ffff">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:text="What is up?"
-            android:layout_centerVertical="true"
-            android:layout_margin="15dp"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
             android:textColor="#000"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="what's up"
             android:gravity="center"
@@ -149,7 +152,7 @@
         android:background="#ffff">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Date of Birth"
             android:gravity="center"
@@ -159,7 +162,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Date of Birth"
             android:gravity="center"
@@ -183,7 +186,7 @@
         android:background="#ffff">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Email"
             android:gravity="center"
@@ -193,7 +196,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Email"
             android:gravity="center"
@@ -213,7 +216,7 @@
         >
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Gender"
             android:gravity="center"
@@ -223,7 +226,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Gender"
             android:gravity="center"
@@ -248,7 +251,7 @@
         >
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="Region"
             android:gravity="center"
@@ -258,7 +261,7 @@
             />
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:text="Region"
             android:gravity="center"
@@ -283,7 +286,7 @@
         >
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="15dp"
             android:text="QRCode"
             android:gravity="center"
@@ -292,8 +295,8 @@
             android:textColor="#000"
             />
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginRight="15dp"
             android:gravity="center"
             android:layout_alignParentRight="true"

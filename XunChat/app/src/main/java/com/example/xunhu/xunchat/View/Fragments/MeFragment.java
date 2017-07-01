@@ -26,6 +26,7 @@ import com.example.xunhu.xunchat.Model.Entities.Me;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllViewClasses.EditProfileLayout;
 import com.example.xunhu.xunchat.View.MainActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -76,6 +77,7 @@ public class MeFragment extends Fragment  {
                 conn.enlargeProfileImage(url);
                 break;
             case R.id.profile_layout:
+                conn.setBottomMenuInvisible();
                 editProfileLayout= new EditProfileLayout(getContext());
                 meFrameLayout.addView(editProfileLayout);
                 editProfileLayout.setOnTouchListener(new View.OnTouchListener() {
@@ -250,25 +252,30 @@ public class MeFragment extends Fragment  {
     public void setIvMyProfile(Me me){
             this.me = me;
             url= MainActivity.domain_url+me.getUrl();
-            if (me.getGender().equals("Female")){
-                ivMyGender.setImageResource(R.drawable.female_icon);
-            }else if (me.getGender().equals("Male")){
-                ivMyGender.setImageResource(R.drawable.male_icon);
+            if (ivMyGender!=null &&
+                    tvMyUsername!=null &&
+                    tvMyAge!=null &&
+                    ivMyProfile!=null){
+                if (me.getGender().equals("Female")){
+                    ivMyGender.setImageResource(R.drawable.female_icon);
+                }else if (me.getGender().equals("Male")){
+                    ivMyGender.setImageResource(R.drawable.male_icon);
+                }
+                tvMyUsername.setText(me.getNickname());
+                tvMyAge.setText(String.valueOf(me.getAge()));
+                ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        ivMyProfile.setImageBitmap(response);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(),"Error...",Toast.LENGTH_SHORT).show();
+                    }
+                });
+                MySingleton.getmInstance(getContext().getApplicationContext()).addImageRequestToRequestQueue(request);
             }
-            tvMyUsername.setText(me.getNickname());
-            tvMyAge.setText(String.valueOf(me.getAge()));
-        ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                ivMyProfile.setImageBitmap(response);
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),"Error...",Toast.LENGTH_SHORT).show();
-            }
-        });
-        MySingleton.getmInstance(getContext().getApplicationContext()).addImageRequestToRequestQueue(request);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -288,5 +295,6 @@ public class MeFragment extends Fragment  {
         void enlargeProfileImage(String url);
         void launchUpdateDialog(String title,String content);
         void launchLocationListDialog();
+        void setBottomMenuInvisible();
     }
 }

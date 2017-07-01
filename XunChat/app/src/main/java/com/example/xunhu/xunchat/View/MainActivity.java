@@ -559,13 +559,16 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
 
     @Override
+    public void setBottomMenuInvisible() {
+       BottomMenu.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onBackPressed() {
         if (meFragment!=null){
             if (meFragment.getEditProfileLayout()!=null){
                 meFragment.removeEditProfileLayout();
-                if (pager.getCurrentItem()!=3){
-                    Toast.makeText(getApplicationContext(),"press back button again to exit",Toast.LENGTH_SHORT).show();
-                }
+                BottomMenu.setVisibility(View.VISIBLE);
             }else {
                 super.onBackPressed();
             }
