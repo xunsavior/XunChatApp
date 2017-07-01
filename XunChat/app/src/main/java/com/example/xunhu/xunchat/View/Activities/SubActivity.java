@@ -128,7 +128,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 adapter.notifyDataSetChanged();
             }while (cursor.moveToNext());
         }
-
+        //update is read
         database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"false"});
         cursor.close();
     }
