@@ -5,5 +5,5 @@ package com.example.xunhu.xunchat.Presenter.Interfaces;
  */
 
 public interface SearchFriendsPresenterAction {
-    void attemptSearchFriends(String nickname);
+    void attemptSearchFriends(String username);
 }

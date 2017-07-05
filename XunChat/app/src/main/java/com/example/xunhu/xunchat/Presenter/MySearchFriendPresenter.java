@@ -33,7 +33,7 @@ public class MySearchFriendPresenter implements SearchFriendsActionStatus,Search
     }
 
     @Override
-    public void attemptSearchFriends(String nickname) {
-        userSearchFriendModel.checkUserTable(nickname);
+    public void attemptSearchFriends(String username) {
+        userSearchFriendModel.checkUserTable(username);
     }
 }

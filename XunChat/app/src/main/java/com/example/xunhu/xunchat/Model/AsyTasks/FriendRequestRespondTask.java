@@ -2,7 +2,7 @@ package com.example.xunhu.xunchat.Model.AsyTasks;
 
 import android.os.AsyncTask;
 
-import com.example.xunhu.xunchat.Presenter.Interfaces.SearchFriendsActionStatus;
+import com.example.xunhu.xunchat.Presenter.Interfaces.FriendRespondActionStatus;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.json.JSONException;
@@ -21,31 +21,46 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 /**
- * Created by xunhu on 6/21/2017.
+ * Created by xunhu on 7/3/2017.
  */
 
-public class SearchFriendsTask extends AsyncTask<String,Void,String>{
-    SearchFriendsActionStatus searchFriendsActionStatus;
-    String restfulURL = MainActivity.domain_url+"search.php";
-    public SearchFriendsTask(SearchFriendsActionStatus searchFriendsActionStatus){
-        this.searchFriendsActionStatus=searchFriendsActionStatus;
+public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
+    FriendRespondActionStatus friendRespondActionStatus;
+    String restfulURL = MainActivity.domain_url+"friend_request_respond.php";
+    public FriendRequestRespondTask( FriendRespondActionStatus friendRespondActionStatus){
+        this.friendRespondActionStatus = friendRespondActionStatus;
     }
+
     @Override
-    protected String doInBackground(String... params) {
-        String targetUsername=params[0];
+    protected String doInBackground(String... strings) {
+        String targetUsername = strings[0];
+        String responderUsername =strings[1];
+        String responderUrl = strings[2];
+        String responderGender = strings[3];
+        String responderRegion = strings[4];
+        String responderWhatsup = strings[5];
+        int responderAge = Integer.parseInt(strings[6]);
+        String responderNickname = strings[7];
+
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(restfulURL);
             httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoInput(true);
             httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setConnectTimeout(5000);
 
             JSONObject object = new JSONObject();
-            object.put("targetUsername",targetUsername);
-            object.put("username",MainActivity.me.getUsername());
-            System.out.println("@ object "+object.toString());
+            object.put("target_username",targetUsername);
+            object.put("responder_username",responderUsername);
+            object.put("responder_url",responderUrl);
+            object.put("responder_gender",responderGender);
+            object.put("responder_region",responderRegion);
+            object.put("responder_whatsup",responderWhatsup);
+            object.put("responder_age",responderAge);
+            object.put("responder_nickname",responderNickname);
+
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
             String postData =  URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");
@@ -64,31 +79,26 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
             bufferedReader.close();
             inputStream.close();
             return result;
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            return e.getMessage();
         } catch (IOException e) {
             e.printStackTrace();
             return "Network Error";
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            if (httpURLConnection!=null){
-                httpURLConnection.disconnect();
-            }
+            return e.getMessage();
         }
-        return null;
     }
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        System.out.println("@ respond "+s);
         if (s!=null){
-            if (s.equals("Network Error")){
-                searchFriendsActionStatus.searchFriendFail(s);
-            }else if (s.equals("The user does not exist!")){
-                searchFriendsActionStatus.searchFriendFail(s);
-            } else {
-                searchFriendsActionStatus.searchFriendsSuccess(s);
+            if (s.contains("\"success\":1")){
+                friendRespondActionStatus.respondSuccess("Friend Request Accepted Successfully");
+            }else {
+                friendRespondActionStatus.respondFail(s);
             }
         }
     }

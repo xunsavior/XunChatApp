@@ -1,11 +1,17 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,8 +23,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.Presenter.SendFriendRequestPresenter;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SendFriendRequestView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
@@ -30,7 +38,7 @@ import butterknife.OnClick;
  * Created by xunhu on 6/21/2017.
  */
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends Activity implements RequestRespondView {
     @BindView(R.id.iv_profile_activity_back)
     ImageView btnBack;
     @BindView(R.id.iv_profile_activity_image)
@@ -54,6 +62,8 @@ public class ProfileActivity extends Activity {
     String type = "";
     public  static User user;
     String profile_url="";
+    AlertDialog dialog;
+    RequestRespondPresenter presenter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +82,10 @@ public class ProfileActivity extends Activity {
                 if(btnSendOrAdd.getText().toString().equals("Add")){
                    Intent intent = new Intent(this,FriendRequestActivity.class);
                    startActivity(intent);
+                }else if (btnSendOrAdd.getText().toString().equals("Accept")){
+                    createGifLogoutDialog();
+                    presenter = new RequestRespondPresenter(this);
+                    presenter.sendRespond(user.getUsername(),MainActivity.me);
                 }
                 break;
             case R.id.iv_profile_activity_image:
@@ -83,6 +97,23 @@ public class ProfileActivity extends Activity {
                 break;
         }
     }
+    public void createGifLogoutDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+        View myView = getLayoutInflater().inflate(R.layout.gif_dialog,null);
+        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) myView.findViewById(R.id.iv_gif);
+        gifImageView.setBackgroundColor(Color.TRANSPARENT);
+        gifImageView.setBackgroundResource(R.drawable.loading);
+        builder.setView(myView);
+        dialog = builder.create();
+
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        wlp.gravity = Gravity.BOTTOM;
+        window.setAttributes(wlp);
+        dialog.getWindow().setDimAmount(0);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.show();
+    }
     private void retrieveData(){
         type = getIntent().getStringExtra("type");
         user = (User) getIntent().getSerializableExtra("user");
@@ -93,9 +124,9 @@ public class ProfileActivity extends Activity {
                 btnSendOrAdd.setText("Add");
                 profile_url = MainActivity.domain_url + user.getUrl();
                 break;
-            case "accept":
+            case "Accept":
                 btnSendOrAdd.setText("Accept");
-                profile_url = user.getUrl();
+                profile_url = MainActivity.domain_url+user.getUrl();
             default:
                 break;
         }
@@ -121,5 +152,17 @@ public class ProfileActivity extends Activity {
             }
         });
         MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
+    }
+
+    @Override
+    public void respondSuccess(String msg) {
+        dialog.cancel();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void respondFail(String msg) {
+        dialog.cancel();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 }

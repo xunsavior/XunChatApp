@@ -5,5 +5,5 @@ package com.example.xunhu.xunchat.Model.Interfaces;
  */
 
 public interface CRUDSearchFriendsOptions {
-    void checkUserTable(String nickname);
+    void checkUserTable(String username);
 }

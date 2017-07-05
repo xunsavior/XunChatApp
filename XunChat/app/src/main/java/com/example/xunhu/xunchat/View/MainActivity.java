@@ -39,6 +39,7 @@ import com.example.xunhu.xunchat.Presenter.MyLoginPresenter;
 import com.example.xunhu.xunchat.Presenter.MyProfileUpdatePresenter;
 import com.example.xunhu.xunchat.Presenter.MyRegisterPresenter;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Activities.FriendRequestActivity;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
@@ -582,7 +583,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         switch (view.getId()){
             case R.id.iv_addFriends:
                 Intent intent = new Intent(MainActivity.this, SubActivity.class);
-                intent.putExtra("type","searching friends");
+                intent.putExtra("type","new friends");
                 startActivity(intent);
                 break;
             case R.id.top_logout_layout:

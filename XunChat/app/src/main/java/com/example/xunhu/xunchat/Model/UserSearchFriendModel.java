@@ -16,7 +16,7 @@ public class UserSearchFriendModel implements CRUDSearchFriendsOptions {
     }
 
     @Override
-    public void checkUserTable(String nickname){
-        new SearchFriendsTask(searchFriendsActionStatus).execute(nickname);
+    public void checkUserTable(String username){
+        new SearchFriendsTask(searchFriendsActionStatus).execute(username);
     }
 }

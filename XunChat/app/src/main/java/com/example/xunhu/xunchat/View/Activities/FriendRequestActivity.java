@@ -33,8 +33,6 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
     Button btnSend;
     @BindView(R.id.et_extra_information)
     EditText etExtra;
-    @BindView(R.id.et_remarks)
-    EditText etRemarks;
     SendFriendRequestPresenter presenter;
     AlertDialog alertDialog;
     @Override
@@ -43,7 +41,6 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
         setContentView(R.layout.friend_request_send_layout);
         ButterKnife.bind(this);
         etExtra.setText("Hello my name is "+MainActivity.me.getUsername());
-        etRemarks.setText(ProfileActivity.user.getUsername());
         presenter = new SendFriendRequestPresenter(this);
     }
 
