@@ -26,7 +26,7 @@ import java.net.URLEncoder;
  */
 
 public class UpdateProfileTask extends AsyncTask<String,Void,String> {
-    String restURL = MainActivity.domain_url+"edit_profile.php";
+    String restURL = MainActivity.EDIT_PROFILE;
     UpdateProfileActionStatus updateProfileActionStatus;
 
     public UpdateProfileTask(UpdateProfileActionStatus updateProfileActionStatus){

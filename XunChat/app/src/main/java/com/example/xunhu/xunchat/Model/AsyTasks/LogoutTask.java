@@ -25,7 +25,7 @@ import java.net.URLEncoder;
  */
 
 public class LogoutTask extends AsyncTask<String,Void,String> {
-    String restfulURL = MainActivity.domain_url+"logout.php";
+    String restfulURL = MainActivity.LOGOUT;
     LogoutActionStatus logoutActionStatus;
 
     public LogoutTask(LogoutActionStatus logoutActionStatus){

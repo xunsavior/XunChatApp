@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 
 public class CookieValidateTask extends AsyncTask<String,Void,String> {
     CookieValidateActionStatus cookieValidateActionStatus;
-    String restfulURL = MainActivity.domain_url+"cookie_validate.php";
+    String restfulURL = MainActivity.VALIDATE_LOGIN;
     public CookieValidateTask(CookieValidateActionStatus cookieValidateActionStatus){
         this.cookieValidateActionStatus = cookieValidateActionStatus;
     }

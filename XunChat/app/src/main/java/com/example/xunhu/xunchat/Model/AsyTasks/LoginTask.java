@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 
 public class LoginTask extends AsyncTask<String,Void,String> {
     LoginActionStatus loginActionStatus;
-    String restfulURL = MainActivity.domain_url+"login.php";
+    String restfulURL = MainActivity.LOGIN;
     public LoginTask(LoginActionStatus loginActionStatus){
         this.loginActionStatus=loginActionStatus;
     }

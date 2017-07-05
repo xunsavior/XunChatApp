@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 
 public class SearchFriendsTask extends AsyncTask<String,Void,String>{
     SearchFriendsActionStatus searchFriendsActionStatus;
-    String restfulURL = MainActivity.domain_url+"search.php";
+    String restfulURL = MainActivity.SEARCH_FRIEND;
     public SearchFriendsTask(SearchFriendsActionStatus searchFriendsActionStatus){
         this.searchFriendsActionStatus=searchFriendsActionStatus;
     }

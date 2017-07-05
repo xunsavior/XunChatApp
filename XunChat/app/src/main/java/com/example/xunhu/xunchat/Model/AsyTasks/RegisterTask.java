@@ -27,7 +27,7 @@ import java.util.Calendar;
 
 public class RegisterTask extends AsyncTask<String,Void,String> {
        RegisterActionStatus actionStatus;
-       String restfulURL = MainActivity.domain_url+"register.php";
+       String restfulURL = MainActivity.REGISTER;
 
     public RegisterTask(RegisterActionStatus actionStatus){
         this.actionStatus=actionStatus;

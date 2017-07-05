@@ -27,7 +27,7 @@ import java.net.URLEncoder;
 
 public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
     SendFriendRequestActionStatus sendFriendRequestActionStatus;
-    String restfulURL = MainActivity.domain_url+"FriendRequest.php";
+    String restfulURL = MainActivity.SEND_FRIEND_REQUEST;
     public SendFriendRequestTask(SendFriendRequestActionStatus sendFriendRequestActionStatus){
         this.sendFriendRequestActionStatus=sendFriendRequestActionStatus;
     }

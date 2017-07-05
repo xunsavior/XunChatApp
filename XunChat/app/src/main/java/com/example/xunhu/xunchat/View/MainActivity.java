@@ -80,6 +80,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @BindView(R.id.tv_network_error) TextView tvNetworkError;
     @BindView(R.id.topBar) RelativeLayout rlTopBar;
     @BindView(R.id.top_logout_layout) RelativeLayout rlLogout;
+    public static final String VALIDATE_LOGIN = "http://xunsavior.com/xunchat/cookie_validate.php";
+    public static final String FRIEND_REQUEST_RESPOND = "http://xunsavior.com/xunchat/friend_request_respond.php";
+    public static final String LOGIN = "http://xunsavior.com/xunchat/login.php";
+    public static final String LOGOUT = "http://xunsavior.com/xunchat/logout.php";
+    public static final String REGISTER = "http://xunsavior.com/xunchat/register.php";
+    public static final String SEARCH_FRIEND = "http://xunsavior.com/xunchat/search.php";
+    public static final String SEND_FRIEND_REQUEST = "http://xunsavior.com/xunchat/FriendRequest.php";
+    public static final String EDIT_PROFILE = "http://xunsavior.com/xunchat/edit_profile.php";
     MyPagerAdapter adapter;
     FragmentManager fragmentManager = getSupportFragmentManager();
     LoginFragment loginFragment;
@@ -110,12 +118,12 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static XunChatDatabaseHelper xunChatDatabaseHelper;
     float Y = 0;
     private int numberOfRequests = 0;
-
     ConnectivityReceiver connectivityReceiver=null;
     XunChatBroadcastReceiver xunChatBroadcastReceiver=null;
     IntentFilter intentFilter;
     private static final String FRIEND_REQUEST = "friend_request";
     AlertDialog logoutDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
