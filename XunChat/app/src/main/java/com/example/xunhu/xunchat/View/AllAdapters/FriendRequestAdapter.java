@@ -214,7 +214,6 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             Intent intent = new Intent(context,ProfileActivity.class);
             intent.putExtra("user",user);
             context.startActivity(intent);
-            context.startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }

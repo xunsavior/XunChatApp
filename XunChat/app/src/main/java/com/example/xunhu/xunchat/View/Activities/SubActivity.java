@@ -61,7 +61,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     private ListView lvSearchFriendsResults;
     private EditText etSearchFriends;
     List<User> users;
-    SearchFriendsAdapter adapter;
     MySearchFriendPresenter presenter;
 
     private static final String NEW_FRIEND = "new friends";
