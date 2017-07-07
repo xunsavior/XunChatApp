@@ -55,7 +55,8 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     RequestRespondPresenter presenter;
     private static final int STRANGER = -1;
     private static final int PENDING = 0;
-    private static final int ACCEPTED = 1;
+    private static final int NEED_TO_ACCEPT = 1;
+    private static final int FRIEND = 2;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,8 +73,14 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                 break;
             case PENDING:
                 btnSendOrAdd.setText("Pending...");
+                btnSendOrAdd.setClickable(false);
+                btnSendOrAdd.setBackgroundColor(Color.RED);
                 profile_url = MainActivity.domain_url+user.getUrl();
-            case ACCEPTED:
+            case NEED_TO_ACCEPT:
+                btnSendOrAdd.setText("Accept");
+                profile_url = MainActivity.domain_url+user.getUrl();
+                break;
+            case FRIEND:
                 btnSendOrAdd.setText("Message");
                 profile_url = MainActivity.domain_url+user.getUrl();
                 break;
