@@ -7,5 +7,5 @@ import com.example.xunhu.xunchat.Model.Entities.Me;
  */
 
 public interface CRUDRequestRespondOptions {
-    void sendRequestRespond(String targeUsername, Me me);
+    void sendRequestRespond(int targetID, Me me);
 }

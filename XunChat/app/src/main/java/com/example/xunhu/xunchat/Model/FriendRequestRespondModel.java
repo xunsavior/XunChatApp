@@ -15,7 +15,7 @@ public class FriendRequestRespondModel implements CRUDRequestRespondOptions {
         this.friendRespondActionStatus=friendRespondActionStatus;
     }
     @Override
-    public void sendRequestRespond(String targetUsername, Me me) {
+    public void sendRequestRespond(int targetID, Me me) {
         String responder_username = me.getUsername();
         String responder_url = me.getUrl();
         String responder_gender = me.getUrl();
@@ -23,8 +23,8 @@ public class FriendRequestRespondModel implements CRUDRequestRespondOptions {
         String responder_whatsup = me.getWhatsup();
         String responder_age = String.valueOf(me.getAge());
         String responder_nickname = me.getNickname();
-        new FriendRequestRespondTask(friendRespondActionStatus).execute(targetUsername,
-                responder_username,responder_url,responder_gender,responder_region,
-                responder_whatsup, responder_age,responder_nickname);
+        new FriendRequestRespondTask(friendRespondActionStatus).execute(String.valueOf(targetID),
+                String.valueOf(me.getId()),responder_username,responder_url,responder_gender,
+                responder_region, responder_whatsup, responder_age,responder_nickname);
     }
 }

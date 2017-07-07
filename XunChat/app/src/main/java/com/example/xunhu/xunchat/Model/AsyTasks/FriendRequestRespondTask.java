@@ -33,14 +33,15 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
 
     @Override
     protected String doInBackground(String... strings) {
-        String targetUsername = strings[0];
-        String responderUsername =strings[1];
-        String responderUrl = strings[2];
-        String responderGender = strings[3];
-        String responderRegion = strings[4];
-        String responderWhatsup = strings[5];
-        int responderAge = Integer.parseInt(strings[6]);
-        String responderNickname = strings[7];
+        int targetID = Integer.parseInt(strings[0]);
+        int responderID = Integer.parseInt(strings[1]);
+        String responderUsername =strings[2];
+        String responderUrl = strings[3];
+        String responderGender = strings[4];
+        String responderRegion = strings[5];
+        String responderWhatsup = strings[6];
+        int responderAge = Integer.parseInt(strings[7]);
+        String responderNickname = strings[8];
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -52,7 +53,8 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
             httpURLConnection.setConnectTimeout(5000);
 
             JSONObject object = new JSONObject();
-            object.put("target_username",targetUsername);
+            object.put("target_id",targetID);
+            object.put("responder_id",responderID);
             object.put("responder_username",responderUsername);
             object.put("responder_url",responderUrl);
             object.put("responder_gender",responderGender);
@@ -60,7 +62,7 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
             object.put("responder_whatsup",responderWhatsup);
             object.put("responder_age",responderAge);
             object.put("responder_nickname",responderNickname);
-
+            System.out.println("@ object "+object.toString());
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
             String postData =  URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");

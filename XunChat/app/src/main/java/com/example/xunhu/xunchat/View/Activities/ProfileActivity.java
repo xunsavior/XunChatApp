@@ -70,6 +70,8 @@ public class ProfileActivity extends Activity implements RequestRespondView {
             case STRANGER:
                 btnSendOrAdd.setText("Add");
                 profile_url = MainActivity.domain_url + user.getUrl();
+                btnSendOrAdd.setClickable(true);
+                btnSendOrAdd.setBackgroundColor(Color.parseColor("#00BFFF"));
                 break;
             case PENDING:
                 btnSendOrAdd.setText("Pending...");
@@ -79,10 +81,14 @@ public class ProfileActivity extends Activity implements RequestRespondView {
             case NEED_TO_ACCEPT:
                 btnSendOrAdd.setText("Accept");
                 profile_url = MainActivity.domain_url+user.getUrl();
+                btnSendOrAdd.setClickable(true);
+                btnSendOrAdd.setBackgroundColor(Color.parseColor("#00BFFF"));
                 break;
             case FRIEND:
                 btnSendOrAdd.setText("Message");
                 profile_url = MainActivity.domain_url+user.getUrl();
+                btnSendOrAdd.setClickable(true);
+                btnSendOrAdd.setBackgroundColor(Color.parseColor("#00BFFF"));
                 break;
             default:
                 break;
@@ -124,7 +130,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
                     createGifLogoutDialog();
                     presenter = new RequestRespondPresenter(this);
-                    presenter.sendRespond(user.getUsername(),MainActivity.me);
+                    presenter.sendRespond(user.getUserID(),MainActivity.me);
                 }
                 break;
             case R.id.iv_profile_activity_image:

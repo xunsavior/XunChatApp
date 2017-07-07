@@ -33,7 +33,7 @@ public class RequestRespondPresenter implements FriendRespondActionStatus,Friend
     }
 
     @Override
-    public void sendRespond(String targetUsername, Me me) {
-        friendRequestRespondModel.sendRequestRespond(targetUsername,me);
+    public void sendRespond(int targetID, Me me) {
+        friendRequestRespondModel.sendRequestRespond(targetID,me);
     }
 }

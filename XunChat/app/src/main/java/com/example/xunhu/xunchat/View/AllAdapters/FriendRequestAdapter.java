@@ -87,7 +87,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             public void onClick(View v) {
                 index = position;
                 createDialog();
-                requestRespondPresenter.sendRespond(request.getSender(),MainActivity.me);
+                //requestRespondPresenter.sendRespond(request,MainActivity.me);
             }
         });
         if (request.getIsRead().equals("true")){
