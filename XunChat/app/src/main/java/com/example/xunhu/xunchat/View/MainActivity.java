@@ -22,12 +22,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -126,7 +128,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         myDialog = new MyDialog(this);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.background_layout);
         xunChatDatabaseHelper = new XunChatDatabaseHelper(this,"XunChat.db",null);
@@ -135,7 +136,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         screenWidth = displayMetrics.widthPixels;
         validateCookies();
     }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -285,6 +285,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     @Override
     public void operateLogin(String username, String password) {
+
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
         this.password = password;
         myDialog.createLoadingGifDialog();
@@ -423,7 +424,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         switchToLogin();
         Toast.makeText(MainActivity.this,"Register Successfully!",Toast.LENGTH_SHORT).show();
     }
-
     public void addLoginFragment(){
         loginFragment= new LoginFragment();
         transaction = fragmentManager.beginTransaction();
@@ -439,7 +439,9 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         String name = "";
         ContentValues values = new ContentValues();
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-        Cursor cursor = database.query("user",new String[]{"username"},"username"+"=?",new String[]{username},null,null,null);
+        Cursor cursor = database.query("user",new String[]{"username"},
+                "username"+"=?",new String[]{username},
+                null,null,null);
         if (cursor.moveToFirst()){
             do{
                 name = cursor.getString(cursor.getColumnIndex("username"));
@@ -449,11 +451,11 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         if (name.equals("")){
             values.put("username",username);
             values.put("password",password);
-            values.put("isActive","true");
+            values.put("isActive","1");
             database.insert("user",null,values);
         }else {
             values.put("password",password);
-            values.put("isActive","true");
+            values.put("isActive","1");
             database.update("user",values,"username=?",new String[]{username});
         }
 
@@ -583,7 +585,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
             contentValues.put("password","");
-            contentValues.put("isActive","false");
+            contentValues.put("isActive","0");
             database.update("user",contentValues,"username=?",new String[]{me.getUsername()});
             finish();
             startActivity(getIntent());
@@ -621,9 +623,49 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
         contactsFragment.getTvNumOfRequests().setVisibility(View.INVISIBLE);
     }
-
+    class XunChatBroadcastReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+                switch (intent.getAction()){
+                    case FRIEND_REQUEST:
+                        checkRequestStatus();
+                        break;
+                    case NETWORK_STATE_CHANGE:
+                        ConnectivityManager connectivityManager =
+                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        if (networkInfo!=null && networkInfo.isAvailable()){
+                            tvNetworkError.setVisibility(View.GONE);
+                        }else {
+                            tvNetworkError.setVisibility(View.VISIBLE);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+        }
+    }
+    public void checkRequestStatus(){
+        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+        Cursor cursor = database.rawQuery("SELECT DISTINCT sender, " +
+                "extras FROM request WHERE isRead=? AND username=?",
+                new String[]{"0",me.getUsername()});
+        numberOfRequests=0;
+        if (cursor.moveToFirst()){
+            do{
+                System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
+                        " "+cursor.getString(cursor.getColumnIndex("extras")));
+                numberOfRequests++;
+            }while (cursor.moveToNext());
+        }
+        if (numberOfRequests>0){
+            contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
+            contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
+        }
+        cursor.close();
+    }
     class MyPagerAdapter extends FragmentStatePagerAdapter{
-         public MyPagerAdapter(FragmentManager fm) {
+        public MyPagerAdapter(FragmentManager fm) {
             super(fm);
             chatsFragment = new ChatsFragment();
             contactsFragment = new ContactsFragment();
@@ -650,44 +692,5 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         public int getCount() {
             return 4;
         }
-    }
-    class XunChatBroadcastReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-                switch (intent.getAction()){
-                    case FRIEND_REQUEST:
-                        checkRequestStatus();
-                        break;
-                    case NETWORK_STATE_CHANGE:
-                        ConnectivityManager connectivityManager =
-                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                        if (networkInfo!=null && networkInfo.isAvailable()){
-                            tvNetworkError.setVisibility(View.GONE);
-                        }else {
-                            tvNetworkError.setVisibility(View.VISIBLE);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-        }
-    }
-    public void checkRequestStatus(){
-        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery("SELECT DISTINCT sender, extras FROM request WHERE isRead=? AND username=?",new String[]{"0",me.getUsername()});
-        numberOfRequests=0;
-        if (cursor.moveToFirst()){
-            do{
-                System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
-                        " "+cursor.getString(cursor.getColumnIndex("extras")));
-                numberOfRequests++;
-            }while (cursor.moveToNext());
-        }
-        if (numberOfRequests>0){
-            contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
-            contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
-        }
-        cursor.close();
     }
 }

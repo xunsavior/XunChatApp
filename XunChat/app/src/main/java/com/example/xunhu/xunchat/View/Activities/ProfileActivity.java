@@ -149,7 +149,6 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         myDialog.cancelBottomGifDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void respondFail(String msg) {
         myDialog.cancelBottomGifDialog();
