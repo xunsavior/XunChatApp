@@ -57,8 +57,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     private ImageView ivCreatePost;
     ImageView ivNewRequestBack;
     ListView lvNewRequests;
-    private ImageView ivSearchFriend;
-    private ListView lvSearchFriendsResults;
     private EditText etSearchFriends;
     List<User> users;
     MySearchFriendPresenter presenter;
@@ -150,31 +148,27 @@ public class SubActivity extends Activity implements SearchFriendInterface {
 
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("isRead","true");
-        Cursor cursor = database.rawQuery("select sender,extras,url,isAgreed,isRead,time," +
-                        "sender_nickname,sender_age,sender_gender,sender_region,sender_whatsup" +
+        contentValues.put("isRead","1");
+        Cursor cursor = database.rawQuery("select sender_id,sender,isRead,extras,isAgreed,time," +
+                        "url,username" +
                         " from request where username=? order by time DESC",
                 new String[]{MainActivity.me.getUsername()});
         if (cursor.moveToFirst()){
             do {
-                String sender = cursor.getString(cursor.getColumnIndex("sender"));
+                int senderID = Integer.parseInt(cursor.getString(cursor.getColumnIndex("sender_id")));
+                String senderName = cursor.getString(cursor.getColumnIndex("sender"));
                 String extras = cursor.getString(cursor.getColumnIndex("extras"));
                 String url = cursor.getString(cursor.getColumnIndex("url"));
                 String isAgreed = cursor.getString(cursor.getColumnIndex("isAgreed"));
                 String isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-                String senderNickname = cursor.getString(cursor.getColumnIndex("sender_nickname"));
-                String senderAge = cursor.getString(cursor.getColumnIndex("sender_age"));
-                String senderGender = cursor.getString(cursor.getColumnIndex("sender_gender"));
-                String senderRegion = cursor.getString(cursor.getColumnIndex("sender_region"));
-                String senderWhatsup = cursor.getString(cursor.getColumnIndex("sender_whatsup"));
-                Request request = new Request(sender,extras,isAgreed,url,isRead,senderNickname,senderAge,senderGender,senderRegion,senderWhatsup);
+                Request request = new Request(senderID,senderName,extras,isAgreed,url,isRead);
                 list.add(request);
             }while (cursor.moveToNext());
         }
 
         lvNewRequests.setAdapter(adapter);
         //update is read
-        database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"false"});
+        database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"0"});
         cursor.close();
     }
 

@@ -55,20 +55,14 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         String type = object.getString("message_type");
         switch (type){
             case FRIEND_REQUEST:
-                String sender_name = object.getString("sender_username");
-                String sender_nickname = object.getString("sender_nickname");
-                String sender_age = String.valueOf(object.getInt("sender_age"));
-                String sender_gender = object.getString("sender_gender");
-                String sender_region = object.getString("sender_region");
-                String sender_url = object.getString("sender_url");
-                String sender_whatsup = object.getString("sender_whatsup");
-                String sender_extra = object.getString("sender_extras");
+                int senderID = object.getInt("sender_id");
+                String senderName = object.getString("sender_username");
+                String senderURL = object.getString("sender_url");
+                String senderExtras = object.getString("sender_extras");
                 String time = String.valueOf(System.currentTimeMillis());
-                storeFriendRequest(sender_name,sender_nickname,
-                        sender_age,sender_gender,sender_region,
-                        sender_url,sender_whatsup,sender_extra,time);
-                sendFriendRequestBroadcast(sender_name);
-                createFriendRequestNotification(sender_name,sender_url);
+                storeFriendRequest(senderID,senderName,senderURL,senderExtras,time);
+                sendFriendRequestBroadcast(senderName);
+                createFriendRequestNotification(senderName,senderURL);
                 break;
             default:
                 break;
@@ -110,14 +104,12 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         MySingleton.getmInstance(XunApplication.getContext()).addImageRequestToRequestQueue(imageRequest);
     }
 
-    public void storeFriendRequest(String sender,String sender_nickname,String sender_age,
-                                   String sender_gender,String sender_region,
-                                   String url,String sender_whatsup,String extras,String time){
+    public void storeFriendRequest(int senderID,String senderName,String url,String extras,String time){
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         String me="";
-        Cursor cursor = database.rawQuery("SELECT username FROM user WHERE isActive=?",new String[]{"true"} );
+        Cursor cursor = database.rawQuery("SELECT username FROM user WHERE isActive=?",new String[]{"1"} );
         if (cursor.moveToFirst()){
             do{
                 me  = cursor.getString(cursor.getColumnIndex("username"));
@@ -126,20 +118,16 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         cursor.close();
         if (!me.isEmpty()){
             String sender_name = "";
-            contentValues.put("sender",sender);
-            contentValues.put("sender_nickname",sender_nickname);
-            contentValues.put("sender_age",sender_age);
-            contentValues.put("sender_gender",sender_gender);
-            contentValues.put("sender_region",sender_region);
-            contentValues.put("sender_whatsup",sender_whatsup);
+            contentValues.put("sender_id",String.valueOf(senderID));
+            contentValues.put("sender",senderName);
             contentValues.put("extras",extras);
-            contentValues.put("isRead","false");
-            contentValues.put("isAgreed","false");
+            contentValues.put("isRead","0");
+            contentValues.put("isAgreed","0");
             contentValues.put("time",time);
             contentValues.put("url",MainActivity.domain_url+url);
             contentValues.put("username",me);
 
-            Cursor cursorRequest = database.rawQuery("SELECT sender FROM request WHERE username=? AND sender=?",new String[]{me,sender});
+            Cursor cursorRequest = database.rawQuery("SELECT sender FROM request WHERE username=? AND sender=?",new String[]{me,senderName});
             if (cursorRequest.moveToFirst()){
                 do {
                     sender_name = cursorRequest.getString(cursorRequest.getColumnIndex("sender"));
@@ -150,7 +138,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             if (sender_name.isEmpty()){
                 database.insert("request",null,contentValues);
             }else {
-                database.update("request",contentValues,"username=? AND sender=?",new String[]{me,sender});
+                database.update("request",contentValues,"username=? AND sender=?",new String[]{me,senderName});
             }
         }
 

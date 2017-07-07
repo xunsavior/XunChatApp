@@ -5,31 +5,21 @@ package com.example.xunhu.xunchat.Model.Entities;
  */
 
 public class Request {
-    String sender;
-    String senderNickname;
-    String senderAge;
-    String senderGender;
-    String senderRegion;
-    String senderWhatsup;
+    int senderID;
+    String senderName;
     String extras;
     String isAgreed;
     String senderUrl;
     String isRead;
 
-    public Request(String sender,String extras,String isAgreed,
-                   String senderUrl,String isRead,String senderNickname,
-                   String senderAge,String senderGender,
-                   String senderRegion,String senderWhatsup){
-        this.sender=sender;
+    public Request(int senderID,String senderName,String extras,
+                   String isAgreed,String senderUrl,String isRead){
+        this.senderID=senderID;
+        this.senderName=senderName;
         this.extras=extras;
         this.isAgreed=isAgreed;
         this.senderUrl=senderUrl;
         this.isRead=isRead;
-        this.senderNickname=senderNickname;
-        this.senderAge=senderAge;
-        this.senderGender=senderGender;
-        this.senderRegion=senderRegion;
-        this.senderWhatsup=senderWhatsup;
     }
 
     public String getExtras() {
@@ -38,17 +28,11 @@ public class Request {
     public String getIsAgreed() {
         return isAgreed;
     }
-    public String getSender() {
-        return sender;
-    }
     public void setExtras(String extras) {
         this.extras = extras;
     }
     public void setIsAgreed(String isAgreed) {
         this.isAgreed = isAgreed;
-    }
-    public void setSender(String sender) {
-        this.sender = sender;
     }
     public String getSenderUrl() {
         return senderUrl;
@@ -62,44 +46,16 @@ public class Request {
     public void setIsRead(String isRead) {
         this.isRead = isRead;
     }
-
-    public String getSenderAge() {
-        return senderAge;
+    public String getSenderName() {
+        return senderName;
     }
-
-    public String getSenderGender() {
-        return senderGender;
+    public int getSenderID() {
+        return senderID;
     }
-
-    public String getSenderNickname() {
-        return senderNickname;
+    public void setSenderID(int senderID) {
+        this.senderID = senderID;
     }
-
-    public String getSenderRegion() {
-        return senderRegion;
-    }
-
-    public String getSenderWhatsup() {
-        return senderWhatsup;
-    }
-
-    public void setSenderAge(String senderAge) {
-        this.senderAge = senderAge;
-    }
-
-    public void setSenderGender(String senderGender) {
-        this.senderGender = senderGender;
-    }
-
-    public void setSenderNickname(String senderNickname) {
-        this.senderNickname = senderNickname;
-    }
-
-    public void setSenderRegion(String senderRegion) {
-        this.senderRegion = senderRegion;
-    }
-
-    public void setSenderWhatsup(String senderWhatsup) {
-        this.senderWhatsup = senderWhatsup;
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
     }
 }

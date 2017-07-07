@@ -87,7 +87,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             public void onClick(View v) {
                 index = position;
                 createDialog();
-                //requestRespondPresenter.sendRespond(request,MainActivity.me);
+                requestRespondPresenter.sendRespond(request.getSenderID(),MainActivity.me);
             }
         });
         if (request.getIsRead().equals("true")){
@@ -134,7 +134,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             @Override
             public void onClick(View v) {
                         createDialog();
-                        mySearchFriendPresenter.attemptSearchFriends(request.getSender());
+                        mySearchFriendPresenter.attemptSearchFriends(request.getSenderName());
             }
         });
         holder.ivRequestProfile.setOnTouchListener(new View.OnTouchListener() {
@@ -157,7 +157,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             }
         });
         holder.tvDelete.setVisibility(View.GONE);
-        holder.tvUsername.setText(request.getSender());
+        holder.tvUsername.setText(request.getSenderName());
         holder.tvExtras.setText(request.getExtras());
         Picasso.with(context).load(request.getSenderUrl()).into(holder.ivRequestProfile);
         return view;

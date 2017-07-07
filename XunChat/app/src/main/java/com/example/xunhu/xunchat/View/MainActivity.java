@@ -24,6 +24,8 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -126,6 +128,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.background_layout);
         xunChatDatabaseHelper = new XunChatDatabaseHelper(this,"XunChat.db",null);
         DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -134,6 +138,23 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         screenWidth = displayMetrics.widthPixels;
         validateCookies();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(connectivityReceiver,filter);
+        XunApplication.getInstance().setConnectivityListener(this);
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceivers();
+    }
+
     public void setBroadcastReceivers(){
         xunChatBroadcastReceiver = new XunChatBroadcastReceiver();
         intentFilter = new IntentFilter();
@@ -217,6 +238,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         addLoginFragment();
     }
     public void loadUserPageInterface(){
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         pager.setOnPageChangeListener(this);
@@ -512,19 +535,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         showConnectionState(isConnected);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(connectivityReceiver,filter);
-        XunApplication.getInstance().setConnectivityListener(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceivers();
-    }
-
     public void unregisterReceivers(){
         if (connectivityReceiver!=null){
             unregisterReceiver(connectivityReceiver);
@@ -695,14 +705,13 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     public void checkRequestStatus(){
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery("SELECT DISTINCT sender, extras FROM request WHERE isRead=? AND username=?",new String[]{"false",me.getUsername()});
+        Cursor cursor = database.rawQuery("SELECT DISTINCT sender, extras FROM request WHERE isRead=? AND username=?",new String[]{"0",me.getUsername()});
         numberOfRequests=0;
         if (cursor.moveToFirst()){
             do{
                 System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
                         " "+cursor.getString(cursor.getColumnIndex("extras")));
                 numberOfRequests++;
-
             }while (cursor.moveToNext());
         }
         if (numberOfRequests>0){
