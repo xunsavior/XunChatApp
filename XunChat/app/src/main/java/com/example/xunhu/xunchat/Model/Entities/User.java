@@ -7,6 +7,7 @@ import java.io.Serializable;
  */
 
 public class User implements Serializable {
+    private int userID;
     private String username;
     private String url;
     private String gender;
@@ -14,9 +15,11 @@ public class User implements Serializable {
     private String whatsup;
     private int age;
     private String nickname;
-    private String token;
+    private int relationship_type;
 
-    public User(String username,String nickname,String url,String gender,String region,String whatsup,int age, String token){
+    public User(int userID,String username,String nickname,String url,String gender,String region,
+                String whatsup,int age, int relationship_type){
+        this.userID=userID;
         this.username=username;
         this.url=url;
         this.gender=gender;
@@ -24,7 +27,7 @@ public class User implements Serializable {
         this.whatsup=whatsup;
         this.age=age;
         this.nickname=nickname;
-        this.token=token;
+        this.relationship_type=relationship_type;
     }
 
     public String getNickname() {
@@ -83,11 +86,14 @@ public class User implements Serializable {
         this.whatsup = whatsup;
     }
 
-    public String getToken() {
-        return token;
+    public int getRelationship_type() {
+        return relationship_type;
+    }
+    public void setRelationship_type(int relationship_type) {
+        this.relationship_type = relationship_type;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public int getUserID() {
+        return userID;
     }
 }

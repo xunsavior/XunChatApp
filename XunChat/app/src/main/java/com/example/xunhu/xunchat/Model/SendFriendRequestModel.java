@@ -2,6 +2,7 @@ package com.example.xunhu.xunchat.Model;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.SendFriendRequestTask;
 import com.example.xunhu.xunchat.Model.Entities.Me;
+import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.Interfaces.CRUDSendFriendRequestOptions;
 import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestAction;
 import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestActionStatus;
@@ -9,7 +10,6 @@ import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestActionSta
 /**
  * Created by xunhu on 6/23/2017.
  */
-
 public class SendFriendRequestModel implements CRUDSendFriendRequestOptions {
     SendFriendRequestActionStatus sendFriendRequestActionStatus;
 
@@ -17,8 +17,9 @@ public class SendFriendRequestModel implements CRUDSendFriendRequestOptions {
         this.sendFriendRequestActionStatus=sendFriendRequestActionStatus;
     }
     @Override
-    public void sendFriendRequest(Me me, String extras,String targetToken) {
+    public void sendFriendRequest(Me me, String extras,User user) {
         new SendFriendRequestTask(sendFriendRequestActionStatus).execute(
+                String.valueOf(me.getId()),
                 me.getUsername(),
                 me.getNickname(),
                 String.valueOf(me.getAge()),
@@ -26,7 +27,7 @@ public class SendFriendRequestModel implements CRUDSendFriendRequestOptions {
                 me.getRegion(),
                 me.getUrl(),
                 me.getWhatsup(),
-                targetToken,
+                String.valueOf(user.getUserID()),
                 extras
         );
     }

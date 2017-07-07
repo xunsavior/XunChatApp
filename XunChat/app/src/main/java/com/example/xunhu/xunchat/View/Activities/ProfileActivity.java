@@ -39,38 +39,69 @@ import butterknife.OnClick;
  */
 
 public class ProfileActivity extends Activity implements RequestRespondView {
-    @BindView(R.id.iv_profile_activity_back)
-    ImageView btnBack;
-    @BindView(R.id.iv_profile_activity_image)
-    ImageView ivProfileImage;
-    @BindView(R.id.tv_profile_activity_nickname)
-    TextView tvNickname;
-    @BindView(R.id.iv_profile_activity_gender)
-    ImageView ivGender;
-    @BindView(R.id.tv_profile_activity_age)
-    TextView tvAge;
-    @BindView(R.id.tv_profile_activity_username)
-    TextView tvUsername;
-    @BindView(R.id.tv_profile_activity_what)
-    TextView tvWhatsup;
-    @BindView(R.id.tv_profile_activity_region)
-    TextView tvRegion;
-    @BindView(R.id.llAlbum)
-    LinearLayout llAlbum;
-    @BindView(R.id.btn_send_or_add)
-    Button btnSendOrAdd;
-    String type = "";
-    public  static User user;
+    @BindView(R.id.iv_profile_activity_back) ImageView btnBack;
+    @BindView(R.id.iv_profile_activity_image) ImageView ivProfileImage;
+    @BindView(R.id.tv_profile_activity_nickname) TextView tvNickname;
+    @BindView(R.id.iv_profile_activity_gender) ImageView ivGender;
+    @BindView(R.id.tv_profile_activity_age) TextView tvAge;
+    @BindView(R.id.tv_profile_activity_username) TextView tvUsername;
+    @BindView(R.id.tv_profile_activity_what) TextView tvWhatsup;
+    @BindView(R.id.tv_profile_activity_region) TextView tvRegion;
+    @BindView(R.id.llAlbum) LinearLayout llAlbum;
+    @BindView(R.id.btn_send_or_add) Button btnSendOrAdd;
+    User user;
     String profile_url="";
     AlertDialog dialog;
     RequestRespondPresenter presenter;
+    private static final int STRANGER = -1;
+    private static final int PENDING = 0;
+    private static final int ACCEPTED = 1;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_activity_layout);
         ButterKnife.bind(this);
-        retrieveData();
-        setViews(type);
+        user= user = (User) getIntent().getSerializableExtra("user");
+        setViews(user.getRelationship_type());
+    }
+    private void setViews(int relationshipType){
+        switch (relationshipType){
+            case STRANGER:
+                btnSendOrAdd.setText("Add");
+                profile_url = MainActivity.domain_url + user.getUrl();
+                break;
+            case PENDING:
+                btnSendOrAdd.setText("Pending...");
+                profile_url = MainActivity.domain_url+user.getUrl();
+            case ACCEPTED:
+                btnSendOrAdd.setText("Message");
+                profile_url = MainActivity.domain_url+user.getUrl();
+                break;
+            default:
+                break;
+        }
+        tvUsername.setText("username: "+user.getUsername());
+        tvNickname.setText(user.getNickname());
+        tvAge.setText(String.valueOf(user.getAge()));
+        tvRegion.setText(user.getRegion());
+        tvWhatsup.setText(user.getWhatsup());
+        if (user.getGender().equals("female")){
+            ivGender.setImageResource(R.drawable.female_icon);
+        }else {
+            ivGender.setImageResource(R.drawable.male_icon);
+        }
+        ImageRequest imageRequest = new ImageRequest(profile_url, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                ivProfileImage.setImageBitmap(response);
+            }
+        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(),"Loading image fail",Toast.LENGTH_SHORT).show();
+            }
+        });
+        MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
     }
     @OnClick({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image})
     public void onRespond(View view){
@@ -81,6 +112,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
             case R.id.btn_send_or_add:
                 if(btnSendOrAdd.getText().toString().equals("Add")){
                    Intent intent = new Intent(this,FriendRequestActivity.class);
+                   intent.putExtra("user",user);
                    startActivity(intent);
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
                     createGifLogoutDialog();
@@ -114,45 +146,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.show();
     }
-    private void retrieveData(){
-        type = getIntent().getStringExtra("type");
-        user = (User) getIntent().getSerializableExtra("user");
-    }
-    private void setViews(String type){
-        switch (type){
-            case "Add":
-                btnSendOrAdd.setText("Add");
-                profile_url = MainActivity.domain_url + user.getUrl();
-                break;
-            case "Accept":
-                btnSendOrAdd.setText("Accept");
-                profile_url = MainActivity.domain_url+user.getUrl();
-            default:
-                break;
-        }
-        tvUsername.setText("username: "+user.getUsername());
-        tvNickname.setText(user.getNickname());
-        tvAge.setText(String.valueOf(user.getAge()));
-        tvRegion.setText(user.getRegion());
-        tvWhatsup.setText(user.getWhatsup());
-        if (user.getGender().equals("female")){
-            ivGender.setImageResource(R.drawable.female_icon);
-        }else {
-            ivGender.setImageResource(R.drawable.male_icon);
-        }
-        ImageRequest imageRequest = new ImageRequest(profile_url, new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap response) {
-                ivProfileImage.setImageBitmap(response);
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Loading image fail",Toast.LENGTH_SHORT).show();
-            }
-        });
-        MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
-    }
+
 
     @Override
     public void respondSuccess(String msg) {

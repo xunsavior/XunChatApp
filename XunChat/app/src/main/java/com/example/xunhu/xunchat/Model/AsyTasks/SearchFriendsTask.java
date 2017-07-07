@@ -44,7 +44,7 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
 
             JSONObject object = new JSONObject();
             object.put("targetUsername",targetUsername);
-            object.put("username",MainActivity.me.getUsername());
+            object.put("my_id",MainActivity.me.getId());
             System.out.println("@ object "+object.toString());
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
@@ -82,6 +82,7 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        System.out.println("@ respond "+s);
         if (s!=null){
             if (s.equals("Network Error")){
                 searchFriendsActionStatus.searchFriendFail(s);

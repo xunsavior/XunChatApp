@@ -1,6 +1,7 @@
 package com.example.xunhu.xunchat.Presenter;
 
 import com.example.xunhu.xunchat.Model.Entities.Me;
+import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.SendFriendRequestModel;
 import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestAction;
 import com.example.xunhu.xunchat.Presenter.Interfaces.SendFriendRequestActionStatus;
@@ -33,7 +34,7 @@ public class SendFriendRequestPresenter implements SendFriendRequestAction,SendF
     }
 
     @Override
-    public void sendFriendRequest(Me me, String extras, String targetToken) {
-        sendFriendRequestModel.sendFriendRequest(me,extras,targetToken);
+    public void sendFriendRequest(Me me, String extras, User user) {
+        sendFriendRequestModel.sendFriendRequest(me,extras,user);
     }
 }

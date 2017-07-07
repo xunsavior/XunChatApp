@@ -100,7 +100,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     MyCookieValidationPresenter validationPresenter;
     MyProfileUpdatePresenter profileUpdatePresenter;
     LogoutPresenter logoutPresenter;
-
     String refreshedToken = FirebaseInstanceId.getInstance().getToken();
     public static String domain_url ="http://xunsavior.com/xunchat/";
     static String password = "";
@@ -244,7 +243,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 return false;
             }
         });
-
         BottomMenu.setOnNavigationItemSelectedListener(this);
         adapter = new MyPagerAdapter(fm);
         pager.setAdapter(adapter);
@@ -271,7 +269,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             loadLoginRegisterInterface();
         }
     }
-
     @Override
     public void operateLogin(String username, String password) {
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
@@ -360,12 +357,10 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         }
         return true;
     }
-
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
-
     @Override
     public void onPageSelected(int position) {
             if (isYourProfileLoading==false && me!=null){
@@ -394,12 +389,10 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             }
         }
     }
-
     @Override
     public void onPageScrollStateChanged(int state) {
 
     }
-
     @Override
     public void registerFail(String msg) {
         registerProgressDialog.cancel();
@@ -408,7 +401,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         }else {
             Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
@@ -480,7 +472,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             return content;
         }
     }
-
     @Override
     public void switchToRegister() {
         signUpFragment= new SignUpFragment();
@@ -661,9 +652,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         contactsFragment.getTvNumOfRequests().setVisibility(View.INVISIBLE);
     }
 
-
     class MyPagerAdapter extends FragmentStatePagerAdapter{
-
          public MyPagerAdapter(FragmentManager fm) {
             super(fm);
             chatsFragment = new ChatsFragment();

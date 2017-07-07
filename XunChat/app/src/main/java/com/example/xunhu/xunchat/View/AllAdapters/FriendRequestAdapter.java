@@ -1,11 +1,8 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -20,17 +17,13 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.Request;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
+import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
@@ -208,6 +201,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         alertDialog.cancel();
         try {
             JSONObject object = new JSONObject(msg);
+            int user_id = object.getInt("user_id");
             String username = object.getString("username");
             String nickname = object.getString("nickname");
             String whatsup = object.getString("what_is_up");
@@ -215,10 +209,11 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             int age = object.getInt("age");
             String gender = object.getString("gender");
             String region = object.getString("region");
-            User user = new User(username,nickname,url,gender,region,whatsup,age,"");
+            int relationshipType = object.getInt("relationship_type");
+            User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
             Intent intent = new Intent(context,ProfileActivity.class);
-            intent.putExtra("type","Accept");
             intent.putExtra("user",user);
+            context.startActivity(intent);
             context.startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();

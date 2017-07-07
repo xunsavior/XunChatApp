@@ -189,20 +189,20 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     public void loadResults(String msg) {
         searchDialog.cancel();
         try {
-            JSONObject object = new JSONObject(msg);
-            String username = object.getString("username");
-            String nickname = object.getString("nickname");
-            String whatsup = object.getString("what_is_up");
-            String url = object.getString("url");
-            int age = object.getInt("age");
-            String gender = object.getString("gender");
-            String region = object.getString("region");
-            String token = object.getString("token");
-            User user = new User(username,nickname,url,gender,region,whatsup,age,token);
-            Intent intent = new Intent(SubActivity.this,ProfileActivity.class);
-            intent.putExtra("type","Add");
-            intent.putExtra("user",user);
-            startActivity(intent);
+              JSONObject object = new JSONObject(msg);
+              int user_id = object.getInt("user_id");
+              String username = object.getString("username");
+              String nickname = object.getString("nickname");
+              String whatsup = object.getString("what_is_up");
+              String url = object.getString("url");
+              int age = object.getInt("age");
+              String gender = object.getString("gender");
+              String region = object.getString("region");
+              int relationshipType = object.getInt("relationship_type");
+              User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
+              Intent intent = new Intent(SubActivity.this,ProfileActivity.class);
+              intent.putExtra("user",user);
+              startActivity(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }

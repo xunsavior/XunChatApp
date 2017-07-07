@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.SendFriendRequestPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Interfaces.SendFriendRequestView;
@@ -27,20 +28,19 @@ import butterknife.OnClick;
  */
 
 public class FriendRequestActivity extends Activity implements SendFriendRequestView {
-    @BindView(R.id.iv_friend_request_back)
-    ImageView btnBack;
-    @BindView(R.id.btn_friend_request_send)
-    Button btnSend;
-    @BindView(R.id.et_extra_information)
-    EditText etExtra;
+    @BindView(R.id.iv_friend_request_back) ImageView btnBack;
+    @BindView(R.id.btn_friend_request_send) Button btnSend;
+    @BindView(R.id.et_extra_information) EditText etExtra;
     SendFriendRequestPresenter presenter;
     AlertDialog alertDialog;
+    User user;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friend_request_send_layout);
         ButterKnife.bind(this);
-        etExtra.setText("Hello my name is "+MainActivity.me.getUsername());
+        user = (User) getIntent().getSerializableExtra("user");
+        etExtra.setText("Hello, my name is "+MainActivity.me.getUsername());
         presenter = new SendFriendRequestPresenter(this);
     }
 
@@ -49,7 +49,7 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
         switch (view.getId()){
             case R.id.btn_friend_request_send:
                 createLogoutDialog();
-                presenter.sendFriendRequest(MainActivity.me,etExtra.getText().toString(),ProfileActivity.user.getToken());
+                presenter.sendFriendRequest(MainActivity.me,etExtra.getText().toString(),user);
                 break;
             case R.id.iv_friend_request_back:
                 onBackPressed();

@@ -33,15 +33,16 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
     }
     @Override
     protected String doInBackground(String... strings) {
-        String senderUsername = strings[0];
-        String senderNickname = strings[1];
-        int senderAge = Integer.parseInt(strings[2]);
-        String senderGender = strings[3];
-        String senderRegion = strings[4];
-        String senderUrl = strings[5];
-        String senderWhatsup= strings[6];
-        String targetToken = strings[7];
-        String extras = strings[8];
+        int senderID = Integer.parseInt(strings[0]);
+        String senderUsername = strings[1];
+        String senderNickname = strings[2];
+        int senderAge = Integer.parseInt(strings[3]);
+        String senderGender = strings[4];
+        String senderRegion = strings[5];
+        String senderUrl = strings[6];
+        String senderWhatsup= strings[7];
+        int target_id =  Integer.parseInt(strings[8]);
+        String extras = strings[9];
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -53,6 +54,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             httpURLConnection.setConnectTimeout(5000);
 
             JSONObject object = new JSONObject();
+            object.put("sender_id",senderID);
             object.put("sender_username",senderUsername);
             object.put("sender_nickname",senderNickname);
             object.put("sender_age",senderAge);
@@ -60,7 +62,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             object.put("sender_region",senderRegion);
             object.put("sender_url",senderUrl);
             object.put("sender_whatsup",senderWhatsup);
-            object.put("target_token",targetToken);
+            object.put("target_id",target_id);
             object.put("sender_extras",extras);
 
             System.out.println("@ object "+object.toString());
