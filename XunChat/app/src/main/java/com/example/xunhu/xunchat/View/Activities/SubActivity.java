@@ -31,6 +31,7 @@ import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.FriendRequestAdapter;
 import com.example.xunhu.xunchat.View.AllAdapters.SearchFriendsAdapter;
+import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
@@ -52,7 +53,7 @@ import butterknife.OnClick;
 
 public class SubActivity extends Activity implements SearchFriendInterface {
     public static Me me = MainActivity.me;
-    private AlertDialog searchDialog;
+    MyDialog myDialog;
     private ImageView ivBackImage;
     private ImageView ivCreatePost;
     ImageView ivNewRequestBack;
@@ -63,9 +64,11 @@ public class SubActivity extends Activity implements SearchFriendInterface {
 
     private static final String NEW_FRIEND = "new friends";
     private static final String MOMENT = "moments";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myDialog = new MyDialog(this);
         String viewType = getIntent().getStringExtra("type");
         determineLayout(viewType);
     }
@@ -101,18 +104,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             }
         });
     }
-    private void createSearchDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.gif_dialog,null);
-        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) view.findViewById(R.id.iv_gif);
-        gifImageView.setBackgroundColor(Color.TRANSPARENT);
-        gifImageView.setBackgroundResource(R.drawable.loading);
-        builder.setView(view);
-        searchDialog = builder.create();
-        searchDialog.getWindow().setDimAmount(0);
-        searchDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        searchDialog.show();
-    }
     private void createNewFriendsView(){
         setContentView(R.layout.new_friends_layout);
         presenter = new MySearchFriendPresenter(this);
@@ -134,12 +125,11 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                     InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     mgr.hideSoftInputFromWindow(etSearchFriends.getWindowToken(), 0);
                     if (!etSearchFriends.getText().toString().isEmpty()){
-                        createSearchDialog();
+                        myDialog.createLoadingGifDialog();
                         presenter.attemptSearchFriends(etSearchFriends.getText().toString());
                     }else {
                         etSearchFriends.setError("Please enter the username you are searching for!");
                     }
-
                     return true;
                 }
                 return false;
@@ -165,7 +155,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 list.add(request);
             }while (cursor.moveToNext());
         }
-
         lvNewRequests.setAdapter(adapter);
         //update is read
         database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"0"});
@@ -174,13 +163,13 @@ public class SubActivity extends Activity implements SearchFriendInterface {
 
     @Override
     public void searchFriendFail(String msg) {
-        searchDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void loadResults(String msg) {
-        searchDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         try {
               JSONObject object = new JSONObject(msg);
               int user_id = object.getInt("user_id");

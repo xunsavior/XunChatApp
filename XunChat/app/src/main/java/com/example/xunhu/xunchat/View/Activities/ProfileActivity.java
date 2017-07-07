@@ -26,6 +26,7 @@ import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.Presenter.SendFriendRequestPresenter;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SendFriendRequestView;
 import com.example.xunhu.xunchat.View.MainActivity;
@@ -51,16 +52,17 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     @BindView(R.id.btn_send_or_add) Button btnSendOrAdd;
     User user;
     String profile_url="";
-    AlertDialog dialog;
     RequestRespondPresenter presenter;
     private static final int STRANGER = -1;
     private static final int PENDING = 0;
     private static final int NEED_TO_ACCEPT = 1;
     private static final int FRIEND = 2;
+    MyDialog myDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_activity_layout);
+        myDialog = new MyDialog(this);
         ButterKnife.bind(this);
         user= user = (User) getIntent().getSerializableExtra("user");
         setViews(user.getRelationship_type());
@@ -128,7 +130,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                    intent.putExtra("user",user);
                    startActivity(intent);
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
-                    createGifLogoutDialog();
+                    myDialog.createBottomGifDialog();
                     presenter = new RequestRespondPresenter(this);
                     presenter.sendRespond(user.getUserID(),MainActivity.me);
                 }
@@ -142,34 +144,15 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                 break;
         }
     }
-    public void createGifLogoutDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
-        View myView = getLayoutInflater().inflate(R.layout.gif_dialog,null);
-        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) myView.findViewById(R.id.iv_gif);
-        gifImageView.setBackgroundColor(Color.TRANSPARENT);
-        gifImageView.setBackgroundResource(R.drawable.loading);
-        builder.setView(myView);
-        dialog = builder.create();
-
-        Window window = dialog.getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        wlp.gravity = Gravity.BOTTOM;
-        window.setAttributes(wlp);
-        dialog.getWindow().setDimAmount(0);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        dialog.show();
-    }
-
-
     @Override
     public void respondSuccess(String msg) {
-        dialog.cancel();
+        myDialog.cancelBottomGifDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void respondFail(String msg) {
-        dialog.cancel();
+        myDialog.cancelBottomGifDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 }

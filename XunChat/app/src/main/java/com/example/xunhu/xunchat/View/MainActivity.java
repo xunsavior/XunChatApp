@@ -11,6 +11,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -31,8 +33,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.xunhu.xunchat.BroadcastReceivers.ConnectivityReceiver;
 import com.example.xunhu.xunchat.Model.Entities.Me;
 import com.example.xunhu.xunchat.Model.SQLite.XunChatDatabaseHelper;
 import com.example.xunhu.xunchat.Presenter.LogoutPresenter;
@@ -44,6 +44,7 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.FriendRequestActivity;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Fragments.DatePickerDialogFragment;
@@ -71,8 +72,7 @@ import butterknife.OnClick;
 
 public class MainActivity extends FragmentActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         ViewPager.OnPageChangeListener, LoginFragment.LoginInterface, RegisterView, SignUpFragment.SignUpInterface,
-        LoginView, ValidateCookiesView, ConnectivityReceiver.ConnectReceiverListener,
-        GenderSelectionFragment.GenderInterface,MeFragment.MeFragmentInterface,
+        LoginView, ValidateCookiesView,GenderSelectionFragment.GenderInterface,MeFragment.MeFragmentInterface,
         UpdateProfileView,UpdateProfileDialogFragment.UpdateProfileDialogFragmentInterface,
         DatePickerDialogFragment.DatePickerInterface, LocationListDialog.LocationDialogInterface,
         LogoutView,ContactsFragment.ContactFragmentInterface{
@@ -90,12 +90,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static final String SEARCH_FRIEND = "http://xunsavior.com/xunchat/search.php";
     public static final String SEND_FRIEND_REQUEST = "http://xunsavior.com/xunchat/FriendRequest.php";
     public static final String EDIT_PROFILE = "http://xunsavior.com/xunchat/edit_profile.php";
+    private static final String FRIEND_REQUEST = "friend_request";
+    private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
+
     MyPagerAdapter adapter;
     FragmentManager fragmentManager = getSupportFragmentManager();
     LoginFragment loginFragment;
     SignUpFragment signUpFragment;
     FragmentTransaction transaction;
-    ProgressDialog registerProgressDialog;
 
     MyRegisterPresenter registerPresenter;
     MyLoginPresenter loginPresenter;
@@ -106,10 +108,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static String domain_url ="http://xunsavior.com/xunchat/";
     static String password = "";
     static String username = "";
-    IntentFilter filter = new IntentFilter();
     public static Me me=null;
     static int screenWidth = 0;
-    static int getScreenHeight = 0;
     ChatsFragment chatsFragment;
     ContactsFragment contactsFragment;
     DiscoverFragment discoverFragment;
@@ -119,22 +119,19 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static XunChatDatabaseHelper xunChatDatabaseHelper;
     float Y = 0;
     private int numberOfRequests = 0;
-    ConnectivityReceiver connectivityReceiver=null;
     XunChatBroadcastReceiver xunChatBroadcastReceiver=null;
     IntentFilter intentFilter;
-    private static final String FRIEND_REQUEST = "friend_request";
-    AlertDialog logoutDialog;
-
+    MyDialog myDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myDialog = new MyDialog(this);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.background_layout);
         xunChatDatabaseHelper = new XunChatDatabaseHelper(this,"XunChat.db",null);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        screenWidth = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
         validateCookies();
     }
@@ -142,8 +139,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(connectivityReceiver,filter);
-        XunApplication.getInstance().setConnectivityListener(this);
     }
     @Override
     protected void onStop() {
@@ -154,11 +149,11 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         super.onDestroy();
         unregisterReceivers();
     }
-
     public void setBroadcastReceivers(){
         xunChatBroadcastReceiver = new XunChatBroadcastReceiver();
         intentFilter = new IntentFilter();
         intentFilter.addAction(FRIEND_REQUEST);
+        intentFilter.addAction(NETWORK_STATE_CHANGE);
         registerReceiver(xunChatBroadcastReceiver,intentFilter);
     }
 
@@ -176,7 +171,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         profileUpdatePresenter = new MyProfileUpdatePresenter(this,this.getApplicationContext());
         profileUpdatePresenter.attemptUpdateProfile(me.getUsername(),title,content);
     }
-
     @Override
     public void changeMyProfile(String msg) {
         try {
@@ -270,9 +264,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         adapter = new MyPagerAdapter(fm);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
-        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        connectivityReceiver = new ConnectivityReceiver();
-        registerReceiver(connectivityReceiver,filter);
         setBroadcastReceivers();
         checkRequestStatus();
     }
@@ -296,13 +287,13 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public void operateLogin(String username, String password) {
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
         this.password = password;
-        registerProgressDialog = ProgressDialog.show(MainActivity.this,"sign in","Connect to XunChat Account: "+username+"...",true);
+        myDialog.createLoadingGifDialog();
         loginPresenter.attemptLogin(username,password,refreshedToken);
     }
 
     @Override
     public void loginFail(String msg) {
-        registerProgressDialog.cancel();
+        myDialog.cancelLogoutDialog();
         Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
     }
     public void retrieveUserInformation(String msg){
@@ -326,7 +317,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     @Override
     public void refreshActivity(String msg) {
-        registerProgressDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         retrieveUserInformation(msg);
         this.username = me.getUsername();
         storeCookies(me.getUsername(),password);
@@ -336,7 +327,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
 
     @Override
     public void operateSignUp(String username, String nickname,String password, String email, String url, String birthday, String token, String gender, String region,String QRCode) {
-        registerProgressDialog = ProgressDialog.show(MainActivity.this,"Processing...","Please wait...",true);
+        myDialog.createLoadingGifDialog();
         registerPresenter.attemptRegister(username,nickname,password,email,url,birthday,token,gender,region,QRCode);
     }
 
@@ -418,7 +409,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     @Override
     public void registerFail(String msg) {
-        registerProgressDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         if (msg.equals("This username has already existed!")){
             signUpFragment.existError(msg);
         }else {
@@ -428,7 +419,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
 
     @Override
     public void switchToLoginInterface() {
-        registerProgressDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         switchToLogin();
         Toast.makeText(MainActivity.this,"Register Successfully!",Toast.LENGTH_SHORT).show();
     }
@@ -522,23 +513,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
 
     }
 
-    private void showConnectionState(boolean isConnected){
-        if (isConnected){
-            tvNetworkError.setVisibility(View.GONE);
-        }else {
-            tvNetworkError.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-        showConnectionState(isConnected);
-    }
-
     public void unregisterReceivers(){
-        if (connectivityReceiver!=null){
-            unregisterReceiver(connectivityReceiver);
-        }
         if (xunChatBroadcastReceiver!=null){
             unregisterReceiver(xunChatBroadcastReceiver);
         }
@@ -580,10 +555,10 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 meFragment.removeEditProfileLayout();
                 BottomMenu.setVisibility(View.VISIBLE);
             }else {
-                super.onBackPressed();
+                moveTaskToBack(true);
             }
         }else {
-                super.onBackPressed();
+                moveTaskToBack(true);
         }
 
     }
@@ -596,24 +571,13 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 startActivity(intent);
                 break;
             case R.id.top_logout_layout:
-                createGifLogoutDialog();
+                myDialog.createGifLogoutDialog();
                 logoutPresenter = new LogoutPresenter(this);
                 logoutPresenter.implementLogout(me.getUsername());
                 break;
             default:
                 break;
         }
-    }
-    public void createGifLogoutDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        View myView = getLayoutInflater().inflate(R.layout.gif_dialog,null);
-        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) myView.findViewById(R.id.iv_gif);
-        gifImageView.setBackgroundColor(Color.TRANSPARENT);
-        gifImageView.setBackgroundResource(R.drawable.logout);
-        builder.setView(myView);
-        logoutDialog = builder.create();
-        logoutDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        logoutDialog.show();
     }
     public void setPasswordToEmptyAndReloadActivity(){
             SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
@@ -628,10 +592,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         return screenWidth;
     }
 
-    public static int getGetScreenHeight() {
-        return getScreenHeight;
-    }
-
     @Override
     public void birthdaySelected(String birthday) {
         signUpFragment.setEtBirthday(birthday);
@@ -644,14 +604,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
 
     @Override
     public void logoutSuccessful(String msg) {
-        logoutDialog.cancel();
+        myDialog.cancelLogoutDialog();
         setPasswordToEmptyAndReloadActivity();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void logoutFail(String msg) {
-        logoutDialog.cancel();
+        myDialog.cancelLogoutDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
@@ -697,6 +657,16 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 switch (intent.getAction()){
                     case FRIEND_REQUEST:
                         checkRequestStatus();
+                        break;
+                    case NETWORK_STATE_CHANGE:
+                        ConnectivityManager connectivityManager =
+                                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                        if (networkInfo!=null && networkInfo.isAvailable()){
+                            tvNetworkError.setVisibility(View.GONE);
+                        }else {
+                            tvNetworkError.setVisibility(View.VISIBLE);
+                        }
                         break;
                     default:
                         break;
