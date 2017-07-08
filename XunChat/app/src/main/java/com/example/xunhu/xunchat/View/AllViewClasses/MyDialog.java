@@ -1,4 +1,4 @@
-package com.example.xunhu.xunchat.View.Dialogs;
+package com.example.xunhu.xunchat.View.AllViewClasses;
 
 import android.app.Activity;
 import android.app.AlertDialog;

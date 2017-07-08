@@ -1,7 +1,5 @@
 package com.example.xunhu.xunchat.View;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,8 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
@@ -22,15 +18,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,10 +35,9 @@ import com.example.xunhu.xunchat.Presenter.MyLoginPresenter;
 import com.example.xunhu.xunchat.Presenter.MyProfileUpdatePresenter;
 import com.example.xunhu.xunchat.Presenter.MyRegisterPresenter;
 import com.example.xunhu.xunchat.R;
-import com.example.xunhu.xunchat.View.Activities.FriendRequestActivity;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
-import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Fragments.DatePickerDialogFragment;
@@ -291,7 +282,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         myDialog.createLoadingGifDialog();
         loginPresenter.attemptLogin(username,password,refreshedToken);
     }
-
     @Override
     public void loginFail(String msg) {
         myDialog.cancelLogoutDialog();
@@ -542,7 +532,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @Override
     public void launchLocationListDialog() {
         LocationListDialog dialog = new LocationListDialog("edit");
-        dialog.show(getFragmentManager(),"locaiton");
+        dialog.show(getFragmentManager(),"location");
     }
 
     @Override

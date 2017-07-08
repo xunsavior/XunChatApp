@@ -2,6 +2,7 @@ package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -74,7 +75,9 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
     public void friendRequestSent(String msg) {
         alertDialog.cancel();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
-
+        Intent intent = new Intent(ProfileActivity.BUTTON_PENDING);
+        sendBroadcast(intent);
+        finish();
     }
 
     @Override

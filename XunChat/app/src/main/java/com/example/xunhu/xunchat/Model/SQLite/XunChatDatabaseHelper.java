@@ -24,6 +24,7 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "url, "+
             "username,"+
             "FOREIGN KEY (username) REFERENCES user (username))";
+
     public XunChatDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
         super(context, name, factory, 1);
         this.context = context;

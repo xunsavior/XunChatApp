@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Request;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
@@ -73,7 +75,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             holder = new ViewHolder(view);
             view.setTag(holder);
         }
-        if (request.getIsAgreed().equals("false")){
+        if (request.getIsAgreed().equals("0")){
             holder.tvAdded.setVisibility(View.INVISIBLE);
             holder.tvAdded.setClickable(false);
             holder.btnAccept.setVisibility(View.VISIBLE);
@@ -90,7 +92,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
                 requestRespondPresenter.sendRespond(request.getSenderID(),MainActivity.me);
             }
         });
-        if (request.getIsRead().equals("true")){
+        if (request.getIsRead().equals("1")){
             holder.tvNew.setVisibility(View.INVISIBLE);
         }else {
             holder.tvNew.setVisibility(View.VISIBLE);
@@ -159,7 +161,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         holder.tvDelete.setVisibility(View.GONE);
         holder.tvUsername.setText(request.getSenderName());
         holder.tvExtras.setText(request.getExtras());
-        Picasso.with(context).load(request.getSenderUrl()).into(holder.ivRequestProfile);
+        PicassoClient.downloadImage(context,request.getSenderUrl(),holder.ivRequestProfile);
         return view;
     }
 

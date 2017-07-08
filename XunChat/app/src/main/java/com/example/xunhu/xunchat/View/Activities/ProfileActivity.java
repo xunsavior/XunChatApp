@@ -1,17 +1,15 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,11 +22,9 @@ import com.android.volley.toolbox.ImageRequest;
 import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
-import com.example.xunhu.xunchat.Presenter.SendFriendRequestPresenter;
 import com.example.xunhu.xunchat.R;
-import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
-import com.example.xunhu.xunchat.View.Interfaces.SendFriendRequestView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import butterknife.BindView;
@@ -58,10 +54,28 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     private static final int NEED_TO_ACCEPT = 1;
     private static final int FRIEND = 2;
     MyDialog myDialog;
+    IntentFilter intentFilter = new IntentFilter();
+    public static final String BUTTON_PENDING = "pending";
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            switch (intent.getAction()){
+                case BUTTON_PENDING:
+                    btnSendOrAdd.setText("Pending...");
+                    btnSendOrAdd.setClickable(false);
+                    btnSendOrAdd.setBackgroundColor(Color.RED);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_activity_layout);
+        intentFilter.addAction("pending");
+        registerReceiver(broadcastReceiver,intentFilter);
         myDialog = new MyDialog(this);
         ButterKnife.bind(this);
         user= user = (User) getIntent().getSerializableExtra("user");
@@ -143,6 +157,11 @@ public class ProfileActivity extends Activity implements RequestRespondView {
             default:
                 break;
         }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
     }
     @Override
     public void respondSuccess(String msg) {

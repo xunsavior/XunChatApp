@@ -1,23 +1,17 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -30,22 +24,15 @@ import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.FriendRequestAdapter;
-import com.example.xunhu.xunchat.View.AllAdapters.SearchFriendsAdapter;
-import com.example.xunhu.xunchat.View.Dialogs.MyDialog;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by xunhu on 6/19/2017.
@@ -68,6 +55,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         myDialog = new MyDialog(this);
         String viewType = getIntent().getStringExtra("type");
         determineLayout(viewType);
@@ -188,5 +176,10 @@ public class SubActivity extends Activity implements SearchFriendInterface {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }
