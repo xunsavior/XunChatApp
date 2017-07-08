@@ -187,7 +187,7 @@ public class SignUpFragment extends Fragment {
                     profileImageURI = data.getData();
                         //bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),profileImageURI);
                     bitmap = MediaStore.Images.Thumbnails.getThumbnail(getActivity().getContentResolver(),
-                            Long.parseLong(profileImageURI.getLastPathSegment()),  MediaStore.Images.Thumbnails.MICRO_KIND,null);
+                            Long.parseLong(profileImageURI.getLastPathSegment()),  MediaStore.Images.Thumbnails.MINI_KIND,null);
                         ivNewImageProfile.setImageBitmap(bitmap);
                 }
                 break;
