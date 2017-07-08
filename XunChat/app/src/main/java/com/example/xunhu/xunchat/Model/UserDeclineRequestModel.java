@@ -2,6 +2,7 @@ package com.example.xunhu.xunchat.Model;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.DeclineRequestTask;
 import com.example.xunhu.xunchat.Model.Interfaces.CRUDDeclineRequestOptions;
+import com.example.xunhu.xunchat.Presenter.Interfaces.DeclineRequestActionStatus;
 import com.example.xunhu.xunchat.Presenter.MyDeclineRequestPresenter;
 
 /**
@@ -9,13 +10,13 @@ import com.example.xunhu.xunchat.Presenter.MyDeclineRequestPresenter;
  */
 
 public class UserDeclineRequestModel implements CRUDDeclineRequestOptions{
-    MyDeclineRequestPresenter myDeclineRequestPresenter;
+    DeclineRequestActionStatus declineRequestActionStatus;
 
-    public UserDeclineRequestModel(MyDeclineRequestPresenter myDeclineRequestPresenter){
-        this.myDeclineRequestPresenter=myDeclineRequestPresenter;
+    public UserDeclineRequestModel(DeclineRequestActionStatus declineRequestActionStatus){
+        this.declineRequestActionStatus=declineRequestActionStatus;
     }
     @Override
     public void operateDecline(int myID, int targetID) {
-        new DeclineRequestTask(this).execute(myID,targetID);
+        new DeclineRequestTask(declineRequestActionStatus).execute(myID,targetID);
     }
 }

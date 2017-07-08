@@ -284,7 +284,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     @Override
     public void loginFail(String msg) {
-        myDialog.cancelLogoutDialog();
+        myDialog.cancelLoadingGifDialog();
         Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
     }
     public void retrieveUserInformation(String msg){

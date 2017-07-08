@@ -24,11 +24,11 @@ public class MyDeclineRequestPresenter implements DeclineRequestAction,DeclineRe
 
     @Override
     public void declineFail(String msg) {
-
+        declineRequestView.declineFail(msg);
     }
 
     @Override
     public void declineSuccessfully(String msg) {
-
+        declineRequestView.declineSuccess(msg);
     }
 }

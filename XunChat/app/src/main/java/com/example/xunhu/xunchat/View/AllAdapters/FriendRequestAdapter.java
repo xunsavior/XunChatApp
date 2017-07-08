@@ -3,6 +3,7 @@ package com.example.xunhu.xunchat.View.AllAdapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -43,6 +44,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
+import static com.example.xunhu.xunchat.View.MainActivity.xunChatDatabaseHelper;
+
 /**
  * Created by xunhu on 6/30/2017.
  */
@@ -56,6 +59,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     float Y =0;
     AlertDialog alertDialog;
     int index;
+    Request deleteRequest;
     RequestRespondPresenter requestRespondPresenter = new RequestRespondPresenter(this);
     MySearchFriendPresenter mySearchFriendPresenter = new MySearchFriendPresenter(this);
     MyDeclineRequestPresenter myDeclineRequestPresenter = new MyDeclineRequestPresenter(this);
@@ -104,9 +108,9 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                createDialog();
                 myDeclineRequestPresenter.declineRequest(MainActivity.me.getId(),request.getSenderID());
-                requests.remove(request);
-                notifyDataSetChanged();
+                deleteRequest = request;
             }
         });
         holder.rlFriendRequest.setOnTouchListener(new View.OnTouchListener() {
@@ -223,17 +227,21 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
-
     @Override
     public void declineSuccess(String msg) {
-
+        alertDialog.cancel();
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        database.delete("request",
+                "sender=? AND sender_id=?",
+                new String[]{deleteRequest.getSenderName(),String.valueOf(deleteRequest.getSenderID())});
+        requests.remove(deleteRequest);
+        notifyDataSetChanged();
     }
 
     @Override
     public void declineFail(String msg) {
-
+        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     class ViewHolder{

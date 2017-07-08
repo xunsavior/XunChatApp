@@ -78,7 +78,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         registerReceiver(broadcastReceiver,intentFilter);
         myDialog = new MyDialog(this);
         ButterKnife.bind(this);
-        user= user = (User) getIntent().getSerializableExtra("user");
+        user = (User) getIntent().getSerializableExtra("user");
         setViews(user.getRelationship_type());
     }
     private void setViews(int relationshipType){
@@ -94,6 +94,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                 btnSendOrAdd.setClickable(false);
                 btnSendOrAdd.setBackgroundColor(Color.RED);
                 profile_url = MainActivity.domain_url+user.getUrl();
+                break;
             case NEED_TO_ACCEPT:
                 btnSendOrAdd.setText("Accept");
                 profile_url = MainActivity.domain_url+user.getUrl();

@@ -34,7 +34,7 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:21.0.+'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     compile group: 'com.squareup.picasso', name: 'picasso', version: '2.5.2'
-    compile 'com.squareup.okhttp:okhttp:2.5.0'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
     testCompile 'junit:junit:4.12'
 }
