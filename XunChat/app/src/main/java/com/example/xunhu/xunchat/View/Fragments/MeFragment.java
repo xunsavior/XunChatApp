@@ -1,13 +1,17 @@
 package com.example.xunhu.xunchat.View.Fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,6 +59,7 @@ public class MeFragment extends Fragment  {
     private EditProfileLayout editProfileLayout=null;
     private static final int SELECT_IMAGE = 0;
     Uri uri;
+    private static final int ACCESS_EXTERNAL = 1;
     Bitmap bitmap =null;
     @Override
     public void onAttach(Activity activity) {
@@ -97,8 +102,23 @@ public class MeFragment extends Fragment  {
                 editProfileLayout.getRlChangeProfileImage().setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                            if (ContextCompat.checkSelfPermission(getContext(),
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED &&
+                                    ContextCompat.checkSelfPermission(getContext(),
+                                            Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
+                                startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                            }else {
+                                requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE}, ACCESS_EXTERNAL);
+                            }
+                        }else {
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
+                            startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                        }
+//                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI);
+//                        startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
                     }
                 });
                 editProfileLayout.getRlChangeProfileImage().setOnTouchListener(new View.OnTouchListener() {
@@ -284,6 +304,7 @@ public class MeFragment extends Fragment  {
             case SELECT_IMAGE:
                 if (resultCode==RESULT_OK){
                     uri = data.getData();
+
                     conn.launchUpdateDialog("edit profile image",uri.toString());
                 }
                 break;

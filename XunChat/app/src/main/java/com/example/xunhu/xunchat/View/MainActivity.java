@@ -85,7 +85,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static final String EDIT_PROFILE = "http://xunsavior.com/xunchat/edit_profile.php";
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
-
+    public static final String DECLINE_REQUEST = "http://xunsavior.com/xunchat/request_decline.php";
     MyPagerAdapter adapter;
     FragmentManager fragmentManager = getSupportFragmentManager();
     LoginFragment loginFragment;

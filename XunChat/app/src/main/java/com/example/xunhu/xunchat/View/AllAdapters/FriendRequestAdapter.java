@@ -21,11 +21,13 @@ import android.widget.Toast;
 import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Request;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Presenter.MyDeclineRequestPresenter;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Interfaces.DeclineRequestView;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
@@ -45,7 +47,8 @@ import butterknife.OnTouch;
  * Created by xunhu on 6/30/2017.
  */
 
-public class FriendRequestAdapter extends ArrayAdapter<Request> implements RequestRespondView,SearchFriendInterface{
+public class FriendRequestAdapter extends ArrayAdapter<Request> implements RequestRespondView,
+        SearchFriendInterface,DeclineRequestView{
     Context context;
     int resourceId;
     List<Request> requests;
@@ -55,6 +58,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     int index;
     RequestRespondPresenter requestRespondPresenter = new RequestRespondPresenter(this);
     MySearchFriendPresenter mySearchFriendPresenter = new MySearchFriendPresenter(this);
+    MyDeclineRequestPresenter myDeclineRequestPresenter = new MyDeclineRequestPresenter(this);
     public FriendRequestAdapter(@NonNull Context context, int resource, @NonNull List<Request> objects) {
         super(context, resource, objects);
         this.context=context;
@@ -100,6 +104,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                myDeclineRequestPresenter.declineRequest(MainActivity.me.getId(),request.getSenderID());
                 requests.remove(request);
                 notifyDataSetChanged();
             }
@@ -131,7 +136,6 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
                 return false;
             }
         });
-
         holder.ivRequestProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +223,16 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void declineSuccess(String msg) {
+
+    }
+
+    @Override
+    public void declineFail(String msg) {
 
     }
 

@@ -146,13 +146,14 @@ public class LocationListDialog extends DialogFragment {
         };
 
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(getContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION)== PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,5000,0,locationListener);
             }else {
-
-                requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION},
-                        ACCESS_LOCATION);
+                requestPermissions(new String[] {Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION}, ACCESS_LOCATION);
             }
         }else {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,5000,0,locationListener);

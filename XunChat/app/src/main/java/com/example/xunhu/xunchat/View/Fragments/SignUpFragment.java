@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Criteria;
@@ -16,6 +17,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -73,11 +75,8 @@ public class SignUpFragment extends Fragment {
     private Uri profileImageURI;
     public SignUpInterface comm;
     Bitmap bitmap =null;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    private static final int ACCESS_LOCATION=0;
+    private static final int ACCESS_EXTERNAL = 1;
     ProgressDialog registerProgressDialog;
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -101,8 +100,21 @@ public class SignUpFragment extends Fragment {
     public void respond(View view){
         switch (view.getId()){
             case R.id.iv_profile_image:
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
-                startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+                    if (ContextCompat.checkSelfPermission(getContext(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(getContext(),
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
+                        startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                    }else {
+                        requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
+                                Manifest.permission.READ_EXTERNAL_STORAGE}, ACCESS_EXTERNAL);
+                    }
+                }else {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
+                    startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+                }
                 break;
             case R.id.btnRegister:
                 if (!etRegisterUsername.getText().toString().isEmpty() &&
@@ -173,12 +185,10 @@ public class SignUpFragment extends Fragment {
             case SELECT_IMAGE:
                 if (resultCode==RESULT_OK){
                     profileImageURI = data.getData();
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),profileImageURI);
+                        //bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),profileImageURI);
+                    bitmap = MediaStore.Images.Thumbnails.getThumbnail(getActivity().getContentResolver(),
+                            Long.parseLong(profileImageURI.getLastPathSegment()),  MediaStore.Images.Thumbnails.MICRO_KIND,null);
                         ivNewImageProfile.setImageBitmap(bitmap);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 break;
             default:
@@ -191,7 +201,6 @@ public class SignUpFragment extends Fragment {
     public void existError(String msg){
         etRegisterUsername.setError(msg);
     }
-
     public void setGender(String gender){
             etGender.setText(gender);
     }

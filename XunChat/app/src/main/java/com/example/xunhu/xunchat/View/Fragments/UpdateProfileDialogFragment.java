@@ -101,17 +101,15 @@ public class UpdateProfileDialogFragment extends DialogFragment {
             int day = Integer.parseInt(date[0]);
             datePicker.updateDate(year,month,day);
         }else if (title.equals("edit profile image")){
-            view = inflater.inflate(R.layout.edit_profile_image_layout,null);
-            ivSelectedImage = (ImageView) view.findViewById(R.id.ivSelectedProfileImage);
-            ivSelectedImage.getLayoutParams().width = MainActivity.getScreenWidth();
-            ivSelectedImage.getLayoutParams().height= MainActivity.getScreenWidth();
-            try {
-                Uri uri = Uri.parse(content);
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),uri);
-                ivSelectedImage.setImageBitmap(bitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+           view = inflater.inflate(R.layout.edit_profile_image_layout,null);
+           ivSelectedImage = (ImageView) view.findViewById(R.id.ivSelectedProfileImage);
+           ivSelectedImage.getLayoutParams().width = MainActivity.getScreenWidth();
+           ivSelectedImage.getLayoutParams().height= MainActivity.getScreenWidth();
+           Uri uri = Uri.parse(content);
+           bitmap = MediaStore.Images.Thumbnails.getThumbnail(getActivity().getContentResolver(),
+                        Long.parseLong(uri.getLastPathSegment()),
+                        MediaStore.Images.Thumbnails.MINI_KIND,null);
+                        ivSelectedImage.setImageBitmap(bitmap);
         }else {
             view = inflater.inflate(R.layout.edit_username_dialog_layout,null);
             editText = (EditText) view.findViewById(R.id.et_information_dialog);
@@ -133,7 +131,7 @@ public class UpdateProfileDialogFragment extends DialogFragment {
                     comm.performUpdate(title,birthday);
                 }else if (title.equals("edit profile image")){
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,70,byteArrayOutputStream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,byteArrayOutputStream);
                     byte[] imageBytes = byteArrayOutputStream.toByteArray();
                     String url = Base64.encodeToString(imageBytes,Base64.DEFAULT);
                     comm.performUpdate(title,url);
