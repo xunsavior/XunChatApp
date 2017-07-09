@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
  * Created by xunhu on 7/9/2017.
  */
 
-public class SingleContactAdapter extends ArrayAdapter<Friend> {
+public class SingleContactAdapter extends ArrayAdapter<Friend>{
     Context context;
     int resource;
     public SingleContactAdapter(@NonNull Context context, int resource, @NonNull List<Friend> objects) {
@@ -35,7 +35,7 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> {
         Friend friend = getItem(position);
         ViewHolder viewHolder;
         View view;
-        if (convertView==null){
+        if (convertView!=null){
             view = convertView;
             viewHolder = (ViewHolder) view.getTag();
         }else {
@@ -63,7 +63,7 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> {
         @BindView(R.id.tv_friend_username)
         TextView tvFriendUsername;
         public ViewHolder(View view){
-            ButterKnife.bind(view);
+            ButterKnife.bind(this,view);
         }
     }
 }

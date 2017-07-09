@@ -76,7 +76,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             values.put("friend_id",friendID);
             values.put("friend_username",friendUsername);
             values.put("friend_nickname",friendNickname);
-            values.put("friend_url",friendURL);
+            values.put("friend_url",MainActivity.domain_url+friendURL);
             values.put("username",currentUser);
             database.insert("friend",null,values);
         }

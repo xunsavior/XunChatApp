@@ -22,9 +22,12 @@ import android.widget.TextView;
 import com.example.xunhu.xunchat.Model.Entities.Friend;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.AllAdapters.SingleContactAdapter;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -44,7 +47,8 @@ public class ContactsFragment extends Fragment {
     private Unbinder unbinder;
     ContactFragmentInterface comm;
     IntentFilter intentFilter = new IntentFilter();
-    List<Friend> list = new ArrayList<>();
+    List<Friend> friends = new ArrayList<>();
+    SingleContactAdapter adapter;
     public static final String NEW_FRIEND_ADDED = "new friend added";
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -64,6 +68,8 @@ public class ContactsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.contacts_fragment_layout,container,false);
         unbinder=ButterKnife.bind(this,view);
+        adapter= new SingleContactAdapter(getContext(),R.layout.single_contact_unit_layout,friends);
+        lvContacts.setAdapter(adapter);
         return view;
     }
     @Override
@@ -114,6 +120,9 @@ public class ContactsFragment extends Fragment {
         super.onResume();
         intentFilter.addAction(NEW_FRIEND_ADDED);
         getContext().registerReceiver(broadcastReceiver,intentFilter);
+        loadFriendList();
+    }
+    public void loadFriendList(){
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         Cursor cursor = database.rawQuery("select * from friend where username=?",new String[]{MainActivity.me.getUsername()});
         if (cursor.moveToFirst()){
@@ -122,13 +131,37 @@ public class ContactsFragment extends Fragment {
                 String friendUsername = cursor.getString(cursor.getColumnIndex("friend_username"));
                 String friendNickname = cursor.getString(cursor.getColumnIndex("friend_nickname"));
                 String friendURL = cursor.getString(cursor.getColumnIndex("friend_url"));
-                boolean firstOrNot = false;
+                boolean FirstOrNot =false;
+                Friend friend = new Friend(friendID,friendUsername,friendNickname,friendURL,FirstOrNot);
+                friends.add(friend);
             }while (cursor.moveToNext());
         }
+        cursor.close();
+        Collections.sort(friends, new Comparator<Friend>() {
+            @Override
+            public int compare(Friend o1, Friend o2) {
+                return o1.getNickname().toLowerCase().compareTo(o2.getNickname().toLowerCase());
+            }
+        });
+        for (int i=0;i<friends.size();i++){
+                if (i==0){
+                       friends.get(i).setFirstOrNot(true);
+                }else {
+                    if (friends.get(i).getNickname().substring(0,1).toLowerCase().
+                            equals(friends.get(i-1).getNickname().
+                                    substring(0,1).toLowerCase())){
+                        friends.get(i).setFirstOrNot(false);
+                    }else {
+                        friends.get(i).setFirstOrNot(true);
+                    }
+                }
+        }
+        adapter.notifyDataSetChanged();
     }
     @Override
     public void onPause() {
         super.onPause();
         getContext().unregisterReceiver(broadcastReceiver);
+        friends.clear();
     }
 }

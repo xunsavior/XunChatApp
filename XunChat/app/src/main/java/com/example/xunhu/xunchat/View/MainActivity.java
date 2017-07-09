@@ -539,7 +539,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public void setBottomMenuInvisible() {
        BottomMenu.setVisibility(View.GONE);
     }
-
     @Override
     public void onBackPressed() {
         if (meFragment!=null){
@@ -550,7 +549,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 moveTaskToBack(true);
             }
         }else {
-                moveTaskToBack(true);
+                super.onBackPressed();
         }
 
     }
