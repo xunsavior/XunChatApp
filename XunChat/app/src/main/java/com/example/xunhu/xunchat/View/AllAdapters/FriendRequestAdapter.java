@@ -201,6 +201,10 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         values.put("friend_url",acceptedRequest.getSenderUrl());
         values.put("username",MainActivity.me.getUsername());
         database.insert("friend",null,values);
+        values.clear();
+        values.put("isAgreed","1");
+        database.update("request",values,"username=? AND sender=?",
+                new String[]{MainActivity.me.getUsername(),acceptedRequest.getSenderName()});
         Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
         context.sendBroadcast(intent);
         alertDialog.cancel();

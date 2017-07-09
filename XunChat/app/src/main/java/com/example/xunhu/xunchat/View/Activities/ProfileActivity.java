@@ -177,6 +177,10 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         values.put("friend_url",user.getUrl());
         values.put("username",MainActivity.me.getUsername());
         database.insert("friend",null,values);
+        values.clear();
+        values.put("isAgreed","1");
+        database.update("request",values,"username=? AND sender=?",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
         myDialog.cancelBottomGifDialog();
         Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
         sendBroadcast(intent);
