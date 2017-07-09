@@ -112,9 +112,14 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         holder.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createDialog();
-                myDeclineRequestPresenter.declineRequest(MainActivity.me.getId(),request.getSenderID());
-                deleteRequest = request;
+                if (request.getIsAgreed().equals("0")){
+                    createDialog();
+                    myDeclineRequestPresenter.declineRequest(MainActivity.me.getId(),request.getSenderID());
+                    deleteRequest = request;
+                }else {
+                    removeFromRequest(request);
+                }
+
             }
         });
         holder.rlFriendRequest.setOnTouchListener(new View.OnTouchListener() {
@@ -249,11 +254,14 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     @Override
     public void declineSuccess(String msg) {
         alertDialog.cancel();
+        removeFromRequest(deleteRequest);
+    }
+    public void removeFromRequest(Request request){
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         database.delete("request",
                 "sender=? AND sender_id=?",
-                new String[]{deleteRequest.getSenderName(),String.valueOf(deleteRequest.getSenderID())});
-        requests.remove(deleteRequest);
+                new String[]{request.getSenderName(),String.valueOf(request.getSenderID())});
+        requests.remove(request);
         notifyDataSetChanged();
     }
 

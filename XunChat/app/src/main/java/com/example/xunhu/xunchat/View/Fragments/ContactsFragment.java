@@ -118,6 +118,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        friends.clear();
         intentFilter.addAction(NEW_FRIEND_ADDED);
         getContext().registerReceiver(broadcastReceiver,intentFilter);
         loadFriendList();
