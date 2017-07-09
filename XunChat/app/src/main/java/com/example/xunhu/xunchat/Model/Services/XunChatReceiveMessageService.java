@@ -60,23 +60,26 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 MyNotification respondNotification = new MyNotification(REQUEST_RESPOND_NOTIFICATION_ID);
                 String respondTicker = responderUsername+" has accepted your friend request.";
                 String respondContent = " has accepted your friend request.";
+                storeFriend(responderID,responderUsername,responderNickname,responderURL);
                 respondNotification.createRequestRespondNotification(responderUsername,responderURL,respondTicker,respondContent);
                 break;
             default:
                 break;
         }
     }
-    public void storeFriend(int friendID,String friendUsername,String friendNickname,String friendURL,String username){
+    public void storeFriend(int friendID,String friendUsername,String friendNickname,String friendURL){
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-        
-        ContentValues values = new ContentValues();
-        values.put("friend_id",friendID);
-        values.put("friend_username",friendUsername);
-        values.put("friend_nickname",friendNickname);
-        values.put("friend_url",friendURL);
-        values.put("username",username);
-        database.insert("friend",null,values);
+        String currentUser = returnCurrentUser();
+        if (!currentUser.isEmpty()){
+            ContentValues values = new ContentValues();
+            values.put("friend_id",friendID);
+            values.put("friend_username",friendUsername);
+            values.put("friend_nickname",friendNickname);
+            values.put("friend_url",friendURL);
+            values.put("username",currentUser);
+            database.insert("friend",null,values);
+        }
     }
     public void sendFriendRequestBroadcast(String username){
         Intent intent = new Intent(FRIEND_REQUEST);

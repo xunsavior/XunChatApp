@@ -123,7 +123,6 @@ public class ContactsFragment extends Fragment {
                 String friendNickname = cursor.getString(cursor.getColumnIndex("friend_nickname"));
                 String friendURL = cursor.getString(cursor.getColumnIndex("friend_url"));
                 boolean firstOrNot = false;
-                System.out.println("@ nickname "+friendNickname);
             }while (cursor.moveToNext());
         }
     }
