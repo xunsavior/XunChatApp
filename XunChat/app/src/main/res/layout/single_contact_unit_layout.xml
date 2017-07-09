@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffff"
     android:id="@+id/rl_search_result"
     >
-   <ImageView
-       android:layout_width="50dp"
-       android:layout_height="50dp"
-       android:src="@drawable/ic_loading"
-       android:layout_margin="10dp"
-       android:id="@+id/iv_search_profile_image"
-       android:scaleType="fitXY"
-       />
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical"
-        android:layout_toRightOf="@+id/iv_search_profile_image"
-        android:layout_margin="10dp"
+        android:background="@color/gray"
+        android:visibility="gone"
+        android:id="@+id/rl_ini_letter"
         >
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_friend_nickname"
-            android:text="Loading..."
-            android:layout_gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
             android:textColor="#000"
-            android:textSize="20dp"
+            android:text="A"
+            android:textSize="12dp"
+            android:id="@+id/tv_ini_letter"
             />
-        <TextView
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_loading"
+            android:layout_margin="10dp"
+            android:id="@+id/iv_search_profile_image"
+            android:scaleType="fitXY"
+            />
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_friend_username"
-            android:text="Loading..."
             android:layout_gravity="center_vertical"
-            android:textColor="#A9A9A9"
-            android:textSize="15dp"
-            />
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/iv_search_profile_image"
+            android:layout_margin="10dp"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_friend_nickname"
+                android:text="Loading..."
+                android:layout_gravity="center_vertical"
+                android:textColor="#000"
+                android:textSize="20dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_friend_username"
+                android:text="Loading..."
+                android:layout_gravity="center_vertical"
+                android:textColor="#A9A9A9"
+                android:textSize="15dp"
+                />
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

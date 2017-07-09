@@ -1,6 +1,7 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +29,7 @@ import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Interfaces.DeclineRequestView;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
@@ -60,6 +62,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     AlertDialog alertDialog;
     int index;
     Request deleteRequest;
+    Request acceptedRequest;
     RequestRespondPresenter requestRespondPresenter = new RequestRespondPresenter(this);
     MySearchFriendPresenter mySearchFriendPresenter = new MySearchFriendPresenter(this);
     MyDeclineRequestPresenter myDeclineRequestPresenter = new MyDeclineRequestPresenter(this);
@@ -96,6 +99,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             @Override
             public void onClick(View v) {
                 index = position;
+                acceptedRequest = request;
                 createDialog();
                 requestRespondPresenter.sendRespond(request.getSenderID(),MainActivity.me);
             }
@@ -189,8 +193,18 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     @Override
     public void respondSuccess(String msg) {
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("friend_id",acceptedRequest.getSenderID());
+        values.put("friend_username",acceptedRequest.getSenderName());
+        values.put("friend_nickname",acceptedRequest.getSenderNickname());
+        values.put("friend_url",acceptedRequest.getSenderUrl());
+        values.put("username",MainActivity.me.getUsername());
+        database.insert("friend",null,values);
+        Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
+        context.sendBroadcast(intent);
         alertDialog.cancel();
-        requests.get(index).setIsAgreed("true");
+        requests.get(index).setIsAgreed("1");
         notifyDataSetChanged();
     }
 

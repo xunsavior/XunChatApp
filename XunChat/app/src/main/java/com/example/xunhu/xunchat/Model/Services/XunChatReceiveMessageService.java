@@ -40,10 +40,11 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             case FRIEND_REQUEST:
                 int senderID = object.getInt("sender_id");
                 String senderName = object.getString("sender_username");
+                String senderNickname = object.getString("sender_nickname");
                 String senderURL = object.getString("sender_url");
                 String senderExtras = object.getString("sender_extras");
                 String requestTime = String.valueOf(System.currentTimeMillis());
-                storeFriendRequest(senderID,senderName,senderURL,senderExtras,requestTime);
+                storeFriendRequest(senderID,senderName,senderNickname,senderURL,senderExtras,requestTime);
                 sendFriendRequestBroadcast(senderName);
                 MyNotification friendRequestNotification = new MyNotification(FRIEND_REQUST_NOTIFICATION_ID);
                 String requestTicker = senderName+" has sent you a friend request.";
@@ -65,12 +66,38 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 break;
         }
     }
+    public void storeFriend(int friendID,String friendUsername,String friendNickname,String friendURL,String username){
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
+        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+        
+        ContentValues values = new ContentValues();
+        values.put("friend_id",friendID);
+        values.put("friend_username",friendUsername);
+        values.put("friend_nickname",friendNickname);
+        values.put("friend_url",friendURL);
+        values.put("username",username);
+        database.insert("friend",null,values);
+    }
     public void sendFriendRequestBroadcast(String username){
         Intent intent = new Intent(FRIEND_REQUEST);
         intent.putExtra("username",username);
         sendBroadcast(intent);
     }
-    public void storeFriendRequest(int senderID,String senderName,String url,String extras,String time){
+    public String returnCurrentUser(){
+        String me="";
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
+        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+        Cursor cursor = database.rawQuery("SELECT username FROM user WHERE isActive=?",new String[]{"1"} );
+        if (cursor.moveToFirst()){
+            do{
+                me  = cursor.getString(cursor.getColumnIndex("username"));
+                break;
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        return me;
+    }
+    public void storeFriendRequest(int senderID,String senderName,String senderNickname, String url,String extras,String time){
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -79,6 +106,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         if (cursor.moveToFirst()){
             do{
                 me  = cursor.getString(cursor.getColumnIndex("username"));
+                break;
             }while (cursor.moveToNext());
         }
         cursor.close();
@@ -86,13 +114,13 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             String sender_name = "";
             contentValues.put("sender_id",String.valueOf(senderID));
             contentValues.put("sender",senderName);
+            contentValues.put("sender_nickname",senderNickname);
             contentValues.put("extras",extras);
             contentValues.put("isRead","0");
             contentValues.put("isAgreed","0");
             contentValues.put("time",time);
             contentValues.put("url",MainActivity.domain_url+url);
             contentValues.put("username",me);
-
             Cursor cursorRequest = database.rawQuery("SELECT sender FROM request WHERE username=? AND sender=?",new String[]{me,senderName});
             if (cursorRequest.moveToFirst()){
                 do {

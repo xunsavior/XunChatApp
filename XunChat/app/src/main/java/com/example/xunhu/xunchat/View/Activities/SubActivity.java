@@ -127,7 +127,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("isRead","1");
-        Cursor cursor = database.rawQuery("select sender_id,sender,isRead,extras,isAgreed,time," +
+        Cursor cursor = database.rawQuery("select sender_id,sender,sender_nickname,isRead,extras,isAgreed,time," +
                         "url,username" +
                         " from request where username=? order by time DESC",
                 new String[]{MainActivity.me.getUsername()});
@@ -135,11 +135,12 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             do {
                 int senderID = Integer.parseInt(cursor.getString(cursor.getColumnIndex("sender_id")));
                 String senderName = cursor.getString(cursor.getColumnIndex("sender"));
+                String senderNickname = cursor.getString(cursor.getColumnIndex("sender_nickname"));
                 String extras = cursor.getString(cursor.getColumnIndex("extras"));
                 String url = cursor.getString(cursor.getColumnIndex("url"));
                 String isAgreed = cursor.getString(cursor.getColumnIndex("isAgreed"));
                 String isRead = cursor.getString(cursor.getColumnIndex("isRead"));
-                Request request = new Request(senderID,senderName,extras,isAgreed,url,isRead);
+                Request request = new Request(senderID,senderName,senderNickname,extras,isAgreed,url,isRead);
                 list.add(request);
             }while (cursor.moveToNext());
         }
@@ -177,7 +178,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             e.printStackTrace();
         }
     }
-
     @Override
     public void onBackPressed() {
         finish();

@@ -7,19 +7,29 @@ package com.example.xunhu.xunchat.Model.Entities;
 public class Request {
     int senderID;
     String senderName;
+    String senderNickname;
     String extras;
     String isAgreed;
     String senderUrl;
     String isRead;
 
-    public Request(int senderID,String senderName,String extras,
+    public Request(int senderID,String senderName,String senderNickname,String extras,
                    String isAgreed,String senderUrl,String isRead){
         this.senderID=senderID;
         this.senderName=senderName;
+        this.senderNickname = senderNickname;
         this.extras=extras;
         this.isAgreed=isAgreed;
         this.senderUrl=senderUrl;
         this.isRead=isRead;
+    }
+
+    public String getSenderNickname() {
+        return senderNickname;
+    }
+
+    public void setSenderNickname(String senderNickname) {
+        this.senderNickname = senderNickname;
     }
 
     public String getExtras() {

@@ -2,9 +2,11 @@ package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +26,7 @@ import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
+import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
@@ -166,7 +169,17 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     }
     @Override
     public void respondSuccess(String msg) {
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("friend_id",user.getUserID());
+        values.put("friend_username",user.getUsername());
+        values.put("friend_nickname",user.getNickname());
+        values.put("friend_url",user.getUrl());
+        values.put("username",MainActivity.me.getUsername());
+        database.insert("friend",null,values);
         myDialog.cancelBottomGifDialog();
+        Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
+        sendBroadcast(intent);
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
     @Override
