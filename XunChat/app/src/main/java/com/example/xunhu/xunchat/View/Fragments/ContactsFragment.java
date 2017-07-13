@@ -2,6 +2,7 @@ package com.example.xunhu.xunchat.View.Fragments;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -57,6 +58,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
     List<Friend> friends = new ArrayList<>();
     SingleContactAdapter adapter;
     public static final String NEW_FRIEND_ADDED = "new friend added";
+    public static final String REFRESH_FRIEND_LIST="fresh friend list";
     RetrieveFriendListPresenter retrieveFriendListPresenter;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -64,6 +66,9 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
             switch (intent.getAction()){
                 case NEW_FRIEND_ADDED:
                     System.out.println("@ roger that");
+                    break;
+                case REFRESH_FRIEND_LIST:
+                    loadFriendList();
                     break;
                 default:
                     break;
@@ -123,6 +128,8 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
 
     @Override
     public void onRetrieveFriendListSuccessful(String msg) {
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        database.delete("friend","username=?",new String[]{MainActivity.me.getUsername()});
         try {
             JSONArray jsonArray = new JSONArray(msg);
             for (int i = 0;i<jsonArray.length();i++){
@@ -132,11 +139,20 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
                 String friendUsername = object.getString("friend_username");
                 String friendNickname = object.getString("friend_nickname");
                 String friendURL = object.getString("friend_url");
+                ContentValues values = new ContentValues();
+                values.put("friend_id",friendID);
+                values.put("friend_username",friendUsername);
+                values.put("friend_nickname",friendNickname);
+                values.put("friend_url",MainActivity.domain_url+friendURL);
+                values.put("username",MainActivity.me.getUsername());
+                database.insert("friend",null,values);
             }
+            Intent intent = new Intent(REFRESH_FRIEND_LIST);
+            getContext().sendBroadcast(intent);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+
 
     }
 
@@ -151,12 +167,13 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
     @Override
     public void onResume() {
         super.onResume();
-        friends.clear();
         intentFilter.addAction(NEW_FRIEND_ADDED);
+        intentFilter.addAction(REFRESH_FRIEND_LIST);
         getContext().registerReceiver(broadcastReceiver,intentFilter);
         loadFriendList();
     }
     public void loadFriendList(){
+        friends.clear();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         Cursor cursor = database.rawQuery("select * from friend where username=?",new String[]{MainActivity.me.getUsername()});
         if (cursor.moveToFirst()){
@@ -196,7 +213,6 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
     public void onPause() {
         super.onPause();
         getContext().unregisterReceiver(broadcastReceiver);
-        friends.clear();
     }
     public void retrieveFriendList(){
         retrieveFriendListPresenter = new RetrieveFriendListPresenter(this);
