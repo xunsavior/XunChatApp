@@ -15,6 +15,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by xunhu on 6/23/2017.
  */
@@ -104,16 +107,19 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        ArrayList<String> list = new ArrayList<>();
         String me="";
+        String querySenderName = "";
         Cursor cursor = database.rawQuery("SELECT username FROM user WHERE isActive=?",new String[]{"1"} );
         if (cursor.moveToFirst()){
             do{
-                me  = cursor.getString(cursor.getColumnIndex("username"));
+                me  = cursor.getString(cursor.getColumnIndex("user.username"));
+                list.add(querySenderName);
                 break;
             }while (cursor.moveToNext());
         }
         cursor.close();
-        if (!me.isEmpty()){
+        if (!me.equals("")){
             String sender_name = "";
             contentValues.put("sender_id",String.valueOf(senderID));
             contentValues.put("sender",senderName);
@@ -129,7 +135,6 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 do {
                     sender_name = cursorRequest.getString(cursorRequest.getColumnIndex("sender"));
                 }while (cursorRequest.moveToNext());
-
             }
             cursorRequest.close();
             if (sender_name.isEmpty()){
@@ -138,6 +143,5 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 database.update("request",contentValues,"username=? AND sender=?",new String[]{me,senderName});
             }
         }
-
     }
 }

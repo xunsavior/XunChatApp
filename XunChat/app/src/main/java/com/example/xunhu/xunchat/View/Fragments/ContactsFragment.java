@@ -18,12 +18,19 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.xunhu.xunchat.Model.Entities.Friend;
+import com.example.xunhu.xunchat.Presenter.RetrieveFriendListPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.AllAdapters.SingleContactAdapter;
+import com.example.xunhu.xunchat.View.Interfaces.RetrieveFriendListView;
 import com.example.xunhu.xunchat.View.MainActivity;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +47,7 @@ import butterknife.Unbinder;
  * Created by xunhu on 6/7/2017.
  */
 
-public class ContactsFragment extends Fragment {
+public class ContactsFragment extends Fragment implements RetrieveFriendListView {
     @BindView(R.id.rlNewFriends) RelativeLayout rlNewFriends;
     @BindView(R.id.tv_num_of_request) TextView tvNumOfRequests;
     @BindView(R.id.lv_contacts) ListView lvContacts;
@@ -50,7 +57,7 @@ public class ContactsFragment extends Fragment {
     List<Friend> friends = new ArrayList<>();
     SingleContactAdapter adapter;
     public static final String NEW_FRIEND_ADDED = "new friend added";
-
+    RetrieveFriendListPresenter retrieveFriendListPresenter;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -70,6 +77,7 @@ public class ContactsFragment extends Fragment {
         unbinder=ButterKnife.bind(this,view);
         adapter= new SingleContactAdapter(getContext(),R.layout.single_contact_unit_layout,friends);
         lvContacts.setAdapter(adapter);
+        retrieveFriendList();
         return view;
     }
     @Override
@@ -112,6 +120,31 @@ public class ContactsFragment extends Fragment {
     public TextView getTvNumOfRequests() {
         return tvNumOfRequests;
     }
+
+    @Override
+    public void onRetrieveFriendListSuccessful(String msg) {
+        try {
+            JSONArray jsonArray = new JSONArray(msg);
+            for (int i = 0;i<jsonArray.length();i++){
+                JSONObject object = new JSONObject();
+                object = jsonArray.getJSONObject(i);
+                int friendID = object.getInt("friend_id");
+                String friendUsername = object.getString("friend_username");
+                String friendNickname = object.getString("friend_nickname");
+                String friendURL = object.getString("friend_url");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+
+    }
+
+    @Override
+    public void onRetrieveFriendListFail(String msg) {
+        Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
     public interface ContactFragmentInterface{
         void clearRequests();
     }
@@ -164,5 +197,9 @@ public class ContactsFragment extends Fragment {
         super.onPause();
         getContext().unregisterReceiver(broadcastReceiver);
         friends.clear();
+    }
+    public void retrieveFriendList(){
+        retrieveFriendListPresenter = new RetrieveFriendListPresenter(this);
+        retrieveFriendListPresenter.retrieveFriendList(MainActivity.me.getId());
     }
 }

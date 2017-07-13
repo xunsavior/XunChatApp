@@ -27,7 +27,7 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "username,"+
             "FOREIGN KEY (username) REFERENCES user (username))";
     private static final String CREATE_FRIEND_TABLE = "create table friend ("+
-            "table_id integer primary key autoincrement, "+
+            "friend_table_id integer primary key autoincrement, "+
             "friend_id, "+
             "friend_username, "+
             "friend_nickname, "+
