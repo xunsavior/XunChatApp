@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,6 +30,7 @@ import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Interfaces.DeclineRequestView;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
@@ -59,10 +61,10 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     List<Request> requests;
     float X = 0;
     float Y =0;
-    AlertDialog alertDialog;
     int index;
     Request deleteRequest;
     Request acceptedRequest;
+    MyDialog myDialog;
     RequestRespondPresenter requestRespondPresenter = new RequestRespondPresenter(this);
     MySearchFriendPresenter mySearchFriendPresenter = new MySearchFriendPresenter(this);
     MyDeclineRequestPresenter myDeclineRequestPresenter = new MyDeclineRequestPresenter(this);
@@ -71,6 +73,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         this.context=context;
         this.resourceId=resource;
         this.requests=objects;
+        myDialog = new MyDialog((Activity) context);
     }
     @NonNull
     @Override
@@ -100,7 +103,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             public void onClick(View v) {
                 index = position;
                 acceptedRequest = request;
-                createDialog();
+                myDialog.createLoadingGifDialog();
                 requestRespondPresenter.sendRespond(request.getSenderID(),MainActivity.me);
             }
         });
@@ -113,7 +116,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             @Override
             public void onClick(View v) {
                 if (request.getIsAgreed().equals("0")){
-                    createDialog();
+                    myDialog.createLoadingGifDialog();
                     myDeclineRequestPresenter.declineRequest(MainActivity.me.getId(),request.getSenderID());
                     deleteRequest = request;
                 }else {
@@ -152,7 +155,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         holder.ivRequestProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                        createDialog();
+                        myDialog.createLoadingGifDialog();
                         mySearchFriendPresenter.attemptSearchFriends(request.getSenderName());
             }
         });
@@ -182,22 +185,11 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
         return view;
     }
 
-    public void createDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        View view = View.inflate(context,R.layout.gif_dialog,null);
-        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) view.findViewById(R.id.iv_gif);
-        gifImageView.setBackgroundColor(Color.TRANSPARENT);
-        gifImageView.setBackgroundResource(R.drawable.loading);
-        builder.setView(view);
-        alertDialog = builder.create();
-        alertDialog.getWindow().setDimAmount(0);
-        alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        alertDialog.show();
-    }
 
     @Override
     public void respondSuccess(String msg) {
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
+        myDialog.cancelLoadingGifDialog();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("friend_id",acceptedRequest.getSenderID());
@@ -212,26 +204,25 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
                 new String[]{MainActivity.me.getUsername(),acceptedRequest.getSenderName()});
         Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
         context.sendBroadcast(intent);
-        alertDialog.cancel();
+
         requests.get(index).setIsAgreed("1");
         notifyDataSetChanged();
     }
-
     @Override
     public void respondFail(String msg) {
-        alertDialog.cancel();
+       myDialog.cancelLoadingGifDialog();
         Toast.makeText(getContext(),"Fail to accept",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void searchFriendFail(String msg) {
-        alertDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void loadResults(String msg) {
-        alertDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         try {
             JSONObject object = new JSONObject(msg);
             int user_id = object.getInt("user_id");
@@ -253,7 +244,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
     }
     @Override
     public void declineSuccess(String msg) {
-        alertDialog.cancel();
+        myDialog.cancelLoadingGifDialog();
         removeFromRequest(deleteRequest);
     }
     public void removeFromRequest(Request request){

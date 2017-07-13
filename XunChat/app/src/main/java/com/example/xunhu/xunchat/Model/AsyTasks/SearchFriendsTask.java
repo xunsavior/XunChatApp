@@ -45,7 +45,6 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
             JSONObject object = new JSONObject();
             object.put("targetUsername",targetUsername);
             object.put("my_id",MainActivity.me.getId());
-            System.out.println("@ object "+object.toString());
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
             String postData =  URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");

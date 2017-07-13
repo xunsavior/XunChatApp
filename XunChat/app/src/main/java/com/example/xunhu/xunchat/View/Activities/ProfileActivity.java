@@ -174,7 +174,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         values.put("friend_id",user.getUserID());
         values.put("friend_username",user.getUsername());
         values.put("friend_nickname",user.getNickname());
-        values.put("friend_url",user.getUrl());
+        values.put("friend_url",MainActivity.domain_url+user.getUrl());
         values.put("username",MainActivity.me.getUsername());
         database.insert("friend",null,values);
         values.clear();
@@ -182,6 +182,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         database.update("request",values,"username=? AND sender=?",
                 new String[]{MainActivity.me.getUsername(),user.getUsername()});
         myDialog.cancelBottomGifDialog();
+        btnSendOrAdd.setText("Message");
         Intent intent = new Intent(ContactsFragment.NEW_FRIEND_ADDED);
         sendBroadcast(intent);
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();

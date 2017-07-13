@@ -48,16 +48,16 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     private EditText etSearchFriends;
     List<User> users;
     MySearchFriendPresenter presenter;
-
+    private String viewType = "";
     private static final String NEW_FRIEND = "new friends";
     private static final String MOMENT = "moments";
-
+    List<Request> list = new ArrayList<>();
+    FriendRequestAdapter adapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         myDialog = new MyDialog(this);
-        String viewType = getIntent().getStringExtra("type");
+        viewType = getIntent().getStringExtra("type");
         determineLayout(viewType);
     }
     private void determineLayout(String viewType){
@@ -92,14 +92,22 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (viewType.equals(NEW_FRIEND)){
+            loadFriendRequest();
+        }
+    }
+
     private void createNewFriendsView(){
         setContentView(R.layout.new_friends_layout);
         presenter = new MySearchFriendPresenter(this);
         ivNewRequestBack = (ImageView) findViewById(R.id.iv_new_friends_back);
         lvNewRequests = (ListView) findViewById(R.id.lv_new_requests);
         etSearchFriends = (EditText) findViewById(R.id.et_search_username);
-        List<Request> list = new ArrayList<>();
-        FriendRequestAdapter adapter = new FriendRequestAdapter(this,R.layout.friend_request_unit,list);
+        adapter = new FriendRequestAdapter(this,R.layout.friend_request_unit,list);
         ivNewRequestBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +132,10 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             }
         });
 
+
+    }
+    public void loadFriendRequest(){
+        list.clear();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("isRead","1");
@@ -149,7 +161,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
         database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"0"});
         cursor.close();
     }
-
     @Override
     public void searchFriendFail(String msg) {
         myDialog.cancelLoadingGifDialog();

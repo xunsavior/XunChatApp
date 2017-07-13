@@ -229,7 +229,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        pager.setOnPageChangeListener(this);
+        pager.addOnPageChangeListener(this);
         rlTopBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

@@ -31,7 +31,6 @@ public class RetrieveFriendListTask extends AsyncTask<Integer,Void,String> {
         JSONObject object = new JSONObject();
         try {
             object.put("user_id",myID);
-            System.out.println("@ object "+object.toString());
             RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
             okhttp3.Request request =new  okhttp3.Request.Builder().
                     url(MainActivity.RETRIEVE_FRIEND_LIST).

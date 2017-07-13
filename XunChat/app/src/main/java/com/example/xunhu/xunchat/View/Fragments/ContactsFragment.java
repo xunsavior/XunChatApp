@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.View.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -22,11 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xunhu.xunchat.Model.Entities.Friend;
+import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.RetrieveFriendListPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.AllAdapters.SingleContactAdapter;
 import com.example.xunhu.xunchat.View.Interfaces.RetrieveFriendListView;
+import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.json.JSONArray;
@@ -65,7 +68,6 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()){
                 case NEW_FRIEND_ADDED:
-                    System.out.println("@ roger that");
                     break;
                 case REFRESH_FRIEND_LIST:
                     loadFriendList();
@@ -108,11 +110,15 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
                 break;
         }
     }
+    @SuppressLint("ResourceAsColor")
     @OnTouch({R.id.rlNewFriends})
     public boolean onTouch(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                rlNewFriends.setBackgroundColor(Color.parseColor("#E1E0DE"));
+                rlNewFriends.setBackgroundColor(R.color.SkyBlue);
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                rlNewFriends.setBackgroundColor(Color.WHITE);
                 break;
             case MotionEvent.ACTION_UP:
                 rlNewFriends.setBackgroundColor(Color.WHITE);
@@ -133,8 +139,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
         try {
             JSONArray jsonArray = new JSONArray(msg);
             for (int i = 0;i<jsonArray.length();i++){
-                JSONObject object = new JSONObject();
-                object = jsonArray.getJSONObject(i);
+                JSONObject object = jsonArray.getJSONObject(i);
                 int friendID = object.getInt("friend_id");
                 String friendUsername = object.getString("friend_username");
                 String friendNickname = object.getString("friend_nickname");
