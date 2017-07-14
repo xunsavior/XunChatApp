@@ -27,6 +27,7 @@ import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
+import com.example.xunhu.xunchat.View.Fragments.RemarkDialogFragment;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
@@ -38,7 +39,7 @@ import butterknife.OnClick;
  * Created by xunhu on 6/21/2017.
  */
 
-public class ProfileActivity extends Activity implements RequestRespondView {
+public class ProfileActivity extends Activity implements RequestRespondView,RemarkDialogFragment.RemarkDialogFragmentInterface {
     @BindView(R.id.iv_profile_activity_back) ImageView btnBack;
     @BindView(R.id.iv_profile_activity_image) ImageView ivProfileImage;
     @BindView(R.id.tv_profile_activity_nickname) TextView tvNickname;
@@ -49,6 +50,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     @BindView(R.id.tv_profile_activity_region) TextView tvRegion;
     @BindView(R.id.llAlbum) LinearLayout llAlbum;
     @BindView(R.id.btn_send_or_add) Button btnSendOrAdd;
+    RemarkDialogFragment remarkDialogFragment;
     User user;
     String profile_url="";
     RequestRespondPresenter presenter;
@@ -148,9 +150,8 @@ public class ProfileActivity extends Activity implements RequestRespondView {
                    intent.putExtra("user",user);
                    startActivity(intent);
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
-                    myDialog.createBottomGifDialog();
-                    presenter = new RequestRespondPresenter(this);
-                    presenter.sendRespond(user.getUserID(),MainActivity.me);
+                    remarkDialogFragment = new RemarkDialogFragment(user.getNickname());
+                    remarkDialogFragment.show(getFragmentManager(),"remarkFragmentDialog");
                 }
                 break;
             case R.id.iv_profile_activity_image:
@@ -173,7 +174,7 @@ public class ProfileActivity extends Activity implements RequestRespondView {
         ContentValues values = new ContentValues();
         values.put("friend_id",user.getUserID());
         values.put("friend_username",user.getUsername());
-        values.put("friend_nickname",user.getNickname());
+        values.put("friend_nickname",remarkDialogFragment.getRemark());
         values.put("friend_url",MainActivity.domain_url+user.getUrl());
         values.put("username",MainActivity.me.getUsername());
         database.insert("friend",null,values);
@@ -191,5 +192,12 @@ public class ProfileActivity extends Activity implements RequestRespondView {
     public void respondFail(String msg) {
         myDialog.cancelBottomGifDialog();
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setRemark(String remark) {
+        myDialog.createBottomGifDialog();
+        presenter = new RequestRespondPresenter(this);
+        presenter.sendRespond(user.getUserID(),MainActivity.me,remark);
     }
 }

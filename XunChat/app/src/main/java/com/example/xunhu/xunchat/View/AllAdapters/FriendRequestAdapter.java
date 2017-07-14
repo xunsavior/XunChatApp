@@ -32,6 +32,7 @@ import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
+import com.example.xunhu.xunchat.View.Fragments.RemarkDialogFragment;
 import com.example.xunhu.xunchat.View.Interfaces.DeclineRequestView;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
@@ -104,7 +105,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
                 index = position;
                 acceptedRequest = request;
                 myDialog.createLoadingGifDialog();
-                requestRespondPresenter.sendRespond(request.getSenderID(),MainActivity.me);
+                requestRespondPresenter.sendRespond(acceptedRequest.getSenderID(),MainActivity.me,acceptedRequest.getSenderNickname());
             }
         });
         if (request.getIsRead().equals("1")){

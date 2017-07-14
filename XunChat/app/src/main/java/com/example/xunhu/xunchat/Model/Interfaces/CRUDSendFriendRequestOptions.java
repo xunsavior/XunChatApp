@@ -8,5 +8,5 @@ import com.example.xunhu.xunchat.Model.Entities.User;
  */
 
 public interface CRUDSendFriendRequestOptions {
-    void sendFriendRequest(Me me, String extras,User user);
+    void sendFriendRequest(Me me, String extras,User user,String remark);
 }

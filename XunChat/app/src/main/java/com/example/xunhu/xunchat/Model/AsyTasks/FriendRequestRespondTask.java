@@ -42,6 +42,7 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
         String responderWhatsup = strings[6];
         int responderAge = Integer.parseInt(strings[7]);
         String responderNickname = strings[8];
+        String respondRemark = strings[9];
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -62,6 +63,7 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
             object.put("responder_whatsup",responderWhatsup);
             object.put("responder_age",responderAge);
             object.put("responder_nickname",responderNickname);
+            object.put("responder_remark",respondRemark);
             System.out.println("@ object "+object.toString());
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));

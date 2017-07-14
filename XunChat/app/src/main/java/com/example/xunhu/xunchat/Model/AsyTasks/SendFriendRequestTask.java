@@ -43,6 +43,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
         String senderWhatsup= strings[7];
         int target_id =  Integer.parseInt(strings[8]);
         String extras = strings[9];
+        String remark = strings[10];
 
         HttpURLConnection httpURLConnection = null;
         try {
@@ -64,7 +65,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             object.put("sender_whatsup",senderWhatsup);
             object.put("target_id",target_id);
             object.put("sender_extras",extras);
-
+            object.put("sender_remark",remark);
             System.out.println("@ object "+object.toString());
 
             OutputStream outputStream = httpURLConnection.getOutputStream();

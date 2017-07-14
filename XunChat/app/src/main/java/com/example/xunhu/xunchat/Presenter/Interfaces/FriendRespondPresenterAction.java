@@ -7,5 +7,5 @@ import com.example.xunhu.xunchat.Model.Entities.Me;
  */
 
 public interface FriendRespondPresenterAction {
-    void sendRespond(int targetID, Me me);
+    void sendRespond(int targetID, Me me,String remark);
 }

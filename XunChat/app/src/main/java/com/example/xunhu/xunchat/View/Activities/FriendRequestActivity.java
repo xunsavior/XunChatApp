@@ -32,6 +32,7 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
     @BindView(R.id.iv_friend_request_back) ImageView btnBack;
     @BindView(R.id.btn_friend_request_send) Button btnSend;
     @BindView(R.id.et_extra_information) EditText etExtra;
+    @BindView(R.id.et_remarks) EditText etRemark;
     SendFriendRequestPresenter presenter;
     AlertDialog alertDialog;
     User user;
@@ -42,6 +43,7 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
         ButterKnife.bind(this);
         user = (User) getIntent().getSerializableExtra("user");
         etExtra.setText("Hello, my name is "+MainActivity.me.getUsername());
+        etRemark.setText(user.getNickname());
         presenter = new SendFriendRequestPresenter(this);
     }
 
@@ -50,7 +52,8 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
         switch (view.getId()){
             case R.id.btn_friend_request_send:
                 createLogoutDialog();
-                presenter.sendFriendRequest(MainActivity.me,etExtra.getText().toString(),user);
+                presenter.sendFriendRequest(MainActivity.me,etExtra.getText().toString(),
+                        user,etRemark.getText().toString());
                 break;
             case R.id.iv_friend_request_back:
                 onBackPressed();

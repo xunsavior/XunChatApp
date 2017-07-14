@@ -34,7 +34,7 @@ public class SendFriendRequestPresenter implements SendFriendRequestAction,SendF
     }
 
     @Override
-    public void sendFriendRequest(Me me, String extras, User user) {
-        sendFriendRequestModel.sendFriendRequest(me,extras,user);
+    public void sendFriendRequest(Me me, String extras, User user,String remark) {
+        sendFriendRequestModel.sendFriendRequest(me,extras,user,remark);
     }
 }

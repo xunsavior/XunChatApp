@@ -163,6 +163,12 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
 
     @Override
     public void onRetrieveFriendListFail(String msg) {
+        if (msg.equals("you currently have no friend!")){
+            SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+            database.delete("friend","username=?",new String[]{MainActivity.me.getUsername()});
+            friends.clear();
+            adapter.notifyDataSetChanged();
+        }
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
 

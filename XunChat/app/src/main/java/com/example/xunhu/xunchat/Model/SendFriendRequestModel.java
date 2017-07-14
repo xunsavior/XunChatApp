@@ -17,7 +17,7 @@ public class SendFriendRequestModel implements CRUDSendFriendRequestOptions {
         this.sendFriendRequestActionStatus=sendFriendRequestActionStatus;
     }
     @Override
-    public void sendFriendRequest(Me me, String extras,User user) {
+    public void sendFriendRequest(Me me, String extras,User user,String remark) {
         new SendFriendRequestTask(sendFriendRequestActionStatus).execute(
                 String.valueOf(me.getId()),
                 me.getUsername(),
@@ -28,7 +28,8 @@ public class SendFriendRequestModel implements CRUDSendFriendRequestOptions {
                 me.getUrl(),
                 me.getWhatsup(),
                 String.valueOf(user.getUserID()),
-                extras
+                extras,
+                remark
         );
     }
 }
