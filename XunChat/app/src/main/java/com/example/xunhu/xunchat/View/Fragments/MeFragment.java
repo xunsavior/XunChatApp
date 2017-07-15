@@ -28,6 +28,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.Me;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Activities.QRCodeActivity;
 import com.example.xunhu.xunchat.View.AllViewClasses.EditProfileLayout;
 import com.example.xunhu.xunchat.View.MainActivity;
 import com.squareup.picasso.Picasso;
@@ -249,6 +250,14 @@ public class MeFragment extends Fragment  {
                                 break;
                         }
                         return false;
+                    }
+                });
+                editProfileLayout.getRlQRCode().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), QRCodeActivity.class);
+                        intent.putExtra("username",MainActivity.me.getUsername());
+                        startActivity(intent);
                     }
                 });
                 break;

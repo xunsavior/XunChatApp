@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -110,6 +111,8 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
                 break;
         }
     }
+
+
     @SuppressLint("ResourceAsColor")
     @OnTouch({R.id.rlNewFriends})
     public boolean onTouch(MotionEvent event){

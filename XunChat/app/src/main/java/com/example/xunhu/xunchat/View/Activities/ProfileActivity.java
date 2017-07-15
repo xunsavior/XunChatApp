@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.View.Activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -11,8 +12,13 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.PopupMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,12 +29,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Presenter.DeleteFriendActionPresenter;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
+import com.example.xunhu.xunchat.Presenter.SetRemarkPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Fragments.RemarkDialogFragment;
+import com.example.xunhu.xunchat.View.Interfaces.DeleteFriendView;
 import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
+import com.example.xunhu.xunchat.View.Interfaces.SetRemarkView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import butterknife.BindView;
@@ -39,7 +49,8 @@ import butterknife.OnClick;
  * Created by xunhu on 6/21/2017.
  */
 
-public class ProfileActivity extends Activity implements RequestRespondView,RemarkDialogFragment.RemarkDialogFragmentInterface {
+public class ProfileActivity extends Activity implements RequestRespondView,
+        RemarkDialogFragment.RemarkDialogFragmentInterface,SetRemarkView, DeleteFriendView {
     @BindView(R.id.iv_profile_activity_back) ImageView btnBack;
     @BindView(R.id.iv_profile_activity_image) ImageView ivProfileImage;
     @BindView(R.id.tv_profile_activity_nickname) TextView tvNickname;
@@ -50,7 +61,10 @@ public class ProfileActivity extends Activity implements RequestRespondView,Rema
     @BindView(R.id.tv_profile_activity_region) TextView tvRegion;
     @BindView(R.id.llAlbum) LinearLayout llAlbum;
     @BindView(R.id.btn_send_or_add) Button btnSendOrAdd;
+    @BindView(R.id.ib_profile_menu) ImageButton ivMenu;
     RemarkDialogFragment remarkDialogFragment;
+    SetRemarkPresenter setRemarkPresenter;
+    DeleteFriendActionPresenter deleteFriendActionPresenter;
     User user;
     String profile_url="";
     RequestRespondPresenter presenter;
@@ -138,7 +152,8 @@ public class ProfileActivity extends Activity implements RequestRespondView,Rema
         });
         MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
     }
-    @OnClick({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image})
+    @OnClick({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image,
+    R.id.ib_profile_menu})
     public void onRespond(View view){
         switch (view.getId()){
             case R.id.iv_profile_activity_back:
@@ -159,9 +174,44 @@ public class ProfileActivity extends Activity implements RequestRespondView,Rema
                 intent.putExtra("url",MainActivity.domain_url+user.getUrl());
                 startActivity(intent);
                 break;
+            case R.id.ib_profile_menu:
+                if (btnSendOrAdd.getText().toString().equals("Message")){
+                    createPopupMenu(view);
+                }
+                break;
             default:
                 break;
         }
+    }
+    @SuppressLint("RestrictedApi")
+    public void createPopupMenu(View view){
+        PopupMenu popup = new PopupMenu(this, view);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.delete:
+                        myDialog.createLoadingGifDialog();
+                        deleteFriend();
+                        return true;
+                    case R.id.mute:
+                        return true;
+                    case R.id.set_remark:
+                        remarkDialogFragment = new RemarkDialogFragment(user.getNickname());
+                        remarkDialogFragment.show(getFragmentManager(),"");
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popup.inflate(R.menu.friend_action_menu);
+        popup.show();
+
+    }
+    public void deleteFriend(){
+        deleteFriendActionPresenter = new DeleteFriendActionPresenter(this);
+        deleteFriendActionPresenter.deleteFriend(MainActivity.me.getId(),user.getUserID());
     }
     @Override
     protected void onDestroy() {
@@ -197,7 +247,49 @@ public class ProfileActivity extends Activity implements RequestRespondView,Rema
     @Override
     public void setRemark(String remark) {
         myDialog.createBottomGifDialog();
-        presenter = new RequestRespondPresenter(this);
-        presenter.sendRespond(user.getUserID(),MainActivity.me,remark);
+        switch (btnSendOrAdd.getText().toString()){
+            case "Message":
+                setRemarkPresenter = new SetRemarkPresenter(this);
+                setRemarkPresenter.setRemark(MainActivity.me.getId(),user.getUserID(),remark);
+                break;
+            case "Accept":
+                presenter = new RequestRespondPresenter(this);
+                presenter.sendRespond(user.getUserID(),MainActivity.me,remark);
+                break;
+        }
+    }
+
+    @Override
+    public void setRemarkSuccessful(String msg) {
+        myDialog.cancelBottomGifDialog();
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("friend_nickname",remarkDialogFragment.getRemark());
+        database.update("friend",values,"username=? and friend_username=?",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setRemarkFail(String msg) {
+        myDialog.cancelBottomGifDialog();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deleteSuccessful(String msg) {
+        myDialog.cancelLoadingGifDialog();
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        database.delete("friend","username=? and friend_username=?",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        database.delete("request","username=? and sender=?",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deleteFail(String msg) {
+        myDialog.cancelLoadingGifDialog();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 }

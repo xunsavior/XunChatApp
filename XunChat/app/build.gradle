@@ -35,6 +35,9 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     compile group: 'com.squareup.picasso', name: 'picasso', version: '2.5.2'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.google.android.gms:play-services:11.0.1'
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.journeyapps:zxing-android-embedded:3.2.0@aar'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
     testCompile 'junit:junit:4.12'
 }

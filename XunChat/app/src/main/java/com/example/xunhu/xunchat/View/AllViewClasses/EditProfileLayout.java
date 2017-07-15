@@ -50,6 +50,7 @@ public class EditProfileLayout extends LinearLayout {
     private TextView tvBirthday;
     private LinearLayout llAll;
     private TextView tvDisplayUsername;
+    private RelativeLayout rlQRCode;
 
     public EditProfileLayout(Context context) {
         super(context);
@@ -70,6 +71,7 @@ public class EditProfileLayout extends LinearLayout {
         rlChangeUsername = (RelativeLayout) findViewById(R.id.layout_change_username);
         rlWhatsUp = (RelativeLayout) findViewById(R.id.layout_change_whatsup);
         rlBirthday = (RelativeLayout) findViewById(R.id.layout_change_birthday);
+        rlQRCode = (RelativeLayout) findViewById(R.id.layout_change_QRCode);
     }
 
     public void setInformation(Me me){
@@ -158,4 +160,7 @@ public class EditProfileLayout extends LinearLayout {
         return tvWhatsUp;
     }
 
+    public RelativeLayout getRlQRCode() {
+        return rlQRCode;
+    }
 }

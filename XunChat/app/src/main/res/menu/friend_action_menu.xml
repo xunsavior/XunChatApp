@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/set_remark"
+        android:icon="@drawable/ic_pencil"
+        android:title="Set Remarks"
+        />
+    <item android:id="@+id/delete"
+        android:icon="@drawable/icon_delete"
+        android:title="Delete"
+        />
+    <item android:id="@+id/mute"
+        android:icon="@drawable/icon_mute"
+        android:title="Mute"
+        />
+</menu>

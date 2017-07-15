@@ -28,6 +28,15 @@
             android:layout_toRightOf="@+id/iv_profile_activity_back"
             android:textColor="#fff"
             />
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/ic_menu"
+            android:layout_margin="5dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/ib_profile_menu"
+            />
     </RelativeLayout>
     <LinearLayout
         android:layout_width="match_parent"
