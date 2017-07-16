@@ -120,7 +120,7 @@ public class CameraViewActivity extends Activity implements SurfaceHolder.Callba
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull int[] grantResults) {
         if (requestCode==ACCESS_CAMERA){
             if (grantResults[0]!=PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(getContext(),"We must access your camera!",Toast.LENGTH_SHORT).show();

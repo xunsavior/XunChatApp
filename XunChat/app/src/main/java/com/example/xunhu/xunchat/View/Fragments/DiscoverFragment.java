@@ -80,9 +80,19 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
         }
     }
     public void launchScannerCamera(){
+        momentLayout.setClickable(false);
         Intent intent = new Intent(getContext(), CameraViewActivity.class);
         startActivityForResult(intent,CAMERA_REQUEST_CODE);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!momentLayout.isClickable()){
+            momentLayout.setClickable(true);
+        }
+    }
+
     @OnTouch({R.id.ll_moments})
     public boolean onTouchRespond(MotionEvent event){
         switch (event.getAction()){

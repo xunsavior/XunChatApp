@@ -34,8 +34,18 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "friend_url, "+
             "username, "+
             "FOREIGN KEY (username) REFERENCES user (username))";
+    private static final String CREATE_LATEST_MESSAGE = "create table latest_message ("+
+            "latest_message_id integer primary key autoincrement, "+
+            "friend_id, "+
+            "friend_username, "+
+            "friend_nickname, "+
+            "friend_url, "+
+            "friend_latest_message, "+
+            "friend_time, "+
+            "username, "+
+            "FOREIGN KEY (username) REFERENCES user (username))";
     public XunChatDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
-        super(context, name, factory, 2);
+        super(context, name, factory, 3);
         this.context = context;
     }
 
@@ -44,6 +54,7 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_USER);
         db.execSQL(CREATE_FRIEND_REQUEST);
         db.execSQL(CREATE_FRIEND_TABLE);
+        db.execSQL(CREATE_LATEST_MESSAGE);
     }
 
     @Override
@@ -54,6 +65,8 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_FRIEND_REQUEST);
             case 1:
                 db.execSQL(CREATE_FRIEND_TABLE);
+            case 2:
+                db.execSQL(CREATE_LATEST_MESSAGE);
         }
     }
 }
