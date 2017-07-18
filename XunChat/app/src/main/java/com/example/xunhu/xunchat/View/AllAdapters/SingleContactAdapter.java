@@ -76,6 +76,7 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> implements Search
         viewHolder.llContactUnit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                globalFriend = friend;
                 searchFriendPresenter = new MySearchFriendPresenter(searchFriendInterface);
                 searchFriendPresenter.attemptSearchFriends(friend.getUsername());
                 myDialog.createLoadingGifDialog();
@@ -98,7 +99,7 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> implements Search
             JSONObject object = new JSONObject(msg);
             int user_id = object.getInt("user_id");
             String username = object.getString("username");
-            String nickname = object.getString("nickname");
+            String nickname =  object.getString("nickname");
             String whatsup = object.getString("what_is_up");
             String url = object.getString("url");
             int age = object.getInt("age");
@@ -106,6 +107,7 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> implements Search
             String region = object.getString("region");
             int relationshipType = object.getInt("relationship_type");
             User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
+            user.setRemark(globalFriend.getNickname());
             Intent intent = new Intent(getContext(),ProfileActivity.class);
             intent.putExtra("user",user);
             getContext().startActivity(intent);

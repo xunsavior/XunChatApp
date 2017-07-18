@@ -167,6 +167,11 @@ public class ProfileActivity extends Activity implements RequestRespondView,
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
                     remarkDialogFragment = new RemarkDialogFragment(user.getNickname());
                     remarkDialogFragment.show(getFragmentManager(),"remarkFragmentDialog");
+                }else if (btnSendOrAdd.getText().toString().equals("Message")){
+                    Intent intent = new Intent(ProfileActivity.this,ChatBoardActivity.class);
+                    intent.putExtra("user",user);
+                    startActivity(intent);
+                    finish();
                 }
                 break;
             case R.id.iv_profile_activity_image:

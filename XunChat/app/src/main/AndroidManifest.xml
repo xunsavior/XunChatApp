@@ -52,6 +52,9 @@
             android:theme="@style/Theme.AppCompat.DayNight.Dialog"
             android:screenOrientation="portrait"
             ></activity>
+        <activity android:name=".View.Activities.ChatBoardActivity"
+            android:screenOrientation="portrait"
+            ></activity>
         <service android:name=".Model.Services.XunChatGetTokenService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>

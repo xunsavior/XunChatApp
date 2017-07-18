@@ -24,8 +24,9 @@
             android:text="Loading..."
             android:textSize="20sp"
             android:layout_margin="10dp"
-            android:layout_toRightOf="@+id/iv_chat_activity_back"
+            android:layout_centerInParent="true"
             android:textColor="#fff"
+            android:id="@+id/tv_remark"
             />
         <ImageButton
             android:layout_width="25dp"
@@ -53,8 +54,8 @@
         android:background="#fff"
         >
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/ib_add"
             android:background="@drawable/add_icon"
             android:layout_alignParentLeft="true"
@@ -66,15 +67,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/ib_add"
-            android:layout_toLeftOf="@+id/ib_emoji"
+            android:layout_toLeftOf="@+id/ib_sending"
             android:backgroundTint="@color/SkyBlue"
             android:id="@+id/et_message"
             android:textSize="15dp"
             android:imeOptions="actionSearch"
             />
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ib_sending"
+            android:layout_toLeftOf="@+id/ib_emoji"
+            android:background="@drawable/send_message"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="10dp"
+            />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/ib_emoji"
             android:layout_toLeftOf="@+id/ib_voice"
             android:background="@drawable/emoji_icon"
@@ -83,8 +94,8 @@
             android:layout_marginRight="10dp"
             />
         <ImageButton
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/ib_voice"
             android:background="@drawable/voice_icon"
             android:layout_alignParentRight="true"

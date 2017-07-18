@@ -16,6 +16,7 @@ public class User implements Serializable {
     private int age;
     private String nickname;
     private int relationship_type;
+    private String remark= "";
 
     public User(int userID,String username,String nickname,String url,String gender,String region,
                 String whatsup,int age, int relationship_type){
@@ -28,6 +29,14 @@ public class User implements Serializable {
         this.age=age;
         this.nickname=nickname;
         this.relationship_type=relationship_type;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getNickname() {
@@ -92,7 +101,6 @@ public class User implements Serializable {
     public void setRelationship_type(int relationship_type) {
         this.relationship_type = relationship_type;
     }
-
     public int getUserID() {
         return userID;
     }
