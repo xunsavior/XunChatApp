@@ -285,6 +285,7 @@ public class ProfileActivity extends Activity implements RequestRespondView,
         database.delete("request","username=? and sender=?",
                 new String[]{MainActivity.me.getUsername(),user.getUsername()});
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
+        finish();
     }
 
     @Override

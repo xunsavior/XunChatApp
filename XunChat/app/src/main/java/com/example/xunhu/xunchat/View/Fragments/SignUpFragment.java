@@ -75,7 +75,6 @@ public class SignUpFragment extends Fragment {
     public SignUpInterface comm;
     Bitmap bitmap =null;
     private static final int ACCESS_EXTERNAL = 1;
-    ProgressDialog registerProgressDialog;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
