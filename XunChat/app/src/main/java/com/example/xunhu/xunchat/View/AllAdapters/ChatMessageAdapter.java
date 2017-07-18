@@ -13,7 +13,7 @@ import java.util.List;
  */
 
 public class ChatMessageAdapter extends ArrayAdapter<Message> {
-    
+
     public ChatMessageAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects) {
         super(context, resource, objects);
     }

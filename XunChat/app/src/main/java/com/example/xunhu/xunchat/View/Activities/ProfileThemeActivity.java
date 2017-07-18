@@ -15,6 +15,9 @@ import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 import static java.security.AccessController.getContext;
 
 /**
@@ -30,14 +33,15 @@ public class ProfileThemeActivity extends Activity {
         imageView= (ImageView) findViewById(R.id.iv_enlargedProfileImage);
         imageView.getLayoutParams().width=MainActivity.getScreenWidth();
         imageView.getLayoutParams().height=MainActivity.getScreenWidth();
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         String url = getIntent().getStringExtra("url");
         ImageRequest request = new ImageRequest(url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
                 imageView.setImageBitmap(response);
+                PhotoViewAttacher photoViewAttacher = new PhotoViewAttacher(imageView);
+                photoViewAttacher.update();
             }
-        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+        }, 0, 0, ImageView.ScaleType.FIT_XY, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(),"Error...",Toast.LENGTH_SHORT).show();
