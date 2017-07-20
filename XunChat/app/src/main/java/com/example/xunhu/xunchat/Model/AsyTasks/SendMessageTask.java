@@ -72,6 +72,8 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
         System.out.println("@ respond "+s);
         if (!s.contains("\"success\":1")){
             sendMessageActionStatus.sendMessageFail(timestamp);
+        }else {
+            sendMessageActionStatus.sendMessageSuccessful(timestamp);
         }
     }
 }

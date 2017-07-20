@@ -7,6 +7,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/lvLatestMessages"
         >
-
     </ListView>
+    <View
+        android:layout_below="@+id/lvLatestMessages"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        />
 </RelativeLayout>

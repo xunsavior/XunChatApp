@@ -272,6 +272,8 @@ public class ProfileActivity extends Activity implements RequestRespondView,
         values.put("friend_nickname",remarkDialogFragment.getRemark());
         database.update("friend",values,"username=? and friend_username=?",
                 new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        database.update("latest_message",values,"username=? and friend_username=?",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
         Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 

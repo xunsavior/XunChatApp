@@ -17,6 +17,7 @@ public class SendMessagePresenter implements SendMessageAction,SendMessageAction
         this.sendChatView = sendChatView;
         mySendMessageModel = new MySendMessageModel(this);
     }
+
     @Override
     public void sendingMessage(Me me, String targetUsername,int targetID,int messageType,String message,long timestamp) {
         mySendMessageModel.attemptSendMessage(me,targetUsername,targetID,messageType,message,timestamp);
@@ -28,7 +29,7 @@ public class SendMessagePresenter implements SendMessageAction,SendMessageAction
     }
 
     @Override
-    public void sendMessageSuccessful(String msg) {
-
+    public void sendMessageSuccessful(long timestamp) {
+        sendChatView.sendingMessageSuccessful(timestamp);
     }
 }

@@ -96,7 +96,8 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         if (!currentUser.isEmpty()){
             String queryFriendName = "";
             int unread = 0;
-            Cursor cursor = database.rawQuery("select unread,friend_username from latest_message where username=?",new String[]{currentUser});
+            Cursor cursor = database.rawQuery("select unread,friend_username from latest_message " +
+                    "where username=? AND friend_username=?",new String[]{currentUser,friendUsername});
             if (cursor.moveToFirst()){
                 do {
                     queryFriendName = cursor.getString(cursor.getColumnIndex("friend_username"));

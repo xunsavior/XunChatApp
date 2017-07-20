@@ -1,19 +1,25 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.LatestMessage;
 import com.example.xunhu.xunchat.Model.Entities.Message;
+import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Activities.ChatBoardActivity;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +29,7 @@ import java.util.zip.Inflater;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnTouch;
 
 /**
  * Created by xunhu on 7/20/2017.
@@ -40,7 +47,7 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        LatestMessage latestMessage = getItem(position);
+        final LatestMessage latestMessage = getItem(position);
         ViewHolder holder;
         View view;
         if (convertView!=null){
@@ -65,13 +72,24 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
             holder.tvUnreadMessage.setVisibility(View.VISIBLE);
             holder.tvUnreadMessage.setText(String.valueOf(latestMessage.getUnread()));
         }
-
         holder.tvNickname.setText(latestMessage.getFriendNickname());
         Long timestamp = Long.parseLong(latestMessage.getTimestamp());
         Date date = new Date(timestamp);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String formattedDate = sdf.format(date);
         holder.tvTimestamp.setText(formattedDate);
+        holder.llLatestChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), ChatBoardActivity.class);
+                User user = new User(latestMessage.getFriendID(),latestMessage.getFriendUsername(),
+                        latestMessage.getFriendNickname(),latestMessage.getFriendURL(),
+                        "","","",-1,1);
+                user.setRemark(latestMessage.getFriendNickname());
+                intent.putExtra("user",user);
+                getContext().startActivity(intent);
+            }
+        });
         return view;
     }
 
@@ -86,8 +104,28 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
         TextView tvTimestamp;
         @BindView(R.id.tv_unread_messages)
         TextView tvUnreadMessage;
+        @BindView(R.id.ll_latest_chat)
+        LinearLayout llLatestChat;
         public ViewHolder(View view){
             ButterKnife.bind(this,view);
         }
+        @OnTouch({R.id.ll_latest_chat})
+        public boolean onTouchRespond(MotionEvent motionEvent){
+            switch (motionEvent.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    llLatestChat.setBackgroundColor(Color.parseColor("#00BFFF"));
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    llLatestChat.setBackgroundColor(Color.WHITE);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    llLatestChat.setBackgroundColor(Color.WHITE);
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+
     }
 }

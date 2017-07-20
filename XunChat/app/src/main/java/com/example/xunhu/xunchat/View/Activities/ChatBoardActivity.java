@@ -54,6 +54,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         lvMessage.setAdapter(adapter);
         user = (User) getIntent().getSerializableExtra("user");
         tvRemark.setText(user.getRemark());
+        clearUnreadMessage();
     }
     @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending})
     public void onClickView(View view){
@@ -80,23 +81,35 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                     0,0,etMessage.getText().toString(),String.valueOf(timestamp));
             messages.add(message);
             adapter.notifyDataSetChanged();
-            etMessage.setText("");
             scrollMyListViewToBottom();
-
+            storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
+                    etMessage.getText().toString(),String.valueOf(timestamp),0);
+            etMessage.setText("");
         }
+    }
+    public void clearUnreadMessage(){
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        Long timestamp = System.currentTimeMillis();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("unread",0);
+        contentValues.put("friend_time",String.valueOf(timestamp));
+        database.update("latest_message",contentValues,
+                "username=? and friend_username=?",new String[]{MainActivity.me.getUsername(),user.getUsername()});
     }
 
     public void storeLatestMessage(int friendID, String friendUsername,String friendNickname,
                                    String friendURL,String message,String timestamp,int messageType ){
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
         String queryFriendName = "";
-        Cursor cursor = database.rawQuery("select friend_username from latest_message where username=?",new String[]{MainActivity.me.getUsername()});
+        Cursor cursor = database.rawQuery("select friend_username from latest_message where username=? " +
+                "and friend_username=?",new String[]{MainActivity.me.getUsername(),friendUsername});
             if (cursor.moveToFirst()){
                 do {
                     queryFriendName = cursor.getString(cursor.getColumnIndex("friend_username"));
                 }while (cursor.moveToNext());
                 cursor.close();
             }
+        System.out.println("@ query "+queryFriendName);
         ContentValues contentValues = new ContentValues();
         contentValues.put("friend_id",friendID);
         contentValues.put("friend_username",friendUsername);
@@ -117,13 +130,14 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         }
 
     }
-
     @Override
     public void sendingMessageFail(long timestamp) {
         for (int i=0;i<messages.size();i++){
             if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
                 messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
                         " "+"(fail to send)");
+                storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
+                        messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
                 break;
             }
         }
@@ -131,7 +145,8 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     }
 
     @Override
-    public void sendingMessageSuccessful(String msg) {
+    public void sendingMessageSuccessful(long timestamp) {
+
 
     }
     private void scrollMyListViewToBottom() {

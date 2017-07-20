@@ -6,5 +6,5 @@ package com.example.xunhu.xunchat.View.Interfaces;
 
 public interface SendChatView {
     void sendingMessageFail(long timestamp);
-    void sendingMessageSuccessful(String msg);
+    void sendingMessageSuccessful(long timestamp);
 }

@@ -72,7 +72,7 @@ public class ChatsFragment extends Fragment {
     public void loadUnreadChat(){
         latestMessages.clear();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery("select * from latest_message where username=? order by friend_time",
+        Cursor cursor = database.rawQuery("select * from latest_message where username=? order by friend_time DESC",
                 new String[]{MainActivity.me.getUsername()});
         if (cursor.moveToFirst()){
             do {
