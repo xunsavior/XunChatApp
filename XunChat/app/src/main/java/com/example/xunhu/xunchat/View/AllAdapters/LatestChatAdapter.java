@@ -59,8 +59,13 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
             view.setTag(holder);
         }
         PicassoClient.downloadImage(context,MainActivity.domain_url+latestMessage.getFriendURL(),holder.ivProfileImage);
+        String message = latestMessage.getLatestMessage();
         if (latestMessage.getMessageType()==0){
-            holder.tvMessage.setText(latestMessage.getLatestMessage());
+           if (message.length()>20){
+               holder.tvMessage.setText(message.substring(0,21)+"...");
+           }else {
+               holder.tvMessage.setText(message);
+           }
         }else if (latestMessage.getMessageType()==1){
             holder.tvMessage.setText("[photo]");
         }else if (latestMessage.getMessageType()==2){

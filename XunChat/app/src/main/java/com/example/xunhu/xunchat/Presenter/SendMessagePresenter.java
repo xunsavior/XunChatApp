@@ -24,8 +24,8 @@ public class SendMessagePresenter implements SendMessageAction,SendMessageAction
     }
 
     @Override
-    public void sendMessageFail(long timestamp) {
-        sendChatView.sendingMessageFail(timestamp);
+    public void sendMessageFail(long timestamp,String msg) {
+        sendChatView.sendingMessageFail(timestamp,msg);
     }
 
     @Override

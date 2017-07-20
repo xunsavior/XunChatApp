@@ -131,22 +131,34 @@ public class ChatBoardActivity extends Activity implements SendChatView {
 
     }
     @Override
-    public void sendingMessageFail(long timestamp) {
-        for (int i=0;i<messages.size();i++){
-            if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
-                messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
-                        " "+"(fail to send)");
-                storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
-                        messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
-                break;
+    public void sendingMessageFail(long timestamp,String msg) {
+        if (msg.equals("not friend record")){
+            for (int i=0;i<messages.size();i++){
+                if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
+                    messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
+                            " "+"(The user is not your friend now.)");
+                    storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
+                            messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
+                    break;
+                }
+            }
+        }else {
+            for (int i=0;i<messages.size();i++){
+                if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
+                    messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
+                            " "+"(fail to send)");
+                    storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
+                            messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
+                    break;
+                }
             }
         }
+
         adapter.notifyDataSetChanged();
     }
 
     @Override
     public void sendingMessageSuccessful(long timestamp) {
-
 
     }
     private void scrollMyListViewToBottom() {
