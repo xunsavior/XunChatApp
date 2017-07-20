@@ -42,7 +42,8 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "friend_url, "+
             "friend_latest_message, "+
             "friend_time, "+
-            "type, "+
+            "type integer, "+
+            "unread integer, "+
             "username, "+
             "FOREIGN KEY (username) REFERENCES user (username))";
     public XunChatDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {

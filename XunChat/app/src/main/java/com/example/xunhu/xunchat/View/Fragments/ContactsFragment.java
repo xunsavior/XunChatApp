@@ -184,7 +184,9 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
         intentFilter.addAction(NEW_FRIEND_ADDED);
         intentFilter.addAction(REFRESH_FRIEND_LIST);
         getContext().registerReceiver(broadcastReceiver,intentFilter);
-        loadFriendList();
+        if (MainActivity.me!=null){
+            loadFriendList();
+        }
     }
     public void loadFriendList(){
         friends.clear();
@@ -229,7 +231,9 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
         getContext().unregisterReceiver(broadcastReceiver);
     }
     public void retrieveFriendList(){
-        retrieveFriendListPresenter = new RetrieveFriendListPresenter(this);
-        retrieveFriendListPresenter.retrieveFriendList(MainActivity.me.getId());
+        if (MainActivity.me!=null){
+            retrieveFriendListPresenter = new RetrieveFriendListPresenter(this);
+            retrieveFriendListPresenter.retrieveFriendList(MainActivity.me.getId());
+        }
     }
 }

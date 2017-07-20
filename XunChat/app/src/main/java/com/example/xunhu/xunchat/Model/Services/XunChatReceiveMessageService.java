@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.xunhu.xunchat.Model.Entities.LatestMessage;
 import com.example.xunhu.xunchat.Model.SQLite.XunChatDatabaseHelper;
 import com.example.xunhu.xunchat.View.MainActivity;
 import com.example.xunhu.xunchat.View.Notifications.MyNotification;
@@ -25,8 +26,11 @@ import java.util.List;
 public class XunChatReceiveMessageService extends FirebaseMessagingService {
     private int FRIEND_REQUST_NOTIFICATION_ID = 45612;
     private int REQUEST_RESPOND_NOTIFICATION_ID  = 45613;
+    private int CHAT_MESSAGE_NOTIFICATION_ID = 45614;
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String REQUEST_ACCEPTED = "accepted_respond";
+    private static final String MESSAGE = "message";
+    public static final String REFRESH_CHAT_FRAGMENT = "refresh.chat.fragment";
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         System.out.println("@ message"+remoteMessage.getData().get("message"));
@@ -66,12 +70,66 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 storeFriend(responderID,responderUsername,responderNickname,responderURL);
                 respondNotification.createRequestRespondNotification(responderUsername,responderURL,respondTicker,respondContent);
                 break;
+            case MESSAGE:
+                int friendID = object.getInt("sender_id");
+                String friendUsername = object.getString("sender_username");
+                String friendURL = object.getString("sender_url");
+                String friendNickname = object.getString("sender_nickname");
+                int messageType = object.getInt("sending_message_type");
+                String message = object.getString("message");
+                String time = String.valueOf(System.currentTimeMillis());
+                MyNotification chatMessageNotification = new MyNotification(CHAT_MESSAGE_NOTIFICATION_ID);
+                String chatMessageTicker = friendNickname+" has sent you a message.";
+                chatMessageNotification.createRequestRespondNotification(friendNickname,friendURL,chatMessageTicker,message);
+                storeLatestChatMessage(friendID,friendUsername,friendNickname,friendURL,message,time,messageType);
+                break;
             default:
                 break;
         }
     }
+    public void storeLatestChatMessage(int friendID, String friendUsername,String friendNickname,
+                                       String friendURL,String message,String timestamp,int messageType){
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(
+                XunApplication.getContext(),"XunChat.db",null);
+        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+        String currentUser = returnCurrentUser();
+        if (!currentUser.isEmpty()){
+            String queryFriendName = "";
+            int unread = 0;
+            Cursor cursor = database.rawQuery("select unread,friend_username from latest_message where username=?",new String[]{currentUser});
+            if (cursor.moveToFirst()){
+                do {
+                    queryFriendName = cursor.getString(cursor.getColumnIndex("friend_username"));
+                    unread = cursor.getInt(cursor.getColumnIndex("unread"));
+                }while (cursor.moveToNext());
+                cursor.close();
+            }
+            unread++;
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("friend_id",friendID);
+            contentValues.put("friend_username",friendUsername);
+            contentValues.put("friend_nickname",friendNickname);
+            contentValues.put("friend_url",friendURL);
+            contentValues.put("friend_latest_message",message);
+            contentValues.put("friend_time",timestamp);
+            contentValues.put("type",messageType);
+            contentValues.put("unread",unread);
+            contentValues.put("username",currentUser);
+            if (queryFriendName.isEmpty()){
+                database.insert("latest_message",null,contentValues);
+            }else {
+                database.update("latest_message",
+                        contentValues,
+                        "username=? and friend_username=?",
+                        new String[]{currentUser,friendUsername});
+            }
+        }
+        Intent intent = new Intent(REFRESH_CHAT_FRAGMENT);
+        getApplicationContext().sendBroadcast(intent);
+    }
     public void storeFriend(int friendID,String friendUsername,String friendNickname,String friendURL){
-        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(
+                XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         String currentUser = returnCurrentUser();
         if (!currentUser.isEmpty()){
@@ -91,7 +149,8 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
     }
     public String returnCurrentUser(){
         String me="";
-        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(
+                XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         Cursor cursor = database.rawQuery("SELECT username FROM user WHERE isActive=?",new String[]{"1"} );
         if (cursor.moveToFirst()){
@@ -104,7 +163,8 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
         return me;
     }
     public void storeFriendRequest(int senderID,String senderName,String senderNickname, String url,String extras,String time){
-        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(XunApplication.getContext(),"XunChat.db",null);
+        XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(
+                XunApplication.getContext(),"XunChat.db",null);
         SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         ArrayList<String> list = new ArrayList<>();

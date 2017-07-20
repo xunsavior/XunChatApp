@@ -87,7 +87,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static final String RETRIEVE_FRIEND_LIST = "http://xunsavior.com/xunchat/retrieve_friend_list.php";
     public static final String SET_REMARK = "http://xunsavior.com/xunchat/set_remark.php";
     public static final String DELETE_FRIEND = "http://xunsavior.com/xunchat/delete_friend.php";
-
+    public static final String SEND_MESSAGE = "http://xunsavior.com/xunchat/send_message.php";
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     MyPagerAdapter adapter;
@@ -640,23 +640,25 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         }
     }
     public void checkRequestStatus(){
-        SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-        Cursor cursor = database.rawQuery("SELECT DISTINCT sender, " +
-                "extras FROM request WHERE isRead=? AND username=?",
-                new String[]{"0",me.getUsername()});
-        numberOfRequests=0;
-        if (cursor.moveToFirst()){
-            do{
-                System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
-                        " "+cursor.getString(cursor.getColumnIndex("extras")));
-                numberOfRequests++;
-            }while (cursor.moveToNext());
+        if (me!=null){
+            SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+            Cursor cursor = database.rawQuery("SELECT DISTINCT sender, " +
+                            "extras FROM request WHERE isRead=? AND username=?",
+                    new String[]{"0",me.getUsername()});
+            numberOfRequests=0;
+            if (cursor.moveToFirst()){
+                do{
+                    System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
+                            " "+cursor.getString(cursor.getColumnIndex("extras")));
+                    numberOfRequests++;
+                }while (cursor.moveToNext());
+            }
+            if (numberOfRequests>0){
+                contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
+                contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
+            }
+            cursor.close();
         }
-        if (numberOfRequests>0){
-            contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
-            contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
-        }
-        cursor.close();
     }
 
     class MyPagerAdapter extends FragmentStatePagerAdapter{

@@ -5,7 +5,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="15dp"
+        android:textSize="10dp"
         android:text="time"
         android:gravity="center"
         android:layout_alignParentTop="true"
@@ -23,6 +23,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="5dp"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_loading"
             android:id="@+id/iv_message_left_image"
                 />
@@ -42,6 +43,7 @@
                 android:background="@drawable/rounded_textview_white"
                 android:layout_gravity="center"
                 android:gravity="center_vertical"
+                android:id="@+id/tv_left_message"
                 />
         </FrameLayout>
     </RelativeLayout>
@@ -67,6 +69,7 @@
                 android:textColor="#ffff"
                 android:gravity="center_vertical"
                 android:background="@drawable/rounded_textview_blue"
+                android:id="@+id/tv_right_message"
                 />
         </FrameLayout>
 
@@ -74,6 +77,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="5dp"
+            android:scaleType="fitXY"
             android:src="@drawable/ic_loading"
             android:id="@+id/iv_message_right_image"
             android:layout_alignParentRight="true"

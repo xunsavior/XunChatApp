@@ -5,14 +5,14 @@ package com.example.xunhu.xunchat.Model.Entities;
  */
 
 public class Message {
-    String friendURL;
+    String senderURL;
     int messageType;
     int from;
     String messageContent;
     String time;
 
-    public Message(String friendURL,int messageType,int from, String messageContent,String time){
-        this.friendURL=friendURL;
+    public Message(String senderURL,int messageType,int from, String messageContent,String time){
+        this.senderURL=senderURL;
         this.messageType=messageType;
         this.from=from;
         this.messageContent=messageContent;
@@ -35,16 +35,16 @@ public class Message {
         return messageType;
     }
 
-    public String getFriendURL() {
-        return friendURL;
+    public String getSenderURL() {
+        return senderURL;
     }
 
     public String getMessageContent() {
         return messageContent;
     }
 
-    public void setFriendURL(String friendURL) {
-        this.friendURL = friendURL;
+    public void setSenderURL(String senderURL) {
+        this.senderURL = senderURL;
     }
 
     public void setFrom(int from) {
