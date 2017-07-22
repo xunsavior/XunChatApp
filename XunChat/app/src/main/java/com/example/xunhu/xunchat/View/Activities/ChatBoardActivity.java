@@ -1,7 +1,11 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +19,7 @@ import android.widget.TextView;
 
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
 import com.example.xunhu.xunchat.Presenter.SendMessagePresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
@@ -45,6 +50,14 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     List<Message> messages = new ArrayList<>();
     ChatMessageAdapter adapter;
     SendMessagePresenter presenter;
+    IntentFilter intentFilter = new IntentFilter();
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadMessage();
+
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +67,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         lvMessage.setAdapter(adapter);
         user = (User) getIntent().getSerializableExtra("user");
         tvRemark.setText(user.getRemark());
-        clearUnreadMessage();
     }
     @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending})
     public void onClickView(View view){
@@ -92,7 +104,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         Long timestamp = System.currentTimeMillis();
         ContentValues contentValues = new ContentValues();
         contentValues.put("unread",0);
-        contentValues.put("friend_time",String.valueOf(timestamp));
         database.update("latest_message",contentValues,
                 "username=? and friend_username=?",new String[]{MainActivity.me.getUsername(),user.getUsername()});
     }
@@ -128,39 +139,85 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                     "username=? and friend_username=?",
                     new String[]{MainActivity.me.getUsername(),friendUsername});
         }
-
+        contentValues.clear();
+        contentValues.put("friend_username",friendUsername);
+        contentValues.put("username",MainActivity.me.getUsername());
+        contentValues.put("message_type",messageType);
+        contentValues.put("me_or_friend",0);
+        contentValues.put("message_content",message);
+        contentValues.put("time",timestamp);
+        contentValues.put("is_sent",1);
+        database.insert("message",null,contentValues);
+    }
+    public void loadMessage(){
+        messages.clear();
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        Cursor cursor = database.rawQuery("select * from message where username=? and friend_username=? order by time",
+                new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        if (cursor.moveToFirst()){
+            do {
+                Message message;
+                int messageType = cursor.getInt(cursor.getColumnIndex("message_type"));
+                int meOrFriend = cursor.getInt(cursor.getColumnIndex("me_or_friend"));
+                String messageContent = cursor.getString(cursor.getColumnIndex("message_content"));
+                String timestamp = cursor.getString(cursor.getColumnIndex("time"));
+                int isSent = cursor.getInt(cursor.getColumnIndex("is_sent"));
+                message = (meOrFriend==0) ?
+                        new Message(MainActivity.domain_url+MainActivity.me.getUrl(),messageType,meOrFriend,messageContent,timestamp)
+                        :new Message(MainActivity.domain_url+user.getUrl(),messageType,meOrFriend,messageContent,timestamp);
+                message.setIsSentSuccess(isSent);
+                messages.add(message);
+            }while (cursor.moveToNext());
+        }
+        cursor.close();
+        adapter.notifyDataSetChanged();
+        scrollMyListViewToBottom();
     }
     @Override
     public void sendingMessageFail(long timestamp,String msg) {
-        if (msg.equals("not friend record")){
-            for (int i=0;i<messages.size();i++){
-                if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
-                    messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
-                            " "+"(The user is not your friend now.)");
-                    storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
-                            messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
-                    break;
-                }
-            }
-        }else {
-            for (int i=0;i<messages.size();i++){
-                if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
-                    messages.get(i).setMessageContent(messages.get(i).getMessageContent()+
-                            " "+"(fail to send)");
-                    storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),user.getUrl(),
-                            messages.get(i).getMessageContent(),String.valueOf(timestamp),0);
-                    break;
-                }
+
+        for (int i=0;i<messages.size();i++){
+            if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
+                messages.get(i).setIsSentSuccess(0);
+                setMessageFalse(MainActivity.me.getUsername(),user.getUsername(),String.valueOf(timestamp));
+                break;
             }
         }
-
         adapter.notifyDataSetChanged();
+    }
+    public void setMessageFalse(String myUsername,String friendUsername,String time){
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("is_sent",0);
+        database.update("message",contentValues,"(username=?) and (friend_username=?) and (time=?)",
+                new String[]{myUsername,friendUsername,time});
     }
 
     @Override
     public void sendingMessageSuccessful(long timestamp) {
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        intentFilter.addAction(XunChatReceiveMessageService.REFRESH_CHAT_BOARD);
+        registerReceiver(broadcastReceiver,intentFilter);
+        loadMessage();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        clearUnreadMessage();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
+    }
+
     private void scrollMyListViewToBottom() {
         lvMessage.post(new Runnable() {
             @Override

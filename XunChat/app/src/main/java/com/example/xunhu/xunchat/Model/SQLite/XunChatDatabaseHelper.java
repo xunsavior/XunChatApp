@@ -3,6 +3,8 @@ package com.example.xunhu.xunchat.Model.SQLite;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 /**
  * Created by xunhu on 6/21/2017.
@@ -32,8 +34,8 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "friend_username, "+
             "friend_nickname, "+
             "friend_url, "+
-            "username, "+
-            "FOREIGN KEY (username) REFERENCES user (username))";
+            "username) ";
+            //"FOREIGN KEY (username) REFERENCES user (username))";
     private static final String CREATE_LATEST_MESSAGE = "create table latest_message ("+
             "latest_message_id integer primary key autoincrement, "+
             "friend_id, "+
@@ -44,10 +46,18 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
             "friend_time, "+
             "type integer, "+
             "unread integer, "+
+            "username)";
+    private static final String CREATE_MESSAGE = "create table message ("+
+            "message_id integer primary key autoincrement,"+
+            "message_type integer, "+
+            "me_or_friend integer,"+
+            "message_content,"+
+            "time, "+
             "username, "+
-            "FOREIGN KEY (username) REFERENCES user (username))";
+            "is_sent integer,"+
+            "friend_username)";
     public XunChatDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory) {
-        super(context, name, factory, 3);
+        super(context, name, factory, 4);
         this.context = context;
     }
 
@@ -57,6 +67,22 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_FRIEND_REQUEST);
         db.execSQL(CREATE_FRIEND_TABLE);
         db.execSQL(CREATE_LATEST_MESSAGE);
+        db.execSQL(CREATE_MESSAGE);
+    }
+
+//    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            db.setForeignKeyConstraintsEnabled(true);
+        }
+    }
+    @Override
+
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.execSQL("PRAGMA foreign_keys = ON;");
     }
 
     @Override
@@ -69,6 +95,8 @@ public class XunChatDatabaseHelper extends SQLiteOpenHelper {
                 db.execSQL(CREATE_FRIEND_TABLE);
             case 2:
                 db.execSQL(CREATE_LATEST_MESSAGE);
+            case 3:
+                db.execSQL(CREATE_MESSAGE);
         }
     }
 }

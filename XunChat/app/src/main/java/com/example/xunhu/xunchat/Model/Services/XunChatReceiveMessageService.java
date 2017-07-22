@@ -31,6 +31,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
     private static final String REQUEST_ACCEPTED = "accepted_respond";
     private static final String MESSAGE = "message";
     public static final String REFRESH_CHAT_FRAGMENT = "refresh.chat.fragment";
+    public static final String REFRESH_CHAT_BOARD = "refresh.chat.board";
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         System.out.println("@ message"+remoteMessage.getData().get("message"));
@@ -80,7 +81,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 String time = String.valueOf(System.currentTimeMillis());
                 MyNotification chatMessageNotification = new MyNotification(CHAT_MESSAGE_NOTIFICATION_ID);
                 String chatMessageTicker = friendNickname+" has sent you a message.";
-                chatMessageNotification.createRequestRespondNotification(friendNickname,friendURL,chatMessageTicker,message);
+                chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,message);
                 storeLatestChatMessage(friendID,friendUsername,friendNickname,friendURL,message,time,messageType);
                 break;
             default:
@@ -124,9 +125,20 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                         "username=? and friend_username=?",
                         new String[]{currentUser,friendUsername});
             }
+            contentValues.clear();
+            contentValues.put("friend_username",friendUsername);
+            contentValues.put("username",currentUser);
+            contentValues.put("message_type",messageType);
+            contentValues.put("me_or_friend",1);
+            contentValues.put("message_content",message);
+            contentValues.put("time",timestamp);
+            contentValues.put("is_sent",1);
+            database.insert("message",null,contentValues);
         }
-        Intent intent = new Intent(REFRESH_CHAT_FRAGMENT);
-        getApplicationContext().sendBroadcast(intent);
+        Intent intentLatestChat = new Intent(REFRESH_CHAT_FRAGMENT);
+        getApplicationContext().sendBroadcast(intentLatestChat);
+        Intent chatMessage = new Intent(REFRESH_CHAT_BOARD);
+        getApplicationContext().sendBroadcast(chatMessage);
     }
     public void storeFriend(int friendID,String friendUsername,String friendNickname,String friendURL){
         XunChatDatabaseHelper xunChatDatabaseHelper = new XunChatDatabaseHelper(

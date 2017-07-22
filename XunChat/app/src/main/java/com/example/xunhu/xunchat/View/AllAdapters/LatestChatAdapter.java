@@ -2,10 +2,13 @@ package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.LatestMessage;
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ChatBoardActivity;
 import com.example.xunhu.xunchat.View.MainActivity;
@@ -95,9 +99,39 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
                 getContext().startActivity(intent);
             }
         });
+        holder.llLatestChat.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                PopupMenu popup = new PopupMenu(getContext(), v);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()){
+                            case R.id.delete_latest_chat:
+                                deleteLatestChat(latestMessage);
+                                return true;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popup.inflate(R.menu.delete_latest_chat);
+                popup.show();
+                return false;
+            }
+        });
         return view;
     }
-
+    public void deleteLatestChat(LatestMessage latestMessage){
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        database.delete("latest_message","username=? and friend_username=?",
+                new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
+        database.delete("message","username=? and friend_username=?",
+                new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
+        Intent intent = new Intent(XunChatReceiveMessageService.REFRESH_CHAT_FRAGMENT);
+        getContext().sendBroadcast(intent);
+    }
     class ViewHolder{
         @BindView(R.id.iv_chat_profile_image)
         ImageView ivProfileImage;

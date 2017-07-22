@@ -10,6 +10,7 @@ public class Message {
     int from;
     String messageContent;
     String time;
+    int isError=1;
 
     public Message(String senderURL,int messageType,int from, String messageContent,String time){
         this.senderURL=senderURL;
@@ -18,7 +19,12 @@ public class Message {
         this.messageContent=messageContent;
         this.time =time;
     }
-
+    public int getIsSentSuccess(){
+        return this.isError;
+    }
+    public void setIsSentSuccess(int isError){
+        this.isError=isError;
+    }
     public String getTime() {
         return time;
     }

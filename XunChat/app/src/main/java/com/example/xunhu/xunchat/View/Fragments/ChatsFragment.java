@@ -67,8 +67,11 @@ public class ChatsFragment extends Fragment {
         super.onResume();
         filter.addAction(XunChatReceiveMessageService.REFRESH_CHAT_FRAGMENT);
         getContext().registerReceiver(receiver,filter);
-        loadUnreadChat();
+        if (MainActivity.me!=null){
+            loadUnreadChat();
+        }
     }
+
     public void loadUnreadChat(){
         latestMessages.clear();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
