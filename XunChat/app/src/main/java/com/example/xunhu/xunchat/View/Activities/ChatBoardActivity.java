@@ -1,21 +1,34 @@
 package com.example.xunhu.xunchat.View.Activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.util.Base64;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
@@ -26,6 +39,10 @@ import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
 import com.example.xunhu.xunchat.View.Interfaces.SendChatView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,10 +64,13 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     @BindView(R.id.ib_voice) ImageButton ibVoice;
     @BindView(R.id.ib_sending) ImageButton ibSending;
     private User user;
+    boolean isRecordingStart=false;
     List<Message> messages = new ArrayList<>();
     ChatMessageAdapter adapter;
     SendMessagePresenter presenter;
     IntentFilter intentFilter = new IntentFilter();
+    MediaRecorder mediaRecorder;
+    private String audioOutput= null;
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -58,15 +78,118 @@ public class ChatBoardActivity extends Activity implements SendChatView {
 
         }
     };
+    private static final int ACCESS_RECORDER = 10;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_activity_layout);
         ButterKnife.bind(this);
+        audioOutput = Environment.getExternalStorageDirectory()+"/xun_chat_recoding.3gp";
         adapter = new ChatMessageAdapter(this,R.layout.message_unit_layout,messages);
         lvMessage.setAdapter(adapter);
         user = (User) getIntent().getSerializableExtra("user");
         tvRemark.setText(user.getRemark());
+        if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.RECORD_AUDIO)== PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getApplicationContext(),
+                            Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(getApplicationContext(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
+                    ){
+            }else {
+                requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE}, ACCESS_RECORDER);
+            }
+        }else {
+
+        }
+        ibVoice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        establishRecorder();
+                        startRecording();
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        stopAndPlay();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        stopAndPlay();
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+    public void establishRecorder(){
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setOutputFile(audioOutput);
+    }
+    public void startRecording(){
+        try {
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+
+            isRecordingStart=true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                   while (isRecordingStart){
+                        if (mediaRecorder!=null){
+                            try {
+                                int db = mediaRecorder.getMaxAmplitude();
+                                if (db>5000){
+                                    System.out.println("@ max ="+db);
+                                }
+                            }catch (RuntimeException e){
+                                e.printStackTrace();
+                            }
+                        }
+                       try {
+                           Thread.sleep(100);
+                       } catch (InterruptedException e) {
+                           e.printStackTrace();
+                       }
+                   }
+                }
+            }).start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void stopAndPlay(){
+        try {
+            mediaRecorder.stop();
+            mediaRecorder.release();
+            isRecordingStart=false;
+            mediaRecorder=null;
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            File file = new File(audioOutput);
+            byte[] bytes = new byte[(int) file.length()];
+            String encoded = Base64.encodeToString(bytes,0);
+            byte[] bytes1 = Base64.decode(encoded,0);
+            FileOutputStream fileOutputStream = new FileOutputStream(file,true);
+            fileOutputStream.write(bytes1);
+            fileOutputStream.close();
+            mediaPlayer.setDataSource(audioOutput);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e){
+            e.printStackTrace();
+        }
     }
     @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending})
     public void onClickView(View view){
@@ -226,5 +349,16 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                 lvMessage.setSelection(adapter.getCount() - 1);
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode==ACCESS_RECORDER){
+            if (grantResults[0]!=PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(getApplicationContext().getApplicationContext(),"we need access to your location",Toast.LENGTH_SHORT).show();
+            }else {
+                establishRecorder();
+            }
+        }
     }
 }
