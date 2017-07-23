@@ -137,7 +137,7 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
        File files = new File(dir);
        if (files.listFiles().length>0){
             for (File file: files.listFiles()){
-                System.out.println("@ delete "+file.getName()+" space "+file.length()/1024+" KB");
+                System.out.println("@ delete "+file.getName()+" space "+file.length()+" B");
                     file.delete();
             }
        }

@@ -39,6 +39,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
     int resourceId;
     Context context;
     User user;
+    MediaPlayer mediaPlayer = new MediaPlayer();
     public ChatMessageAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects, User user) {
         super(context, resource, objects);
         this.resourceId=resource;
@@ -121,12 +122,13 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                     holder.LlLeftAudioMessage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            String filename = message.getTime()+".3gp";
-                            String audioOutput = Environment.getExternalStorageDirectory()+
-                                    File.separator+ MainActivity.me.getUsername()+
-                                    File.separator+user.getUsername()+
-                                    File.separator+filename;
-                            playAudio(message.getMessageContent(),audioOutput);
+//                            String filename = message.getTime()+".3gp";
+//                            String audioOutput = Environment.getExternalStorageDirectory()+
+//                                    File.separator+ MainActivity.me.getUsername()+
+//                                    File.separator+user.getUsername()+
+//                                    File.separator+filename;
+//                            playAudio(message.getMessageContent(),audioOutput);
+                            playAudioFromURL(MainActivity.domain_url+message.getMessageContent());
                         }
                     });
                     break;
@@ -140,6 +142,20 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         String formattedDate = sdf.format(date);
         holder.tvMessageTime.setText(formattedDate);
         return view;
+    }
+    public void playAudioFromURL(String url){
+        try {
+            mediaPlayer.stop();
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(url);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            System.out.println("@ runtime "+e.getMessage());
+        }
     }
     public void playAudio(String base64Code,String filename){
         File file = new File(filename);

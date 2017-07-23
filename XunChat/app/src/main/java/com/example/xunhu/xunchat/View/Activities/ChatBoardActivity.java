@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -63,13 +64,16 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     @BindView(R.id.ib_emoji) ImageButton ibEmoji;
     @BindView(R.id.ib_voice) ImageButton ibVoice;
     @BindView(R.id.ib_sending) ImageButton ibSending;
+
+    MediaRecorder mediaRecorder;
+
     private User user;
     boolean isRecordingStart=false;
     List<Message> messages = new ArrayList<>();
     ChatMessageAdapter adapter;
     SendMessagePresenter presenter;
     IntentFilter intentFilter = new IntentFilter();
-    MediaRecorder mediaRecorder;
+
     private String audioOutput= null;
     private MyDialog myDialog;
     private static final int ACCESS_RECORDER = 10;
@@ -147,13 +151,13 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         File file = new File(dir);
         if (!file.exists()){
             file.mkdirs();
-            System.out.println("@ make a directory");
         }
         audioOutput = dir+"initial_audio.3gp";
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+        mediaRecorder.setAudioEncodingBitRate(5);
         mediaRecorder.setOutputFile(audioOutput);
     }
     public void startRecording(){
