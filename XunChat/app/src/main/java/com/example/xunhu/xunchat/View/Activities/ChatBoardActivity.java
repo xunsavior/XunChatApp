@@ -141,8 +141,15 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         });
     }
     public void establishRecorder(){
-        audioOutput = Environment.getExternalStorageDirectory()+
-                File.separator+"initial_audio.3gp";
+        String dir = Environment.getExternalStorageDirectory()+
+                File.separator+MainActivity.me.getUsername()+
+                File.separator+user.getUsername();
+        File file = new File(dir);
+        if (!file.exists()){
+            file.mkdirs();
+            System.out.println("@ make a directory");
+        }
+        audioOutput = dir+"initial_audio.3gp";
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -195,12 +202,14 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     }
     public void sendRecordedAudio(){
         byte[] bytes = getAudioBytes(audioOutput);
-        String encoded = Base64.encodeToString(bytes,Base64.DEFAULT);
+        String encoded = Base64.encodeToString(bytes,0);
         Long timestamp = System.currentTimeMillis();
         storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),
                 user.getUrl(),encoded,String.valueOf(timestamp),2);
         Message message = new Message(MainActivity.domain_url+MainActivity.me.getUrl(),2,0,
                 encoded,String.valueOf(timestamp));
+        presenter = new SendMessagePresenter(this);
+        presenter.sendingMessage(MainActivity.me,user.getUsername(),user.getUserID(),2,encoded,timestamp);
         messages.add(message);
         adapter.notifyDataSetChanged();
         scrollMyListViewToBottom();
@@ -210,7 +219,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         try {
             FileInputStream fis = new FileInputStream(file);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            byte[] buf = new byte[2048];
+            byte[] buf = new byte[1024];
             for (int readNum; (readNum = fis.read(buf)) != -1;) {
                 bos.write(buf, 0, readNum); //no doubt here is 0
             }

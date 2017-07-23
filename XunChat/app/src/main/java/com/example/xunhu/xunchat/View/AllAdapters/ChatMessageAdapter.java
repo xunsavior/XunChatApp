@@ -19,6 +19,7 @@ import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -89,7 +90,10 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                         @Override
                         public void onClick(View v) {
                             String filename = message.getTime()+".3gp";
-                            String audioOutput = Environment.getExternalStorageDirectory()+File.separator+filename;
+                            String audioOutput = Environment.getExternalStorageDirectory()+
+                                    File.separator+ MainActivity.me.getUsername()+
+                                    File.separator+user.getUsername()+
+                                    File.separator+filename;
                             playAudio(message.getMessageContent(),audioOutput);
                         }
                     });
@@ -103,11 +107,28 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             PicassoClient.downloadImage(context,senderURL,holder.ivLeftImage);
             switch (messageType){
                 case 0:
+                    holder.tvLeftMessage.setVisibility(View.VISIBLE);
+                    holder.LlLeftAudioMessage.setVisibility(View.GONE);
+
                     holder.tvLeftMessage.setText(messageContent);
                     break;
                 case 1:
                     break;
                 case 2:
+                    holder.tvLeftMessage.setVisibility(View.GONE);
+                    holder.LlLeftAudioMessage.setVisibility(View.VISIBLE);
+
+                    holder.LlLeftAudioMessage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String filename = message.getTime()+".3gp";
+                            String audioOutput = Environment.getExternalStorageDirectory()+
+                                    File.separator+ MainActivity.me.getUsername()+
+                                    File.separator+user.getUsername()+
+                                    File.separator+filename;
+                            playAudio(message.getMessageContent(),audioOutput);
+                        }
+                    });
                     break;
                 default:
                     break;
@@ -125,7 +146,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         System.out.print("@ code "+base64Code);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file,true);
-            byte[] bytes = Base64.decode(base64Code,Base64.DEFAULT);
+            byte[] bytes = Base64.decode(base64Code,0);
             fileOutputStream.write(bytes);
             fileOutputStream.close();
 
@@ -164,8 +185,10 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         TextView tvRightMessage;
         @BindView(R.id.iv_message_right_image)
         ImageView ivRightImage;
-        @BindView(R.id.ll_audio_layout)
+        @BindView(R.id.ll_audio_right_layout)
         LinearLayout llAudioMessage;
+        @BindView(R.id.ll_audio_left_layout)
+        LinearLayout LlLeftAudioMessage;
         public ViewHolder(View view){
             ButterKnife.bind(this,view);
         }

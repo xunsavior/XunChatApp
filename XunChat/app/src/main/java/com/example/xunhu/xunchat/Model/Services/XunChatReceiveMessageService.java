@@ -81,7 +81,18 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 String time = String.valueOf(System.currentTimeMillis());
                 MyNotification chatMessageNotification = new MyNotification(CHAT_MESSAGE_NOTIFICATION_ID);
                 String chatMessageTicker = friendNickname+" has sent you a message.";
-                chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,message);
+                switch (messageType){
+                    case 0:
+                        chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,message);
+                        break;
+                    case 1:
+                        chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,"[photo]");
+                        break;
+                    default:
+                        chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,"[audio]");
+                        break;
+                }
+
                 storeLatestChatMessage(friendID,friendUsername,friendNickname,friendURL,message,time,messageType);
                 break;
             default:

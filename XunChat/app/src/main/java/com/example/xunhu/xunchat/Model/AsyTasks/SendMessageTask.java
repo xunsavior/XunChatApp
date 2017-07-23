@@ -46,7 +46,7 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
             object.put("target_id",targetID);
             object.put("sending_message_type",messageType);
             object.put("message",message);
-
+            System.out.println("@ object "+object.toString());
             RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
             okhttp3.Request request =new  okhttp3.Request.Builder().
                     url(MainActivity.SEND_MESSAGE).

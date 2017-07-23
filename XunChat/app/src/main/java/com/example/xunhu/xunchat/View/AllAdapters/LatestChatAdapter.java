@@ -131,6 +131,16 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
                 new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
         database.delete("message","username=? and friend_username=?",
                 new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
+       String dir = Environment.getExternalStorageDirectory()+
+                File.separator+MainActivity.me.getUsername()+
+                File.separator+latestMessage.getFriendUsername();
+       File files = new File(dir);
+       if (files.listFiles().length>0){
+            for (File file: files.listFiles()){
+                System.out.println("@ delete "+file.getName()+" space "+file.length()/1024+" KB");
+                    file.delete();
+            }
+       }
         Intent intent = new Intent(XunChatReceiveMessageService.REFRESH_CHAT_FRAGMENT);
         getContext().sendBroadcast(intent);
     }
