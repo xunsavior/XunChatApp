@@ -135,11 +135,13 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
                 File.separator+MainActivity.me.getUsername()+
                 File.separator+latestMessage.getFriendUsername();
        File files = new File(dir);
-       if (files.listFiles().length>0){
-            for (File file: files.listFiles()){
-                System.out.println("@ delete "+file.getName()+" space "+file.length()+" B");
-                    file.delete();
-            }
+       if (files.exists()){
+           if (files.listFiles().length>0){
+               for (File file: files.listFiles()){
+                   System.out.println("@ delete "+file.getName()+" space "+file.length()+" B");
+                   file.delete();
+               }
+           }
        }
         Intent intent = new Intent(XunChatReceiveMessageService.REFRESH_CHAT_FRAGMENT);
         getContext().sendBroadcast(intent);

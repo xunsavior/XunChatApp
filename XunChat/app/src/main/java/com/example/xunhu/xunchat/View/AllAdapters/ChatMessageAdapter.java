@@ -71,10 +71,9 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             PicassoClient.downloadImage(context,senderURL,holder.ivRightImage);
             switch (messageType){
                 case 0:
+                    holder.tvRightMessage.setVisibility(View.VISIBLE);
+                    holder.llAudioMessage.setVisibility(View.GONE);
                     if (message.getIsSentSuccess()==0){
-                        holder.tvRightMessage.setVisibility(View.VISIBLE);
-                        holder.llAudioMessage.setVisibility(View.GONE);
-
                         holder.tvRightMessage.setText(messageContent);
                         holder.tvRightMessage.setError("fail to send your message"+
                                 "\n caused by network error or the user is not your friend now!");
