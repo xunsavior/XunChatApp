@@ -72,6 +72,24 @@
                 android:id="@+id/tv_right_message"
                 style="@android:style/Widget.EditText"
                 />
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rounded_textview_blue"
+                android:gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:id="@+id/ll_audio_layout"
+                android:visibility="gone"
+                >
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/audio_play_right"
+                    android:layout_margin="5dp"
+                    android:layout_gravity="center"
+                    android:scaleType="fitXY"
+                    />
+            </LinearLayout>
         </FrameLayout>
 
         <ImageView

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.PopupMenu;
@@ -26,6 +27,7 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ChatBoardActivity;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;

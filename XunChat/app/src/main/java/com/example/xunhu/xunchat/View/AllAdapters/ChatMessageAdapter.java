@@ -1,20 +1,28 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Message;
+import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -29,17 +37,19 @@ import butterknife.ButterKnife;
 public class ChatMessageAdapter extends ArrayAdapter<Message> {
     int resourceId;
     Context context;
-    public ChatMessageAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects) {
+    User user;
+    public ChatMessageAdapter(@NonNull Context context, int resource, @NonNull List<Message> objects, User user) {
         super(context, resource, objects);
         this.resourceId=resource;
         this.context=context;
+        this.user=user;
     }
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
         ViewHolder holder;
-        Message message = getItem(position);
+        final Message message = getItem(position);
         if (convertView==null){
             view = LayoutInflater.from(getContext()).inflate(resourceId,null);
             holder = new ViewHolder(view);
@@ -60,6 +70,9 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             switch (messageType){
                 case 0:
                     if (message.getIsSentSuccess()==0){
+                        holder.tvRightMessage.setVisibility(View.VISIBLE);
+                        holder.llAudioMessage.setVisibility(View.GONE);
+
                         holder.tvRightMessage.setText(messageContent);
                         holder.tvRightMessage.setError("fail to send your message"+
                                 "\n caused by network error or the user is not your friend now!");
@@ -70,6 +83,16 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                 case 1:
                     break;
                 case 2:
+                    holder.tvRightMessage.setVisibility(View.GONE);
+                    holder.llAudioMessage.setVisibility(View.VISIBLE);
+                    holder.llAudioMessage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String filename = message.getTime()+".3gp";
+                            String audioOutput = Environment.getExternalStorageDirectory()+File.separator+filename;
+                            playAudio(message.getMessageContent(),audioOutput);
+                        }
+                    });
                     break;
                 default:
                     break;
@@ -97,7 +120,27 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         holder.tvMessageTime.setText(formattedDate);
         return view;
     }
+    public void playAudio(String base64Code,String filename){
+        File file = new File(filename);
+        System.out.print("@ code "+base64Code);
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(file,true);
+            byte[] bytes = Base64.decode(base64Code,Base64.DEFAULT);
+            fileOutputStream.write(bytes);
+            fileOutputStream.close();
 
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDataSource(filename);
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("@ io "+e.getMessage());
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            System.out.println("@ runtime "+e.getMessage());
+        }
+    }
     @Override
     public boolean areAllItemsEnabled() {
         return false;
@@ -121,6 +164,8 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         TextView tvRightMessage;
         @BindView(R.id.iv_message_right_image)
         ImageView ivRightImage;
+        @BindView(R.id.ll_audio_layout)
+        LinearLayout llAudioMessage;
         public ViewHolder(View view){
             ButterKnife.bind(this,view);
         }

@@ -1,7 +1,6 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -11,12 +10,11 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.LocationManager;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -36,12 +34,14 @@ import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
 import com.example.xunhu.xunchat.Presenter.SendMessagePresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SendChatView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,25 +71,37 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     IntentFilter intentFilter = new IntentFilter();
     MediaRecorder mediaRecorder;
     private String audioOutput= null;
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+    private MyDialog myDialog;
+    private static final int ACCESS_RECORDER = 10;
+    public static final int UPDATE_DB = 11;
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             loadMessage();
-
         }
     };
-    private static final int ACCESS_RECORDER = 10;
-
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what){
+                case UPDATE_DB:
+                    myDialog.setDBResult(msg.arg1);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.chat_activity_layout);
         ButterKnife.bind(this);
-        audioOutput = Environment.getExternalStorageDirectory()+"/xun_chat_recoding.3gp";
-        adapter = new ChatMessageAdapter(this,R.layout.message_unit_layout,messages);
-        lvMessage.setAdapter(adapter);
         user = (User) getIntent().getSerializableExtra("user");
+        adapter = new ChatMessageAdapter(this,R.layout.message_unit_layout,messages,user);
+        lvMessage.setAdapter(adapter);
         tvRemark.setText(user.getRemark());
+        myDialog = new MyDialog(this);
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(getApplicationContext(),
                     Manifest.permission.RECORD_AUDIO)== PackageManager.PERMISSION_GRANTED &&
@@ -119,6 +131,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                         break;
                     case MotionEvent.ACTION_UP:
                         stopAndPlay();
+                        sendRecordedAudio();
                         break;
                     default:
                         break;
@@ -128,6 +141,8 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         });
     }
     public void establishRecorder(){
+        audioOutput = Environment.getExternalStorageDirectory()+
+                File.separator+"initial_audio.3gp";
         mediaRecorder = new MediaRecorder();
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -135,10 +150,10 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         mediaRecorder.setOutputFile(audioOutput);
     }
     public void startRecording(){
+        myDialog.createVoiceLevelDialog();
         try {
             mediaRecorder.prepare();
             mediaRecorder.start();
-
             isRecordingStart=true;
             new Thread(new Runnable() {
                 @Override
@@ -147,9 +162,10 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                         if (mediaRecorder!=null){
                             try {
                                 int db = mediaRecorder.getMaxAmplitude();
-                                if (db>5000){
-                                    System.out.println("@ max ="+db);
-                                }
+                                android.os.Message message = new android.os.Message();
+                                message.what=UPDATE_DB;
+                                message.arg1=db;
+                                handler.sendMessage(message);
                             }catch (RuntimeException e){
                                 e.printStackTrace();
                             }
@@ -167,29 +183,45 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         }
     }
     public void stopAndPlay(){
+        myDialog.cancelVoiceLevelDialog();
         try {
             mediaRecorder.stop();
             mediaRecorder.release();
             isRecordingStart=false;
             mediaRecorder=null;
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            File file = new File(audioOutput);
-            byte[] bytes = new byte[(int) file.length()];
-            String encoded = Base64.encodeToString(bytes,0);
-            byte[] bytes1 = Base64.decode(encoded,0);
-            FileOutputStream fileOutputStream = new FileOutputStream(file,true);
-            fileOutputStream.write(bytes1);
-            fileOutputStream.close();
-            mediaPlayer.setDataSource(audioOutput);
-            mediaPlayer.prepare();
-            mediaPlayer.start();
+        } catch (RuntimeException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendRecordedAudio(){
+        byte[] bytes = getAudioBytes(audioOutput);
+        String encoded = Base64.encodeToString(bytes,Base64.DEFAULT);
+        Long timestamp = System.currentTimeMillis();
+        storeLatestMessage(user.getUserID(),user.getUsername(),user.getRemark(),
+                user.getUrl(),encoded,String.valueOf(timestamp),2);
+        Message message = new Message(MainActivity.domain_url+MainActivity.me.getUrl(),2,0,
+                encoded,String.valueOf(timestamp));
+        messages.add(message);
+        adapter.notifyDataSetChanged();
+        scrollMyListViewToBottom();
+    }
+    public byte[] getAudioBytes(String filename){
+        File file = new File(filename);
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[2048];
+            for (int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum); //no doubt here is 0
+            }
+            byte[] bytes = bos.toByteArray();
+            return bytes;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (RuntimeException e){
-            e.printStackTrace();
         }
+        return new byte[0];
     }
     @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending})
     public void onClickView(View view){
