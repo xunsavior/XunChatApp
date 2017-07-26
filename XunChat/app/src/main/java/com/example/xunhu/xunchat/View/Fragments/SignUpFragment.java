@@ -59,7 +59,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by xunhu on 6/10/2017.
  */
-public class SignUpFragment extends Fragment {
+public class SignUpFragment extends android.app.Fragment {
     private static final int SELECT_IMAGE = 0;
     @BindView(R.id.iv_profile_image) ImageView ivNewImageProfile;
     @BindView(R.id.et_register_username) EditText etRegisterUsername;

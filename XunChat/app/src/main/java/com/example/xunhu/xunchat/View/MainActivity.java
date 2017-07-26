@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.View;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -112,6 +113,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     DiscoverFragment discoverFragment;
     MeFragment meFragment;
     FragmentManager fm = getSupportFragmentManager();
+
     boolean isYourProfileLoading = false;
     public static XunChatDatabaseHelper xunChatDatabaseHelper;
     float Y = 0;
@@ -421,14 +423,10 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     public void addLoginFragment(){
         loginFragment= new LoginFragment();
-        transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.panel,loginFragment,"loginFragment");
-        transaction.commit();
+        getFragmentManager().beginTransaction().add(R.id.panel,loginFragment).commit();
     }
     public void switchToLogin(){
-        transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.panel,loginFragment,"loginFragment");
-        transaction.commit();
+        getFragmentManager().beginTransaction().replace(R.id.panel,loginFragment).commit();
     }
     public void storeCookies(String username,String password){
         String name = "";
@@ -483,13 +481,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             return content;
         }
     }
+    @SuppressLint("ResourceType")
     @Override
     public void switchToRegister() {
         signUpFragment= new SignUpFragment();
-        transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.panel,signUpFragment,"signUpFragment");
-        transaction.addToBackStack(null);
-        transaction.commit();
+        getFragmentManager().beginTransaction().
+                replace(R.id.panel,signUpFragment).
+                setCustomAnimations(R.animator.card_flip_right_in,R.animator.card_flip_right_out).addToBackStack(null).
+                commit();
     }
 
     @Override

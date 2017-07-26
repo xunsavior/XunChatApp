@@ -88,6 +88,7 @@ public class LoginTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        System.out.println("@ respond "+s);
         if (s!=null){
             if (s.equals("We can't recognise the username or password you entered.") ||
                     s.equals("Network Error")){

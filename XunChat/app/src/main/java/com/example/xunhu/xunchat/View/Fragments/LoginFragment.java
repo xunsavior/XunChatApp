@@ -24,7 +24,7 @@ import butterknife.Unbinder;
  * Created by xunhu on 6/10/2017.
  */
 
-public class LoginFragment extends Fragment {
+public class LoginFragment extends android.app.Fragment {
     @BindView(R.id.et_login_username)
     EditText etLoginUsername;
     @BindView(R.id.et_login_password)

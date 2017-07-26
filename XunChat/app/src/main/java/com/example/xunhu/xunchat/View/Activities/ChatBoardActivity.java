@@ -20,6 +20,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -104,8 +105,11 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         user = (User) getIntent().getSerializableExtra("user");
         adapter = new ChatMessageAdapter(this,R.layout.message_unit_layout,messages,user);
         lvMessage.setAdapter(adapter);
+        lvMessage.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        lvMessage.setStackFromBottom(false);
         tvRemark.setText(user.getRemark());
         myDialog = new MyDialog(this);
+
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(getApplicationContext(),
                     Manifest.permission.RECORD_AUDIO)== PackageManager.PERMISSION_GRANTED &&
@@ -157,7 +161,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        mediaRecorder.setAudioEncodingBitRate(5);
+        mediaRecorder.setAudioEncodingBitRate(5000);
         mediaRecorder.setOutputFile(audioOutput);
     }
     public void startRecording(){
@@ -236,7 +240,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         }
         return new byte[0];
     }
-    @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending})
+    @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending,R.id.et_message})
     public void onClickView(View view){
         switch (view.getId()){
             case R.id.iv_chat_activity_back:
