@@ -20,19 +20,19 @@
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode"></meta-data>
-        <activity android:name=".View.MainActivity"
+        <activity android:name=".View.MainActivity_"
                    android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".View.Activities.ProfileThemeActivity"
+        <activity android:name=".View.Activities.ProfileThemeActivity_"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog"
             android:screenOrientation="portrait"
             ></activity>
 
-        <activity android:name=".View.Activities.SubActivity"
+        <activity android:name=".View.Activities.SubActivity_"
             android:screenOrientation="portrait"
             >
         </activity>

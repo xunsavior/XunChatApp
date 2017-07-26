@@ -44,6 +44,10 @@ import android.widget.Toast;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -59,18 +63,18 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by xunhu on 6/10/2017.
  */
+@EFragment
 public class SignUpFragment extends android.app.Fragment {
     private static final int SELECT_IMAGE = 0;
-    @BindView(R.id.iv_profile_image) ImageView ivNewImageProfile;
-    @BindView(R.id.et_register_username) EditText etRegisterUsername;
-    @BindView(R.id.et_register_password) EditText etRegisterPassword;
-    @BindView(R.id.et_email) EditText etRegisterEmail;
-    @BindView(R.id.btnRegister) Button btnRegister;
-    @BindView(R.id.et_register_gender) EditText etGender;
-    @BindView(R.id.et_register_region) EditText etRegion;
-    @BindView(R.id.et_register_birth) EditText etBirthday;
-    @BindView(R.id.et_register_nickname) EditText etNickname;
-    private Unbinder unbinder;
+    @ViewById(R.id.iv_profile_image) ImageView ivNewImageProfile;
+    @ViewById(R.id.et_register_username) EditText etRegisterUsername;
+    @ViewById(R.id.et_register_password) EditText etRegisterPassword;
+    @ViewById(R.id.et_email) EditText etRegisterEmail;
+    @ViewById(R.id.btnRegister) Button btnRegister;
+    @ViewById(R.id.et_register_gender) EditText etGender;
+    @ViewById(R.id.et_register_region) EditText etRegion;
+    @ViewById(R.id.et_register_birth) EditText etBirthday;
+    @ViewById(R.id.et_register_nickname) EditText etNickname;
     private Uri profileImageURI;
     public SignUpInterface comm;
     Bitmap bitmap =null;
@@ -84,17 +88,10 @@ public class SignUpFragment extends android.app.Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.register_fragment_layout,container,false);
-        unbinder = ButterKnife.bind(this,view);
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @OnClick({R.id.iv_profile_image,R.id.btnRegister,R.id.et_register_gender,R.id.et_register_region,R.id.et_register_birth})
+    @Click({R.id.iv_profile_image,R.id.btnRegister,R.id.et_register_gender,R.id.et_register_region,R.id.et_register_birth})
     public void respond(View view){
         switch (view.getId()){
             case R.id.iv_profile_image:

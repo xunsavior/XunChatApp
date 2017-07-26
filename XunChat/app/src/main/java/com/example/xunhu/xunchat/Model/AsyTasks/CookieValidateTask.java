@@ -84,7 +84,7 @@ public class CookieValidateTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        if (s.equals("We can't recognise the username or password you entered.")){
+        if (s.equals("We cannot recognise the username or password you entered.")){
             cookieValidateActionStatus.validateFail();
         }else if (s.equals("connect timed out")){
             cookieValidateActionStatus.validateTimeout();

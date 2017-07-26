@@ -28,6 +28,7 @@ import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.EActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,7 +38,7 @@ import java.util.List;
 /**
  * Created by xunhu on 6/19/2017.
  */
-
+@EActivity
 public class SubActivity extends Activity implements SearchFriendInterface {
     public static Me me = MainActivity.me;
     MyDialog myDialog;

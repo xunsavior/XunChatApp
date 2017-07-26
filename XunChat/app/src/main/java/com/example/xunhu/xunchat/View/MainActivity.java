@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -37,7 +38,9 @@ import com.example.xunhu.xunchat.Presenter.MyProfileUpdatePresenter;
 import com.example.xunhu.xunchat.Presenter.MyRegisterPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
+import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity_;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
@@ -46,8 +49,10 @@ import com.example.xunhu.xunchat.View.Fragments.DiscoverFragment;
 import com.example.xunhu.xunchat.View.Fragments.GenderSelectionFragment;
 import com.example.xunhu.xunchat.View.Fragments.LocationListDialog;
 import com.example.xunhu.xunchat.View.Fragments.LoginFragment;
+import com.example.xunhu.xunchat.View.Fragments.LoginFragment_;
 import com.example.xunhu.xunchat.View.Fragments.MeFragment;
 import com.example.xunhu.xunchat.View.Fragments.SignUpFragment;
+import com.example.xunhu.xunchat.View.Fragments.SignUpFragment_;
 import com.example.xunhu.xunchat.View.Fragments.UpdateProfileDialogFragment;
 import com.example.xunhu.xunchat.View.Interfaces.LoginView;
 import com.example.xunhu.xunchat.View.Interfaces.LogoutView;
@@ -56,28 +61,30 @@ import com.example.xunhu.xunchat.View.Interfaces.UpdateProfileView;
 import com.example.xunhu.xunchat.View.Interfaces.ValidateCookiesView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.androidannotations.annotations.AfterExtras;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Calendar;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
+@EActivity
 public class MainActivity extends FragmentActivity implements BottomNavigationView.OnNavigationItemSelectedListener,
         ViewPager.OnPageChangeListener, LoginFragment.LoginInterface, RegisterView, SignUpFragment.SignUpInterface,
         LoginView, ValidateCookiesView,GenderSelectionFragment.GenderInterface,MeFragment.MeFragmentInterface,
         UpdateProfileView,UpdateProfileDialogFragment.UpdateProfileDialogFragmentInterface,
         DatePickerDialogFragment.DatePickerInterface, LocationListDialog.LocationDialogInterface,
         LogoutView,ContactsFragment.ContactFragmentInterface{
-    @BindView(R.id.iv_addFriends) ImageView ivAddFriends;
-    @BindView(R.id.mypager) ViewPager pager;
-    @BindView(R.id.bottomMenu) android.support.design.widget.BottomNavigationView BottomMenu;
-    @BindView(R.id.tv_network_error) TextView tvNetworkError;
-    @BindView(R.id.topBar) RelativeLayout rlTopBar;
-    @BindView(R.id.top_logout_layout) RelativeLayout rlLogout;
-    public static final String VALIDATE_LOGIN = "http://xunsavior.com/xunchat/cookie_validate.php";
-    public static final String FRIEND_REQUEST_RESPOND = "http://xunsavior.com/xunchat/friend_request_respond.php";
+    @ViewById(R.id.iv_addFriends) ImageView ivAddFriends;
+    @ViewById(R.id.mypager) ViewPager pager;
+    @ViewById(R.id.bottomMenu) android.support.design.widget.BottomNavigationView BottomMenu;
+    @ViewById(R.id.tv_network_error) TextView tvNetworkError;
+    @ViewById(R.id.topBar) RelativeLayout rlTopBar;
+    @ViewById(R.id.top_logout_layout) RelativeLayout rlLogout;
+    @org.androidannotations.annotations.res.StringRes public static String VALIDATE_LOGIN;
+    @org.androidannotations.annotations.res.StringRes public static String FRIEND_REQUEST_RESPOND;
     public static final String LOGIN = "http://xunsavior.com/xunchat/login.php";
     public static final String LOGOUT = "http://xunsavior.com/xunchat/logout.php";
     public static final String REGISTER = "http://xunsavior.com/xunchat/register.php";
@@ -95,8 +102,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     FragmentManager fragmentManager = getSupportFragmentManager();
     LoginFragment loginFragment;
     SignUpFragment signUpFragment;
-    FragmentTransaction transaction;
-
     MyRegisterPresenter registerPresenter;
     MyLoginPresenter loginPresenter;
     MyCookieValidationPresenter validationPresenter;
@@ -233,7 +238,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
         pager.addOnPageChangeListener(this);
         rlTopBar.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -422,7 +426,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         Toast.makeText(MainActivity.this,"Register Successfully!",Toast.LENGTH_SHORT).show();
     }
     public void addLoginFragment(){
-        loginFragment= new LoginFragment();
+        loginFragment= new LoginFragment_();
         getFragmentManager().beginTransaction().add(R.id.panel,loginFragment).commit();
     }
     public void switchToLogin(){
@@ -484,7 +488,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @SuppressLint("ResourceType")
     @Override
     public void switchToRegister() {
-        signUpFragment= new SignUpFragment();
+        signUpFragment= new SignUpFragment_();
         getFragmentManager().beginTransaction().
                 replace(R.id.panel,signUpFragment).
                 setCustomAnimations(R.animator.card_flip_right_in,R.animator.card_flip_right_out).addToBackStack(null).
@@ -522,11 +526,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
 
     @Override
     public void enlargeProfileImage(String url) {
-        Intent intent = new Intent(MainActivity.this, ProfileThemeActivity.class);
-        intent.putExtra("url",url);
-        startActivity(intent);
+        ProfileThemeActivity_.intent(this).extra("url",url).start();
     }
-
     @Override
     public void launchUpdateDialog(String title, String content) {
         UpdateProfileDialogFragment updateProfileDialogFragment = new UpdateProfileDialogFragment(title,content);
@@ -557,13 +558,14 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         }
 
     }
-    @OnClick({R.id.iv_addFriends,R.id.top_logout_layout})
+    @Click({R.id.iv_addFriends,R.id.top_logout_layout})
     public void respond(View view){
         switch (view.getId()){
             case R.id.iv_addFriends:
-                Intent intent = new Intent(MainActivity.this, SubActivity.class);
-                intent.putExtra("type","new friends");
-                startActivity(intent);
+                SubActivity_.intent(this).extra("type","new friends").start();
+//                Intent intent = new Intent(MainActivity.this, SubActivity.class);
+//                intent.putExtra("type","new friends");
+//                startActivity(intent);
                 break;
             case R.id.top_logout_layout:
                 myDialog.createGifLogoutDialog();
@@ -616,6 +618,11 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
         contactsFragment.getTvNumOfRequests().setVisibility(View.INVISIBLE);
     }
+    @Override
+    public void headToFriendRequest() {
+        SubActivity_.intent(this).extra("type","new friends").start();
+    }
+
     class XunChatBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {

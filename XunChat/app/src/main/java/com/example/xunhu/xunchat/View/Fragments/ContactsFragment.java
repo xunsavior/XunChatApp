@@ -102,9 +102,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
     public void onRespond(View view){
         switch (view.getId()){
             case R.id.rlNewFriends:
-                Intent intent = new Intent(getActivity(), SubActivity.class);
-                intent.putExtra("type","new friends");
-                startActivity(intent);
+                comm.headToFriendRequest();
                 comm.clearRequests();
                 break;
             default:
@@ -177,6 +175,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
 
     public interface ContactFragmentInterface{
         void clearRequests();
+        void headToFriendRequest();
     }
     @Override
     public void onResume() {

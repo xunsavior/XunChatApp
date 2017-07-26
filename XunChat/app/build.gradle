@@ -18,7 +18,12 @@ android {
         }
     }
 }
-
+apply plugin: 'com.android.application'
+def AAVersion = '4.3.1'
+dependencies {
+    annotationProcessor "org.androidannotations:androidannotations:$AAVersion"
+    compile "org.androidannotations:androidannotations-api:$AAVersion"
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
