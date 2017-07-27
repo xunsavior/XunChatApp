@@ -8,6 +8,7 @@ import com.example.xunhu.xunchat.Presenter.Interfaces.CookieValidateActionStatus
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 import org.json.JSONException;
 import org.json.JSONObject;
 

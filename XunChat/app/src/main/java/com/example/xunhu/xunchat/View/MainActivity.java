@@ -43,7 +43,9 @@ import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
+import com.example.xunhu.xunchat.View.Fragments.ChatsFragment_;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
+import com.example.xunhu.xunchat.View.Fragments.ContactsFragment_;
 import com.example.xunhu.xunchat.View.Fragments.DatePickerDialogFragment;
 import com.example.xunhu.xunchat.View.Fragments.DiscoverFragment;
 import com.example.xunhu.xunchat.View.Fragments.GenderSelectionFragment;
@@ -62,6 +64,7 @@ import com.example.xunhu.xunchat.View.Interfaces.ValidateCookiesView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.androidannotations.annotations.AfterExtras;
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -99,7 +102,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     MyPagerAdapter adapter;
-    FragmentManager fragmentManager = getSupportFragmentManager();
     LoginFragment loginFragment;
     SignUpFragment signUpFragment;
     MyRegisterPresenter registerPresenter;
@@ -180,51 +182,35 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             JSONObject object = new JSONObject(msg);
             String title = object.getString("title");
             String content = object.getString("content");
-            if (meFragment!=null){
                 if (title.contains("nickname")){
                     me.setNickname(content);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvEditUsername().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvEditUsername().setText(content);
                     meFragment.setIvMyProfile(me);
                 }else if (title.contains("email")){
                     me.setEmail(content);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvEditEmail().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvEditEmail().setText(content);
                 }else if (title.contains("gender")){
                     me.setGender(content);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvChangeGender().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvChangeGender().setText(content);
                 }else if (title.contains("region")){
                     me.setRegion(content);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvEditRegion().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvEditRegion().setText(content);
                 }else if (title.contains("whatsup")){
                     me.setWhatsup(content);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvWhatsUp().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvWhatsUp().setText(content);
                 }else if (title.contains("birthday")){
                     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                     int age = currentYear-Integer.parseInt(content.split("/")[2]);
                     me.setBirthday(content);
                     me.setAge(age);
-                    if ( meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().getTvBirthday().setText(content);
-                    }
+                    meFragment.getEditProfileLayout().getTvBirthday().setText(content);
                     meFragment.setIvMyProfile(me);
                 }else if (title.contains("edit profile image")){
                     me.setUrl(content);
                     meFragment.setIvMyProfile(me);
-                    if (meFragment.getEditProfileLayout()!=null){
-                        meFragment.getEditProfileLayout().setInformation(me);
-                    }
+                    meFragment.getEditProfileLayout().setInformation(me);
                 }
-            }
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -287,7 +273,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     @Override
     public void operateLogin(String username, String password) {
-
         refreshedToken = FirebaseInstanceId.getInstance().getToken();
         this.password = password;
         myDialog.createLoadingGifDialog();
@@ -494,7 +479,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 setCustomAnimations(R.animator.card_flip_right_in,R.animator.card_flip_right_out).addToBackStack(null).
                 commit();
     }
-
     @Override
     public void validateFail() {
         loadLoginRegisterInterface();
@@ -512,13 +496,11 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         loadUserPageInterface();
 
     }
-
     public void unregisterReceivers(){
         if (xunChatBroadcastReceiver!=null){
             unregisterReceiver(xunChatBroadcastReceiver);
         }
     }
-
     @Override
     public void respondGender(String selection) {
         signUpFragment.setGender(selection);
@@ -563,9 +545,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         switch (view.getId()){
             case R.id.iv_addFriends:
                 SubActivity_.intent(this).extra("type","new friends").start();
-//                Intent intent = new Intent(MainActivity.this, SubActivity.class);
-//                intent.putExtra("type","new friends");
-//                startActivity(intent);
                 break;
             case R.id.top_logout_layout:
                 myDialog.createGifLogoutDialog();
@@ -618,11 +597,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
         contactsFragment.getTvNumOfRequests().setVisibility(View.INVISIBLE);
     }
-    @Override
-    public void headToFriendRequest() {
-        SubActivity_.intent(this).extra("type","new friends").start();
-    }
-
     class XunChatBroadcastReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -646,36 +620,37 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         }
     }
     public void checkRequestStatus(){
-        if (me!=null){
-            SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
-            Cursor cursor = database.rawQuery("SELECT DISTINCT sender, " +
-                            "extras FROM request WHERE isRead=? AND username=?",
-                    new String[]{"0",me.getUsername()});
-            numberOfRequests=0;
-            if (cursor.moveToFirst()){
-                do{
-                    System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
-                            " "+cursor.getString(cursor.getColumnIndex("extras")));
-                    numberOfRequests++;
-                }while (cursor.moveToNext());
+            try {
+                SQLiteDatabase database = xunChatDatabaseHelper.getWritableDatabase();
+                Cursor cursor = database.rawQuery("SELECT DISTINCT sender, " +
+                                "extras FROM request WHERE isRead=? AND username=?",
+                        new String[]{"0",me.getUsername()});
+                numberOfRequests=0;
+                if (cursor.moveToFirst()){
+                    do{
+                        System.out.println("@ "+cursor.getString(cursor.getColumnIndex("sender"))+
+                                " "+cursor.getString(cursor.getColumnIndex("extras")));
+                        numberOfRequests++;
+                    }while (cursor.moveToNext());
+                }
+                if (numberOfRequests>0){
+                    contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
+                    contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
+                }
+                cursor.close();
+            }catch (NullPointerException e){
+                e.printStackTrace();
             }
-            if (numberOfRequests>0){
-                contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
-                contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
-            }
-            cursor.close();
-        }
     }
 
     class MyPagerAdapter extends FragmentStatePagerAdapter{
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
-            chatsFragment = new ChatsFragment();
-            contactsFragment = new ContactsFragment();
+            chatsFragment = new ChatsFragment_();
+            contactsFragment = new ContactsFragment_();
             discoverFragment = new DiscoverFragment();
             meFragment = new MeFragment();
         }
-
         @Override
         public Fragment getItem(int position) {
             switch (position){

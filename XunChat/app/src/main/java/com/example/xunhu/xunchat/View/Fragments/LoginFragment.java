@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.xunhu.xunchat.R;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.SystemService;
@@ -37,14 +38,7 @@ public class LoginFragment extends android.app.Fragment {
     @ViewById(R.id.tv_forget_password) TextView tvForgotPassword;
     @SystemService InputMethodManager mgr;
     LoginInterface comm;
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.login_fragment_layout,container,false);
-        return view;
-    }
-    @Click({R.id.tv_sign_up,R.id.btn_login})
-    public void signUpClick(View view){
+    @Click({R.id.tv_sign_up,R.id.btn_login}) void onSignUpClick(View view){
         switch (view.getId()){
             case R.id.tv_sign_up:
                 comm.switchToRegister();
@@ -67,18 +61,11 @@ public class LoginFragment extends android.app.Fragment {
                 break;
         }
     }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         comm = (LoginInterface) activity;
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
     public interface LoginInterface{
          void switchToRegister();
          void operateLogin(String username, String password);

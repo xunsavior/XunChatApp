@@ -20,6 +20,10 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.LatestChatAdapter;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +34,10 @@ import butterknife.Unbinder;
 /**
  * Created by xunhu on 6/7/2017.
  */
-
+@EFragment(R.layout.chats_fragment_layout)
 public class ChatsFragment extends Fragment {
-    @BindView(R.id.lvLatestMessages)
-    ListView lvMessages;
-    private Unbinder unbinder;
-    private IntentFilter filter;
+    @ViewById(R.id.lvLatestMessages) ListView lvMessages;
+    private IntentFilter filter  = new IntentFilter();
     LatestChatAdapter adapter;
     List<LatestMessage> latestMessages = new ArrayList<>();
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -51,17 +53,10 @@ public class ChatsFragment extends Fragment {
             }
         }
     };
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.chats_fragment_layout,container,false);
-        unbinder= ButterKnife.bind(this,view);
+    @AfterViews void setChatsFragmentView(){
         adapter = new LatestChatAdapter(getContext(),R.layout.latest_chat_unit_layout,latestMessages);
         lvMessages.setAdapter(adapter);
-        filter = new IntentFilter();
-        return view;
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -71,7 +66,6 @@ public class ChatsFragment extends Fragment {
             loadUnreadChat();
         }
     }
-
     public void loadUnreadChat(){
         latestMessages.clear();
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();

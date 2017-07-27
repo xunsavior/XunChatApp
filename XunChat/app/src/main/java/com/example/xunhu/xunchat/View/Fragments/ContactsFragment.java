@@ -28,11 +28,18 @@ import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.RetrieveFriendListPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllAdapters.SingleContactAdapter;
 import com.example.xunhu.xunchat.View.Interfaces.RetrieveFriendListView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterInject;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Touch;
+import org.androidannotations.annotations.ViewById;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,12 +58,11 @@ import butterknife.Unbinder;
 /**
  * Created by xunhu on 6/7/2017.
  */
-
+@EFragment(R.layout.contacts_fragment_layout)
 public class ContactsFragment extends Fragment implements RetrieveFriendListView {
-    @BindView(R.id.rlNewFriends) RelativeLayout rlNewFriends;
-    @BindView(R.id.tv_num_of_request) TextView tvNumOfRequests;
-    @BindView(R.id.lv_contacts) ListView lvContacts;
-    private Unbinder unbinder;
+    @ViewById(R.id.rlNewFriends) RelativeLayout rlNewFriends;
+    @ViewById(R.id.tv_num_of_request) TextView tvNumOfRequests;
+    @ViewById(R.id.lv_contacts) ListView lvContacts;
     ContactFragmentInterface comm;
     IntentFilter intentFilter = new IntentFilter();
     List<Friend> friends = new ArrayList<>();
@@ -78,42 +84,28 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
             }
         }
     };
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.contacts_fragment_layout,container,false);
-        unbinder=ButterKnife.bind(this,view);
+    @AfterViews void setContactFragmentViews(){
         adapter= new SingleContactAdapter(getContext(),R.layout.single_contact_unit_layout,friends);
         lvContacts.setAdapter(adapter);
         retrieveFriendList();
-        return view;
     }
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         comm = (ContactFragmentInterface) activity;
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-    @OnClick({R.id.rlNewFriends})
-    public void onRespond(View view){
+    @Click({R.id.rlNewFriends,R.id.rlNewFriends}) void onRespond(View view){
         switch (view.getId()){
             case R.id.rlNewFriends:
-                comm.headToFriendRequest();
+                SubActivity_.intent(getContext()).extra("type","new friends").start();
                 comm.clearRequests();
                 break;
             default:
                 break;
         }
     }
-
-
     @SuppressLint("ResourceAsColor")
-    @OnTouch({R.id.rlNewFriends})
-    public boolean onTouch(MotionEvent event){
+    @Touch({R.id.rlNewFriends}) boolean onTouch(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
                 rlNewFriends.setBackgroundColor(R.color.SkyBlue);
@@ -175,7 +167,6 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
 
     public interface ContactFragmentInterface{
         void clearRequests();
-        void headToFriendRequest();
     }
     @Override
     public void onResume() {

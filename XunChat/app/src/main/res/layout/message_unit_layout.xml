@@ -19,11 +19,11 @@
         android:layout_alignParentLeft="true"
         android:visibility="gone"
         >
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="5dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_loading"
             android:id="@+id/iv_message_left_image"
                 />
@@ -110,11 +110,11 @@
             </LinearLayout>
         </FrameLayout>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_margin="5dp"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_loading"
             android:id="@+id/iv_message_right_image"
             android:layout_alignParentRight="true"

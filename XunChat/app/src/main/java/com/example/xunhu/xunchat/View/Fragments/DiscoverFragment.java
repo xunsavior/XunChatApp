@@ -25,6 +25,7 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.CameraViewActivity;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
+import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 
@@ -68,9 +69,7 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
     public void onResponse(View view){
         switch (view.getId()){
             case R.id.ll_moments:
-                Intent intent = new Intent(getActivity(), SubActivity.class);
-                intent.putExtra("type","moments");
-                startActivity(intent);
+                SubActivity_.intent(getActivity()).extra("type","moments").start();
                 break;
             case R.id.llScanQRCode:
                launchScannerCamera();

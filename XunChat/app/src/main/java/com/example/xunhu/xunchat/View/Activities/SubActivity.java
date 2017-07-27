@@ -28,7 +28,10 @@ import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.LongClick;
+import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,19 +44,18 @@ import java.util.List;
 @EActivity
 public class SubActivity extends Activity implements SearchFriendInterface {
     public static Me me = MainActivity.me;
-    MyDialog myDialog;
-    private ImageView ivBackImage;
-    private ImageView ivCreatePost;
-    ImageView ivNewRequestBack;
-    ListView lvNewRequests;
-    private EditText etSearchFriends;
-    List<User> users;
+    @ViewById(R.id.iv_moment_back) ImageView ivBackImage;
+    @ViewById(R.id.iv_post_photo) ImageView ivCreatePost;
+    @ViewById(R.id.iv_new_friends_back) ImageView ivNewRequestBack;
+    @ViewById(R.id.lv_new_requests) ListView lvNewRequests;
+    @ViewById(R.id.et_search_username) EditText etSearchFriends;
     MySearchFriendPresenter presenter;
     private String viewType = "";
     private static final String NEW_FRIEND = "new friends";
     private static final String MOMENT = "moments";
     List<Request> list = new ArrayList<>();
     FriendRequestAdapter adapter;
+    MyDialog myDialog;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,25 +75,32 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 break;
         }
     }
-    private void createMomentView(){
-        setContentView(R.layout.moments_display_layout);
-        ivBackImage = (ImageView) findViewById(R.id.iv_moment_back);
-        ivCreatePost = (ImageView) findViewById(R.id.iv_post_photo);
-        ivCreatePost.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
+    @Click({R.id.iv_moment_back,R.id.iv_new_friends_back})
+    void onSubActivityClickRespond(View view){
+        switch (view.getId()){
+            case R.id.iv_moment_back:
+                onBackPressed();
+                break;
+            case R.id.iv_new_friends_back:
+                onBackPressed();
+                break;
+            default:
+                break;
+        }
+    }
+    @LongClick({R.id.iv_post_photo})
+    boolean onSubActivityLongClickRespond(View view){
+        switch (view.getId()){
+            case R.id.iv_post_photo:
                 Intent intent = new Intent(SubActivity.this,EditMomentActivity.class);
                 intent.putExtra("image",false);
                 startActivity(intent);
-                return false;
-            }
-        });
-        ivBackImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+                break;
+        }
+        return false;
+    }
+    private void createMomentView(){
+        setContentView(R.layout.moments_display_layout);
     }
 
     @Override
@@ -101,20 +110,10 @@ public class SubActivity extends Activity implements SearchFriendInterface {
             loadFriendRequest();
         }
     }
-
     private void createNewFriendsView(){
         setContentView(R.layout.new_friends_layout);
         presenter = new MySearchFriendPresenter(this);
-        ivNewRequestBack = (ImageView) findViewById(R.id.iv_new_friends_back);
-        lvNewRequests = (ListView) findViewById(R.id.lv_new_requests);
-        etSearchFriends = (EditText) findViewById(R.id.et_search_username);
         adapter = new FriendRequestAdapter(this,R.layout.friend_request_unit,list);
-        ivNewRequestBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
         etSearchFriends.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -132,8 +131,6 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 return false;
             }
         });
-
-
     }
     public void loadFriendRequest(){
         list.clear();

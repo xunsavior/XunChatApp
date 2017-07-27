@@ -5,10 +5,11 @@ import com.example.xunhu.xunchat.Presenter.Interfaces.CookieValidateActionStatus
 import com.example.xunhu.xunchat.Presenter.Interfaces.CookieValidatePresenterAction;
 import com.example.xunhu.xunchat.View.Interfaces.ValidateCookiesView;
 
+import org.androidannotations.annotations.EBean;
+
 /**
  * Created by xunhu on 6/12/2017.
  */
-
 public class MyCookieValidationPresenter  implements CookieValidateActionStatus, CookieValidatePresenterAction{
     ValidateCookiesView validateCookiesView;
     UserCookieValidateModel userCookieValidateModel;

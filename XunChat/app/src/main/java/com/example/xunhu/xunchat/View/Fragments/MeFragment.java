@@ -39,6 +39,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -47,7 +48,7 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class MeFragment extends Fragment  {
-    @BindView(R.id.iv_my_profile) ImageView ivMyProfile;
+    @BindView(R.id.iv_my_profile) CircleImageView ivMyProfile;
     @BindView(R.id.my_username) TextView tvMyUsername;
     @BindView(R.id.iv_my_gender) ImageView ivMyGender;
     @BindView(R.id.profile_layout) LinearLayout linearLayoutProfile;

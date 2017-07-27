@@ -44,6 +44,7 @@ import com.example.xunhu.xunchat.View.MainActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by xunhu on 6/21/2017.
@@ -52,7 +53,7 @@ import butterknife.OnClick;
 public class ProfileActivity extends Activity implements RequestRespondView,
         RemarkDialogFragment.RemarkDialogFragmentInterface,SetRemarkView, DeleteFriendView {
     @BindView(R.id.iv_profile_activity_back) ImageView btnBack;
-    @BindView(R.id.iv_profile_activity_image) ImageView ivProfileImage;
+    @BindView(R.id.iv_profile_activity_image) CircleImageView ivProfileImage;
     @BindView(R.id.tv_profile_activity_nickname) TextView tvNickname;
     @BindView(R.id.iv_profile_activity_gender) ImageView ivGender;
     @BindView(R.id.tv_profile_activity_age) TextView tvAge;
@@ -175,9 +176,11 @@ public class ProfileActivity extends Activity implements RequestRespondView,
                 }
                 break;
             case R.id.iv_profile_activity_image:
-                Intent intent = new Intent(ProfileActivity.this,ProfileThemeActivity.class);
-                intent.putExtra("url",MainActivity.domain_url+user.getUrl());
-                startActivity(intent);
+                ProfileThemeActivity_.intent(this).
+                        extra("url",MainActivity.domain_url+user.getUrl()).start();
+//                Intent intent = new Intent(ProfileActivity.this,ProfileThemeActivity.class);
+//                intent.putExtra();
+//                startActivity(intent);
                 break;
             case R.id.ib_profile_menu:
                 if (btnSendOrAdd.getText().toString().equals("Message")){

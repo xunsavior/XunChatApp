@@ -30,6 +30,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by xunhu on 7/18/2017.
@@ -191,7 +192,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         @BindView(R.id.rl_friend_left)
         RelativeLayout rlFriendLeft;
         @BindView(R.id.iv_message_left_image)
-        ImageView ivLeftImage;
+        CircleImageView ivLeftImage;
         @BindView(R.id.tv_left_message)
         TextView tvLeftMessage;
         @BindView(R.id.rl_friend_right)
@@ -199,7 +200,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         @BindView(R.id.tv_right_message)
         TextView tvRightMessage;
         @BindView(R.id.iv_message_right_image)
-        ImageView ivRightImage;
+        CircleImageView ivRightImage;
         @BindView(R.id.ll_audio_right_layout)
         LinearLayout llAudioMessage;
         @BindView(R.id.ll_audio_left_layout)

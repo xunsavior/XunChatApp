@@ -27,6 +27,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.text.method.KeyListener;
@@ -46,6 +47,7 @@ import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.ViewById;
 
 import java.io.ByteArrayOutputStream;
@@ -59,11 +61,12 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 
 import static android.app.Activity.RESULT_OK;
+import static com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE;
 
 /**
  * Created by xunhu on 6/10/2017.
  */
-@EFragment
+@EFragment(R.layout.register_fragment_layout)
 public class SignUpFragment extends android.app.Fragment {
     private static final int SELECT_IMAGE = 0;
     @ViewById(R.id.iv_profile_image) ImageView ivNewImageProfile;
@@ -84,13 +87,6 @@ public class SignUpFragment extends android.app.Fragment {
         super.onAttach(activity);
         comm = (SignUpInterface) activity;
     }
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.register_fragment_layout,container,false);
-        return view;
-    }
-
     @Click({R.id.iv_profile_image,R.id.btnRegister,R.id.et_register_gender,R.id.et_register_region,R.id.et_register_birth})
     public void respond(View view){
         switch (view.getId()){
@@ -102,6 +98,7 @@ public class SignUpFragment extends android.app.Fragment {
                                     Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED){
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
                         startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
+
                     }else {
                         requestPermissions(new String[] {Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.READ_EXTERNAL_STORAGE}, ACCESS_EXTERNAL);
@@ -114,8 +111,9 @@ public class SignUpFragment extends android.app.Fragment {
             case R.id.btnRegister:
                 if (!etRegisterUsername.getText().toString().isEmpty() &&
                         !etRegisterPassword.getText().toString().isEmpty() &&
-                        !etRegisterEmail.getText().toString().isEmpty() && !etGender.getText().toString().isEmpty()
-                        && !etRegion.getText().toString().isEmpty()){
+                        !etRegisterEmail.getText().toString().isEmpty() &&
+                        !etGender.getText().toString().isEmpty() &&
+                        !etRegion.getText().toString().isEmpty()){
                     String username = etRegisterUsername.getText().toString();
                     String password = etRegisterPassword.getText().toString();
                     String email = etRegisterEmail.getText().toString();
@@ -173,23 +171,16 @@ public class SignUpFragment extends android.app.Fragment {
     public void setEtBirthday(String birthday){
         etBirthday.setText(birthday);
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SELECT_IMAGE:
-                if (resultCode==RESULT_OK){
-                    profileImageURI = data.getData();
-                        //bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(),profileImageURI);
-                    bitmap = MediaStore.Images.Thumbnails.getThumbnail(getActivity().getContentResolver(),
-                            Long.parseLong(profileImageURI.getLastPathSegment()),  MediaStore.Images.Thumbnails.MINI_KIND,null);
-                        ivNewImageProfile.setImageBitmap(bitmap);
-                }
-                break;
-            default:
-                break;
+    @OnActivityResult(SELECT_IMAGE)
+    void onResult(int resultCode, Intent data) {
+        if (resultCode==RESULT_OK){
+            profileImageURI = data.getData();
+            bitmap = MediaStore.Images.Thumbnails.getThumbnail(getActivity().getContentResolver(),
+                    Long.parseLong(profileImageURI.getLastPathSegment()),  MediaStore.Images.Thumbnails.MINI_KIND,null);
+            ivNewImageProfile.setImageBitmap(bitmap);
         }
     }
+
     public void setLocation(String location){
         etRegion.setText(location);
     }
