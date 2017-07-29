@@ -36,17 +36,17 @@
             android:screenOrientation="portrait"
             >
         </activity>
-        <activity android:name=".View.Activities.EditMomentActivity"
+        <activity android:name=".View.Activities.EditMomentActivity_"
             android:screenOrientation="portrait"
             ></activity>
 
-        <activity android:name=".View.Activities.ProfileActivity"
+        <activity android:name=".View.Activities.ProfileActivity_"
             android:screenOrientation="portrait"
             ></activity>
-        <activity android:name=".View.Activities.FriendRequestActivity"
+        <activity android:name=".View.Activities.FriendRequestActivity_"
             android:screenOrientation="portrait"
             ></activity>
-        <activity android:name=".View.Activities.CameraViewActivity"
+        <activity android:name=".View.Activities.CameraViewActivity_"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog"
             ></activity>
@@ -54,7 +54,7 @@
             android:theme="@style/Theme.AppCompat.DayNight.Dialog"
             android:screenOrientation="portrait"
             ></activity>
-        <activity android:name=".View.Activities.ChatBoardActivity"
+        <activity android:name=".View.Activities.ChatBoardActivity_"
             android:screenOrientation="portrait"
             ></activity>
         <service android:name=".Model.Services.XunChatGetTokenService">

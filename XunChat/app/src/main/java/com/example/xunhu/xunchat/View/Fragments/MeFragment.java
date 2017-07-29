@@ -7,12 +7,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,14 +28,10 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.QRCodeActivity;
 import com.example.xunhu.xunchat.View.AllViewClasses.EditProfileLayout;
 import com.example.xunhu.xunchat.View.MainActivity;
-import com.squareup.picasso.Picasso;
-
-import java.io.IOException;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.ViewById;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_OK;
@@ -46,15 +39,14 @@ import static android.app.Activity.RESULT_OK;
 /**
  * Created by xunhu on 6/7/2017.
  */
-
+@EFragment(R.layout.me_fragment_layout)
 public class MeFragment extends Fragment  {
-    @BindView(R.id.iv_my_profile) CircleImageView ivMyProfile;
-    @BindView(R.id.my_username) TextView tvMyUsername;
-    @BindView(R.id.iv_my_gender) ImageView ivMyGender;
-    @BindView(R.id.profile_layout) LinearLayout linearLayoutProfile;
-    @BindView(R.id.MeLayout) FrameLayout meFrameLayout;
-    @BindView(R.id.tv_my_age) TextView tvMyAge;
-    private Unbinder unbinder;
+    @ViewById(R.id.iv_my_profile) CircleImageView ivMyProfile;
+    @ViewById(R.id.my_username) TextView tvMyUsername;
+    @ViewById(R.id.iv_my_gender) ImageView ivMyGender;
+    @ViewById(R.id.profile_layout) LinearLayout linearLayoutProfile;
+    @ViewById(R.id.MeLayout) FrameLayout meFrameLayout;
+    @ViewById(R.id.tv_my_age) TextView tvMyAge;
     String url ="";
     MeFragmentInterface conn;
     private Me me;
@@ -62,22 +54,12 @@ public class MeFragment extends Fragment  {
     private static final int SELECT_IMAGE = 0;
     Uri uri;
     private static final int ACCESS_EXTERNAL = 1;
-    Bitmap bitmap =null;
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         conn = (MeFragmentInterface) activity;
     }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.me_fragment_layout,container,false);
-        unbinder = ButterKnife.bind(this,view);
-        return view;
-    }
-
-    @OnClick({R.id.iv_my_profile,R.id.profile_layout})
+    @Click({R.id.iv_my_profile,R.id.profile_layout})
     public void onRespond(View view){
         switch (view.getId()){
             case R.id.iv_my_profile:
@@ -119,8 +101,6 @@ public class MeFragment extends Fragment  {
                             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.INTERNAL_CONTENT_URI);
                             startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
                         }
-//                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI);
-//                        startActivityForResult(Intent.createChooser(intent, "Select Your Profile Picture"), SELECT_IMAGE);
                     }
                 });
                 editProfileLayout.getRlChangeProfileImage().setOnTouchListener(new View.OnTouchListener() {
@@ -273,12 +253,6 @@ public class MeFragment extends Fragment  {
         meFrameLayout.removeViewInLayout(editProfileLayout);
         editProfileLayout=null;
     }
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
     public void setIvMyProfile(Me me){
             this.me = me;
             url= MainActivity.domain_url+me.getUrl();
@@ -307,19 +281,10 @@ public class MeFragment extends Fragment  {
                 MySingleton.getmInstance(getContext().getApplicationContext()).addImageRequestToRequestQueue(request);
             }
     }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
-            case SELECT_IMAGE:
-                if (resultCode==RESULT_OK){
-                    uri = data.getData();
-
-                    conn.launchUpdateDialog("edit profile image",uri.toString());
-                }
-                break;
-            default:
-                break;
+    @OnActivityResult(SELECT_IMAGE) void MeFragmentResult(int resultCode, Intent data){
+        if (resultCode==RESULT_OK){
+            uri = data.getData();
+            conn.launchUpdateDialog("edit profile image",uri.toString());
         }
     }
     public interface MeFragmentInterface{

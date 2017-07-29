@@ -48,11 +48,13 @@ import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment_;
 import com.example.xunhu.xunchat.View.Fragments.DatePickerDialogFragment;
 import com.example.xunhu.xunchat.View.Fragments.DiscoverFragment;
+import com.example.xunhu.xunchat.View.Fragments.DiscoverFragment_;
 import com.example.xunhu.xunchat.View.Fragments.GenderSelectionFragment;
 import com.example.xunhu.xunchat.View.Fragments.LocationListDialog;
 import com.example.xunhu.xunchat.View.Fragments.LoginFragment;
 import com.example.xunhu.xunchat.View.Fragments.LoginFragment_;
 import com.example.xunhu.xunchat.View.Fragments.MeFragment;
+import com.example.xunhu.xunchat.View.Fragments.MeFragment_;
 import com.example.xunhu.xunchat.View.Fragments.SignUpFragment;
 import com.example.xunhu.xunchat.View.Fragments.SignUpFragment_;
 import com.example.xunhu.xunchat.View.Fragments.UpdateProfileDialogFragment;
@@ -648,8 +650,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             super(fm);
             chatsFragment = new ChatsFragment_();
             contactsFragment = new ContactsFragment_();
-            discoverFragment = new DiscoverFragment();
-            meFragment = new MeFragment();
+            discoverFragment = new DiscoverFragment_();
+            meFragment = new MeFragment_();
         }
         @Override
         public Fragment getItem(int position) {

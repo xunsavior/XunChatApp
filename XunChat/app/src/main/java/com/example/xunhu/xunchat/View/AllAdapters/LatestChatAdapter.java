@@ -25,6 +25,7 @@ import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ChatBoardActivity;
+import com.example.xunhu.xunchat.View.Activities.ChatBoardActivity_;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import java.io.File;
@@ -92,13 +93,11 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
         holder.llLatestChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), ChatBoardActivity.class);
                 User user = new User(latestMessage.getFriendID(),latestMessage.getFriendUsername(),
                         latestMessage.getFriendNickname(),latestMessage.getFriendURL(),
                         "","","",-1,1);
                 user.setRemark(latestMessage.getFriendNickname());
-                intent.putExtra("user",user);
-                getContext().startActivity(intent);
+                ChatBoardActivity_.intent(getContext()).extra("user",user).start();
             }
         });
         holder.llLatestChat.setOnLongClickListener(new View.OnLongClickListener() {

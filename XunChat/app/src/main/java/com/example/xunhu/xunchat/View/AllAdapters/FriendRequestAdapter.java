@@ -29,6 +29,7 @@ import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
+import com.example.xunhu.xunchat.View.Activities.ProfileActivity_;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ContactsFragment;
@@ -236,9 +237,7 @@ public class FriendRequestAdapter extends ArrayAdapter<Request> implements Reque
             String region = object.getString("region");
             int relationshipType = object.getInt("relationship_type");
             User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
-            Intent intent = new Intent(context,ProfileActivity.class);
-            intent.putExtra("user",user);
-            context.startActivity(intent);
+            ProfileActivity_.intent(context).extra("user",user).start();
         } catch (JSONException e) {
             e.printStackTrace();
         }

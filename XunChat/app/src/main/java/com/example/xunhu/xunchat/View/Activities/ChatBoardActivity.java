@@ -10,17 +10,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -40,6 +36,12 @@ import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SendChatView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Touch;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,33 +50,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by xunhu on 7/18/2017.
  */
-
+@EActivity(R.layout.chat_activity_layout)
 public class ChatBoardActivity extends Activity implements SendChatView {
-    @BindView(R.id.iv_chat_activity_back) ImageView ivBack;
-    @BindView(R.id.tv_remark) TextView tvRemark;
-    @BindView(R.id.lv_message) ListView lvMessage;
-    @BindView(R.id.ib_add) ImageButton ibAdd;
-    @BindView(R.id.et_message) EditText etMessage;
-    @BindView(R.id.ib_emoji) ImageButton ibEmoji;
-    @BindView(R.id.ib_voice) ImageButton ibVoice;
-    @BindView(R.id.ib_sending) ImageButton ibSending;
-
+    @ViewById(R.id.iv_chat_activity_back) ImageView ivBack;
+    @ViewById(R.id.tv_remark) TextView tvRemark;
+    @ViewById(R.id.lv_message) ListView lvMessage;
+    @ViewById(R.id.ib_add) ImageButton ibAdd;
+    @ViewById(R.id.et_message) EditText etMessage;
+    @ViewById(R.id.ib_emoji) ImageButton ibEmoji;
+    @ViewById(R.id.ib_voice) ImageButton ibVoice;
+    @ViewById(R.id.ib_sending) ImageButton ibSending;
     MediaRecorder mediaRecorder;
-
     private User user;
     boolean isRecordingStart=false;
     List<Message> messages = new ArrayList<>();
     ChatMessageAdapter adapter;
     SendMessagePresenter presenter;
     IntentFilter intentFilter = new IntentFilter();
-
     private String audioOutput= null;
     private MyDialog myDialog;
     private static final int ACCESS_RECORDER = 10;
@@ -97,11 +93,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
             }
         }
     };
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.chat_activity_layout);
-        ButterKnife.bind(this);
+    @AfterViews void setChatBoardActivityViews(){
         user = (User) getIntent().getSerializableExtra("user");
         adapter = new ChatMessageAdapter(this,R.layout.message_unit_layout,messages,user);
         lvMessage.setAdapter(adapter);
@@ -118,36 +110,33 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                     ContextCompat.checkSelfPermission(getApplicationContext(),
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
                     ){
+
             }else {
                 requestPermissions(new String[] {Manifest.permission.RECORD_AUDIO,
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE}, ACCESS_RECORDER);
             }
-        }else {
-
         }
-        ibVoice.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        establishRecorder();
-                        startRecording();
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        stopAndPlay();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        stopAndPlay();
-                        sendRecordedAudio();
-                        break;
-                    default:
-                        break;
-                }
-                return false;
-            }
-        });
     }
+    @Touch({R.id.ib_voice}) boolean onVoiceTouch(MotionEvent event){
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                establishRecorder();
+                startRecording();
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                stopAndPlay();
+                break;
+            case MotionEvent.ACTION_UP:
+                stopAndPlay();
+                sendRecordedAudio();
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
     public void establishRecorder(){
         String dir = Environment.getExternalStorageDirectory()+
                 File.separator+MainActivity.me.getUsername()+
@@ -240,7 +229,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         }
         return new byte[0];
     }
-    @OnClick({R.id.iv_chat_activity_back,R.id.ib_sending,R.id.et_message})
+    @Click({R.id.iv_chat_activity_back,R.id.ib_sending,R.id.et_message})
     public void onClickView(View view){
         switch (view.getId()){
             case R.id.iv_chat_activity_back:

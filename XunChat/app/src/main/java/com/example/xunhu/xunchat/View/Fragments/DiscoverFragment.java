@@ -1,72 +1,45 @@
 package com.example.xunhu.xunchat.View.Fragments;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.example.xunhu.xunchat.Manifest;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.R;
-import com.example.xunhu.xunchat.View.Activities.CameraViewActivity;
+import com.example.xunhu.xunchat.View.Activities.CameraViewActivity_;
 import com.example.xunhu.xunchat.View.Activities.ProfileActivity;
+import com.example.xunhu.xunchat.View.Activities.ProfileActivity_;
 import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
-
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Touch;
+import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnLongClick;
-import butterknife.OnTouch;
-import butterknife.Unbinder;
-
 import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by xunhu on 6/7/2017.
  */
-
+@EFragment(R.layout.discover_fragment)
 public class DiscoverFragment extends Fragment implements SearchFriendInterface {
-    @BindView(R.id.ll_moments)
-    LinearLayout momentLayout;
-    @BindView(R.id.iv_new_post_found)
-    ImageView ivNewPostFound;
-    @BindView(R.id.llScanQRCode)
-    LinearLayout scanQRCodeLayout;
-    @BindView(R.id.llPeopleNearby)
-    LinearLayout peopleNearbyLayout;
-    private Unbinder unbinder;
+    @ViewById(R.id.ll_moments) LinearLayout momentLayout;
+    @ViewById(R.id.iv_new_post_found) ImageView ivNewPostFound;
+    @ViewById(R.id.llScanQRCode) LinearLayout scanQRCodeLayout;
+    @ViewById(R.id.llPeopleNearby) LinearLayout peopleNearbyLayout;
     public static final int CAMERA_REQUEST_CODE = 100;
     MySearchFriendPresenter mySearchFriendPresenter;
     MyDialog myDialog;
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view =inflater.inflate(R.layout.discover_fragment,container,false);
-        unbinder = ButterKnife.bind(this,view);
-        return view;
-    }
-    @OnClick({R.id.ll_moments, R.id.iv_new_post_found,R.id.llScanQRCode,R.id.llPeopleNearby})
-    public void onResponse(View view){
+    @Click({R.id.ll_moments, R.id.iv_new_post_found,R.id.llScanQRCode,R.id.llPeopleNearby})
+    public void onDiscoverFragmentClick(View view){
         switch (view.getId()){
             case R.id.ll_moments:
                 SubActivity_.intent(getActivity()).extra("type","moments").start();
@@ -80,10 +53,9 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
     }
     public void launchScannerCamera(){
         momentLayout.setClickable(false);
-        Intent intent = new Intent(getContext(), CameraViewActivity.class);
+        Intent intent = new Intent(getContext(), CameraViewActivity_.class);
         startActivityForResult(intent,CAMERA_REQUEST_CODE);
     }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -91,8 +63,7 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
             momentLayout.setClickable(true);
         }
     }
-
-    @OnTouch({R.id.ll_moments})
+    @Touch({R.id.ll_moments})
     public boolean onTouchRespond(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -109,7 +80,7 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
         }
         return false;
     }
-    @OnTouch({R.id.llScanQRCode})
+    @Touch({R.id.llScanQRCode})
     public boolean onTouchQRBarRespond(MotionEvent event){
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -127,12 +98,6 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
             return false;
     }
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode==CAMERA_REQUEST_CODE && resultCode==RESULT_OK){
             if (data!=null){
@@ -149,7 +114,6 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
         myDialog.cancelLoadingGifDialog();
         Toast.makeText(getContext(),msg,Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void loadResults(String msg) {
         myDialog.cancelLoadingGifDialog();
@@ -165,9 +129,7 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
             String region = object.getString("region");
             int relationshipType = object.getInt("relationship_type");
             User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
-            Intent intent = new Intent(getContext(),ProfileActivity.class);
-            intent.putExtra("user",user);
-            startActivity(intent);
+            ProfileActivity_.intent(getContext()).extra("user",user).start();
         } catch (JSONException e) {
             e.printStackTrace();
         }

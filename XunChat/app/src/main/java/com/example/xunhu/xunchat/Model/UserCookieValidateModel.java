@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.Model;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.StringRes;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.CookieValidateTask;
@@ -22,7 +23,6 @@ import okhttp3.Response;
 /**
  * Created by xunhu on 6/12/2017.
  */
-
 public class UserCookieValidateModel implements CRUDCookieValidateOptions {
     CookieValidateActionStatus cookieValidateActionStatus;
     public UserCookieValidateModel(CookieValidateActionStatus cookieValidateActionStatus){

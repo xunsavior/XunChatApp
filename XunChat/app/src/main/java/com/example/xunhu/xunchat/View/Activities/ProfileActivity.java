@@ -41,6 +41,11 @@ import com.example.xunhu.xunchat.View.Interfaces.RequestRespondView;
 import com.example.xunhu.xunchat.View.Interfaces.SetRemarkView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -49,20 +54,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by xunhu on 6/21/2017.
  */
-
+@EActivity(R.layout.profile_activity_layout)
 public class ProfileActivity extends Activity implements RequestRespondView,
         RemarkDialogFragment.RemarkDialogFragmentInterface,SetRemarkView, DeleteFriendView {
-    @BindView(R.id.iv_profile_activity_back) ImageView btnBack;
-    @BindView(R.id.iv_profile_activity_image) CircleImageView ivProfileImage;
-    @BindView(R.id.tv_profile_activity_nickname) TextView tvNickname;
-    @BindView(R.id.iv_profile_activity_gender) ImageView ivGender;
-    @BindView(R.id.tv_profile_activity_age) TextView tvAge;
-    @BindView(R.id.tv_profile_activity_username) TextView tvUsername;
-    @BindView(R.id.tv_profile_activity_what) TextView tvWhatsup;
-    @BindView(R.id.tv_profile_activity_region) TextView tvRegion;
-    @BindView(R.id.llAlbum) LinearLayout llAlbum;
-    @BindView(R.id.btn_send_or_add) Button btnSendOrAdd;
-    @BindView(R.id.ib_profile_menu) ImageButton ivMenu;
+    @ViewById(R.id.iv_profile_activity_back) ImageView btnBack;
+    @ViewById(R.id.iv_profile_activity_image) CircleImageView ivProfileImage;
+    @ViewById(R.id.tv_profile_activity_nickname) TextView tvNickname;
+    @ViewById(R.id.iv_profile_activity_gender) ImageView ivGender;
+    @ViewById(R.id.tv_profile_activity_age) TextView tvAge;
+    @ViewById(R.id.tv_profile_activity_username) TextView tvUsername;
+    @ViewById(R.id.tv_profile_activity_what) TextView tvWhatsup;
+    @ViewById(R.id.tv_profile_activity_region) TextView tvRegion;
+    @ViewById(R.id.llAlbum) LinearLayout llAlbum;
+    @ViewById(R.id.btn_send_or_add) Button btnSendOrAdd;
+    @ViewById(R.id.ib_profile_menu) ImageButton ivMenu;
     RemarkDialogFragment remarkDialogFragment;
     SetRemarkPresenter setRemarkPresenter;
     DeleteFriendActionPresenter deleteFriendActionPresenter;
@@ -90,10 +95,7 @@ public class ProfileActivity extends Activity implements RequestRespondView,
             }
         }
     };
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_activity_layout);
+    @AfterViews void setProfileActivity(){
         intentFilter.addAction("pending");
         registerReceiver(broadcastReceiver,intentFilter);
         myDialog = new MyDialog(this);
@@ -153,7 +155,7 @@ public class ProfileActivity extends Activity implements RequestRespondView,
         });
         MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
     }
-    @OnClick({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image,
+    @Click({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image,
     R.id.ib_profile_menu})
     public void onRespond(View view){
         switch (view.getId()){
@@ -162,25 +164,18 @@ public class ProfileActivity extends Activity implements RequestRespondView,
                 break;
             case R.id.btn_send_or_add:
                 if(btnSendOrAdd.getText().toString().equals("Add")){
-                   Intent intent = new Intent(this,FriendRequestActivity.class);
-                   intent.putExtra("user",user);
-                   startActivity(intent);
+                    FriendRequestActivity_.intent(this).extra("user",user).start();
                 }else if (btnSendOrAdd.getText().toString().equals("Accept")){
                     remarkDialogFragment = new RemarkDialogFragment(user.getNickname());
                     remarkDialogFragment.show(getFragmentManager(),"remarkFragmentDialog");
                 }else if (btnSendOrAdd.getText().toString().equals("Message")){
-                    Intent intent = new Intent(ProfileActivity.this,ChatBoardActivity.class);
-                    intent.putExtra("user",user);
-                    startActivity(intent);
+                    ChatBoardActivity_.intent(this).extra("user",user).start();
                     finish();
                 }
                 break;
             case R.id.iv_profile_activity_image:
                 ProfileThemeActivity_.intent(this).
                         extra("url",MainActivity.domain_url+user.getUrl()).start();
-//                Intent intent = new Intent(ProfileActivity.this,ProfileThemeActivity.class);
-//                intent.putExtra();
-//                startActivity(intent);
                 break;
             case R.id.ib_profile_menu:
                 if (btnSendOrAdd.getText().toString().equals("Message")){
@@ -266,7 +261,6 @@ public class ProfileActivity extends Activity implements RequestRespondView,
                 break;
         }
     }
-
     @Override
     public void setRemarkSuccessful(String msg) {
         myDialog.cancelBottomGifDialog();

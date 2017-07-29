@@ -21,6 +21,10 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.io.IOException;
 
 import static com.example.xunhu.xunchat.View.XunApplication.getContext;
@@ -28,18 +32,14 @@ import static com.example.xunhu.xunchat.View.XunApplication.getContext;
 /**
  * Created by xunhu on 7/15/2017.
  */
-
+@EActivity(R.layout.scanner_activity_layout)
 public class CameraViewActivity extends Activity implements SurfaceHolder.Callback,Detector.Processor {
-    SurfaceView cameraPreview;
+    @ViewById(R.id.sv_camera) SurfaceView cameraPreview;
     BarcodeDetector barcodeDetector;
     CameraSource cameraSource;
     SurfaceHolder surfaceHolder;
     public static final int ACCESS_CAMERA = 200;
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.scanner_activity_layout);
-        cameraPreview = (SurfaceView) findViewById(R.id.sv_camera);
+    @AfterViews void setCameraView(){
         cameraPreview.setZOrderMediaOverlay(true);
         cameraPreview.getLayoutParams().width= MainActivity.getScreenWidth();
         cameraPreview.getLayoutParams().height= MainActivity.getScreenWidth();
@@ -52,7 +52,6 @@ public class CameraViewActivity extends Activity implements SurfaceHolder.Callba
         }
         barcodeDetector.setProcessor(this);
         surfaceHolder.addCallback(this);
-
     }
 
     @Override
@@ -88,13 +87,11 @@ public class CameraViewActivity extends Activity implements SurfaceHolder.Callba
 
     }
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    @Override public void surfaceDestroyed(SurfaceHolder holder) {
         if (cameraSource!=null){
             cameraSource.release();
             cameraSource=null;
@@ -104,8 +101,7 @@ public class CameraViewActivity extends Activity implements SurfaceHolder.Callba
             barcodeDetector=null;
         }
     }
-    @Override
-    public void release() {
+    @Override public void release() {
 
     }
 

@@ -25,6 +25,9 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.EViewGroup;
+import org.androidannotations.annotations.ViewById;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,25 +35,24 @@ import butterknife.OnClick;
 /**
  * Created by xunhu on 6/14/2017.
  */
-
 public class EditProfileLayout extends LinearLayout {
-    private ImageView etEditImage;
-    private RelativeLayout rlChangeProfileImage;
-    private RelativeLayout rlChangeUsername;
-    private TextView tvEditUsername;
-    private RelativeLayout rlChangeEmail;
-    private TextView tvEditEmail;
-    private TextView tvChangeGender;
-    private RelativeLayout rlEditGender;
-    private RelativeLayout rlChangeRegion;
-    private TextView tvEditRegion;
-    private RelativeLayout rlWhatsUp;
-    private TextView tvWhatsUp;
-    private RelativeLayout rlBirthday;
-    private TextView tvBirthday;
-    private LinearLayout llAll;
-    private TextView tvDisplayUsername;
-    private RelativeLayout rlQRCode;
+     ImageView etEditImage;
+     RelativeLayout rlChangeProfileImage;
+     RelativeLayout rlChangeUsername;
+     TextView tvEditUsername;
+     RelativeLayout rlChangeEmail;
+     TextView tvEditEmail;
+     TextView tvChangeGender;
+     RelativeLayout rlEditGender;
+     RelativeLayout rlChangeRegion;
+     TextView tvEditRegion;
+     RelativeLayout rlWhatsUp;
+     TextView tvWhatsUp;
+     RelativeLayout rlBirthday;
+     TextView tvBirthday;
+     LinearLayout llAll;
+     TextView tvDisplayUsername;
+     RelativeLayout rlQRCode;
 
     public EditProfileLayout(Context context) {
         super(context);

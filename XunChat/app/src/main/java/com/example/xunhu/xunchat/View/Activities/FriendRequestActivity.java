@@ -20,6 +20,11 @@ import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Interfaces.SendFriendRequestView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,27 +32,22 @@ import butterknife.OnClick;
 /**
  * Created by xunhu on 6/30/2017.
  */
-
+@EActivity(R.layout.friend_request_send_layout)
 public class FriendRequestActivity extends Activity implements SendFriendRequestView {
-    @BindView(R.id.iv_friend_request_back) ImageView btnBack;
-    @BindView(R.id.btn_friend_request_send) Button btnSend;
-    @BindView(R.id.et_extra_information) EditText etExtra;
-    @BindView(R.id.et_remarks) EditText etRemark;
+    @ViewById(R.id.iv_friend_request_back) ImageView btnBack;
+    @ViewById(R.id.btn_friend_request_send) Button btnSend;
+    @ViewById(R.id.et_extra_information) EditText etExtra;
+    @ViewById(R.id.et_remarks) EditText etRemark;
     SendFriendRequestPresenter presenter;
     AlertDialog alertDialog;
     User user;
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.friend_request_send_layout);
-        ButterKnife.bind(this);
+    @AfterViews void FriendRequestActivity(){
         user = (User) getIntent().getSerializableExtra("user");
         etExtra.setText("Hello, my name is "+MainActivity.me.getUsername());
         etRemark.setText(user.getNickname());
         presenter = new SendFriendRequestPresenter(this);
     }
-
-    @OnClick({R.id.iv_friend_request_back,R.id.btn_friend_request_send})
+    @Click({R.id.iv_friend_request_back,R.id.btn_friend_request_send})
     public void onRespond(View view) {
         switch (view.getId()){
             case R.id.btn_friend_request_send:
@@ -82,7 +82,6 @@ public class FriendRequestActivity extends Activity implements SendFriendRequest
         sendBroadcast(intent);
         finish();
     }
-
     @Override
     public void friendRequestFailtoSend(String msg) {
         alertDialog.cancel();

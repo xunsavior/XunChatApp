@@ -92,9 +92,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     boolean onSubActivityLongClickRespond(View view){
         switch (view.getId()){
             case R.id.iv_post_photo:
-                Intent intent = new Intent(SubActivity.this,EditMomentActivity.class);
-                intent.putExtra("image",false);
-                startActivity(intent);
+                EditMomentActivity_.intent(this).extra("image",false).start();
                 break;
         }
         return false;
@@ -180,9 +178,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
               String region = object.getString("region");
               int relationshipType = object.getInt("relationship_type");
               User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
-              Intent intent = new Intent(SubActivity.this,ProfileActivity.class);
-              intent.putExtra("user",user);
-              startActivity(intent);
+              ProfileActivity_.intent(this).extra("user",user).start();
         } catch (JSONException e) {
             e.printStackTrace();
         }
