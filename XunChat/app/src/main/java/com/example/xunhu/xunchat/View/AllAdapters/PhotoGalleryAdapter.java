@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,6 +32,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
     private static Cursor mMediaStoreCursor;
     Activity activity;
     PhotoSelectListener photoSelectListener;
+    Bitmap bitmap;
     public PhotoGalleryAdapter(Activity activity,PhotoSelectListener photoSelectListener){
         this.activity=activity;
         this.photoSelectListener=photoSelectListener;
@@ -45,7 +47,7 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Bitmap bitmap = getBitmapFromMediaStore(position);
+        bitmap = getBitmapFromMediaStore(position);
         if (bitmap!=null){
             holder.getIvPhotoGallery().setImageBitmap(bitmap);
         }
@@ -91,18 +93,21 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
         ImageView ivPhotoGallery;
         public ViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
             ivPhotoGallery= (ImageView) itemView.findViewById(R.id.ivPhotoGallery);
+            ivPhotoGallery.setOnClickListener(this);
         }
         public ImageView getIvPhotoGallery() {
             return ivPhotoGallery;
         }
+
         @Override
         public void onClick(View v) {
-            photoSelectListener.photoSelected(v,getAdapterPosition());
+            BitmapDrawable drawable = (BitmapDrawable) ivPhotoGallery.getDrawable();
+            bitmap = drawable.getBitmap();
+            photoSelectListener.photoSelected(bitmap);
         }
     }
     public interface PhotoSelectListener{
-        void photoSelected(View view, int position);
+        void photoSelected(Bitmap bitmap);
     }
 }

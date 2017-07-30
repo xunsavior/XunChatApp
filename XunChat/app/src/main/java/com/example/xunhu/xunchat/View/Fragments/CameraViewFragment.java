@@ -6,6 +6,7 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -96,7 +97,6 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
         startCamera(frontOrBack);
     }
     void takePhoto(){
-        cameraSource.stop();
         cameraSource.takePicture(new CameraSource.ShutterCallback() {
             @Override
             public void onShutter() {
@@ -105,7 +105,8 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
         }, new CameraSource.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] bytes) {
-
+                comm.convertPhoto(bytes,cameraSource.getCameraFacing());
+                cameraSource.stop();
             }
         });
     }
@@ -199,10 +200,11 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
     }
 
     @Override
-    public void photoSelected(View view, int position) {
-
+    public void photoSelected(Bitmap bitmap) {
+        comm.convertSelectedPhoto(bitmap);
     }
     public interface CameraViewFragmentInterface{
-        void convertPhoto(byte[] bytes);
+        void convertPhoto(byte[] bytes, int whichCamera);
+        void convertSelectedPhoto(Bitmap bitmap);
     }
 }
