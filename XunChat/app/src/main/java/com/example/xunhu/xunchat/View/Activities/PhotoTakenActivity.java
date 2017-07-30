@@ -20,10 +20,14 @@ import org.androidannotations.annotations.WindowFeature;
 @Fullscreen
 @WindowFeature({Window.FEATURE_NO_TITLE})
 @EActivity(R.layout.photo_taken_activity)
-public class PhotoTakenActivity extends AppCompatActivity {
+public class PhotoTakenActivity extends AppCompatActivity implements CameraViewFragment.CameraViewFragmentInterface {
     CameraViewFragment cameraViewFragment;
     @AfterViews void setPhotoTakenActivity(){
         cameraViewFragment = new CameraViewFragment_();
         getFragmentManager().beginTransaction().replace(R.id.photo_container,cameraViewFragment).commit();
+    }
+    @Override
+    public void convertPhoto(byte[] bytes) {
+
     }
 }

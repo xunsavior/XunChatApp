@@ -19,6 +19,36 @@
             android:id="@+id/rvPhotoGallery"
             >
         </android.support.v7.widget.RecyclerView>
-
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/flash_on_icon"
+                android:scaleType="fitXY"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="15dp"
+                android:id="@+id/ibCameraFlash"
+                />
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerInParent="true"
+                android:id="@+id/ibCameraRing"
+                android:scaleType="fitXY"
+                android:background="@drawable/camera_circle_icon"
+                android:layout_margin="15dp"
+                />
+            <ImageButton
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:scaleType="fitXY"
+                android:layout_margin="15dp"
+                android:background="@drawable/camera_switch_icon"
+                android:id="@+id/ibSwitchCamera"
+                />
+        </RelativeLayout>
     </LinearLayout>
 </FrameLayout>

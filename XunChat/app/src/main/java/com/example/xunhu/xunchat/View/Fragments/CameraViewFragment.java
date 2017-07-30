@@ -1,5 +1,6 @@
 package com.example.xunhu.xunchat.View.Fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.example.xunhu.xunchat.R;
@@ -24,6 +26,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.face.FaceDetector;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.RootContext;
 import org.androidannotations.annotations.ViewById;
@@ -37,11 +40,16 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
        LoaderManager.LoaderCallbacks<Cursor>,PhotoGalleryAdapter.PhotoSelectListener{
     @ViewById SurfaceView svChatCamera;
     @ViewById RecyclerView rvPhotoGallery;
+    @ViewById ImageButton ibCameraFlash;
+    @ViewById ImageButton ibCameraRing;
+    @ViewById ImageButton ibSwitchCamera;
     private final static int MEDIA_STORE_LOADER_ID = 0;
     SurfaceHolder surfaceHolder;
     CameraSource cameraSource;
     FaceDetector faceDetector;
     PhotoGalleryAdapter adapter;
+    int frontOrBack = CameraSource.CAMERA_FACING_BACK;
+    CameraViewFragmentInterface comm;
     @AfterViews void setCameraViewFragment(){
         svChatCamera.setZOrderMediaOverlay(true);
         surfaceHolder = svChatCamera.getHolder();
@@ -55,17 +63,61 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
         rvPhotoGallery.setAdapter(adapter);
         getActivity().getLoaderManager().initLoader(MEDIA_STORE_LOADER_ID,null,  this);
     }
+    @Click({R.id.ibCameraFlash,R.id.ibCameraRing,R.id.ibSwitchCamera})
+    void onCameraViewFragmentClick(View view){
+        switch (view.getId()){
+            case R.id.ibCameraFlash:
+                break;
+            case R.id.ibCameraRing:
+                takePhoto();
+                break;
+            case R.id.ibSwitchCamera:
+                switchCamera();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        comm = (CameraViewFragmentInterface) activity;
+    }
+
+    void switchCamera(){
+        cameraSource.stop();
+        cameraSource.release();
+        if (cameraSource.getCameraFacing()==CameraSource.CAMERA_FACING_BACK){
+            frontOrBack=CameraSource.CAMERA_FACING_FRONT;
+        }else {
+            frontOrBack=CameraSource.CAMERA_FACING_BACK;
+        }
+        startCamera(frontOrBack);
+    }
+    void takePhoto(){
+        cameraSource.stop();
+        cameraSource.takePicture(new CameraSource.ShutterCallback() {
+            @Override
+            public void onShutter() {
+
+            }
+        }, new CameraSource.PictureCallback() {
+            @Override
+            public void onPictureTaken(byte[] bytes) {
+
+            }
+        });
+    }
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         this.surfaceHolder=holder;
-        startCamera();
+        startCamera(frontOrBack);
     }
-
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
-
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (cameraSource!=null){
@@ -77,9 +129,9 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
             faceDetector=null;
         }
     }
-    void startCamera(){
+    void startCamera(int camera){
         cameraSource = new CameraSource.Builder(getActivity(),faceDetector)
-                .setFacing(CameraSource.CAMERA_FACING_BACK)
+                .setFacing(camera)
                 .setRequestedFps(24)
                 .setAutoFocusEnabled(true)
                 .build();
@@ -110,7 +162,7 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
             if (grantResults[0]!=PackageManager.PERMISSION_GRANTED){
                 Toast.makeText(getActivity(),"We must access your camera!",Toast.LENGTH_SHORT).show();
             }else {
-                startCamera();
+                startCamera(frontOrBack);
             }
         }
     }
@@ -149,5 +201,8 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
     @Override
     public void photoSelected(View view, int position) {
 
+    }
+    public interface CameraViewFragmentInterface{
+        void convertPhoto(byte[] bytes);
     }
 }
