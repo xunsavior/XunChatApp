@@ -11,13 +11,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -37,9 +35,7 @@ import com.example.xunhu.xunchat.Presenter.MyLoginPresenter;
 import com.example.xunhu.xunchat.Presenter.MyProfileUpdatePresenter;
 import com.example.xunhu.xunchat.Presenter.MyRegisterPresenter;
 import com.example.xunhu.xunchat.R;
-import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity;
 import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity_;
-import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Fragments.ChatsFragment;
@@ -65,11 +61,9 @@ import com.example.xunhu.xunchat.View.Interfaces.UpdateProfileView;
 import com.example.xunhu.xunchat.View.Interfaces.ValidateCookiesView;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.androidannotations.annotations.AfterExtras;
-import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.ViewById;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,11 +82,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     @ViewById(R.id.tv_network_error) TextView tvNetworkError;
     @ViewById(R.id.topBar) RelativeLayout rlTopBar;
     @ViewById(R.id.top_logout_layout) RelativeLayout rlLogout;
-    @org.androidannotations.annotations.res.StringRes public static String VALIDATE_LOGIN;
     @org.androidannotations.annotations.res.StringRes public static String FRIEND_REQUEST_RESPOND;
-    public static final String LOGIN = "http://xunsavior.com/xunchat/login.php";
-    public static final String LOGOUT = "http://xunsavior.com/xunchat/logout.php";
-    public static final String REGISTER = "http://xunsavior.com/xunchat/register.php";
     public static final String SEARCH_FRIEND = "http://xunsavior.com/xunchat/search.php";
     public static final String SEND_FRIEND_REQUEST = "http://xunsavior.com/xunchat/FriendRequest.php";
     public static final String EDIT_PROFILE = "http://xunsavior.com/xunchat/edit_profile.php";
@@ -106,11 +96,11 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     MyPagerAdapter adapter;
     LoginFragment loginFragment;
     SignUpFragment signUpFragment;
-    MyRegisterPresenter registerPresenter;
-    MyLoginPresenter loginPresenter;
-    MyCookieValidationPresenter validationPresenter;
+    @Bean MyRegisterPresenter registerPresenter;
+    @Bean MyLoginPresenter loginPresenter;
+    @Bean MyCookieValidationPresenter validationPresenter;
     MyProfileUpdatePresenter profileUpdatePresenter;
-    LogoutPresenter logoutPresenter;
+    @Bean LogoutPresenter logoutPresenter;
     String refreshedToken = FirebaseInstanceId.getInstance().getToken();
     public static String domain_url ="http://xunsavior.com/xunchat/";
     static String password = "";
@@ -122,7 +112,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     DiscoverFragment discoverFragment;
     MeFragment meFragment;
     FragmentManager fm = getSupportFragmentManager();
-
     boolean isYourProfileLoading = false;
     public static XunChatDatabaseHelper xunChatDatabaseHelper;
     float Y = 0;
@@ -163,7 +152,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         intentFilter.addAction(NETWORK_STATE_CHANGE);
         registerReceiver(xunChatBroadcastReceiver,intentFilter);
     }
-
     @Override
     public void performUpdate(String title, String content) {
         profileUpdatePresenter = new MyProfileUpdatePresenter(this,this.getApplicationContext());
@@ -218,8 +206,10 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     }
     public void loadLoginRegisterInterface(){
         setContentView(R.layout.log_regiser_layout);
-        registerPresenter = new MyRegisterPresenter(this);
-        loginPresenter = new MyLoginPresenter(this);
+        registerPresenter = new MyRegisterPresenter(getApplicationContext());
+        registerPresenter.setRegisterView(this);
+        loginPresenter = new MyLoginPresenter(getApplicationContext());
+        loginPresenter.setLoginView(this);
         addLoginFragment();
     }
     public void loadUserPageInterface(){
@@ -258,7 +248,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         checkRequestStatus();
     }
     public void validateCookies(){
-        validationPresenter = new MyCookieValidationPresenter(this);
+        validationPresenter = new MyCookieValidationPresenter(getApplicationContext());
+        validationPresenter.setValidateCookiesView(this);
         String cookies = readCookie();
         if (!cookies.isEmpty()){
             try {
@@ -550,7 +541,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                 break;
             case R.id.top_logout_layout:
                 myDialog.createGifLogoutDialog();
-                logoutPresenter = new LogoutPresenter(this);
+                logoutPresenter = new LogoutPresenter(getApplicationContext());
+                logoutPresenter.setLogoutView(this);
                 logoutPresenter.implementLogout(me.getUsername());
                 break;
             default:

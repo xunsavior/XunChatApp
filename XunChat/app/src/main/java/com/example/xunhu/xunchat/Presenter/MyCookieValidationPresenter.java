@@ -1,23 +1,31 @@
 package com.example.xunhu.xunchat.Presenter;
 
+import android.content.Context;
+
 import com.example.xunhu.xunchat.Model.UserCookieValidateModel;
 import com.example.xunhu.xunchat.Presenter.Interfaces.CookieValidateActionStatus;
 import com.example.xunhu.xunchat.Presenter.Interfaces.CookieValidatePresenterAction;
 import com.example.xunhu.xunchat.View.Interfaces.ValidateCookiesView;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 /**
  * Created by xunhu on 6/12/2017.
  */
+@EBean
 public class MyCookieValidationPresenter  implements CookieValidateActionStatus, CookieValidatePresenterAction{
     ValidateCookiesView validateCookiesView;
-    UserCookieValidateModel userCookieValidateModel;
+    @Bean UserCookieValidateModel userCookieValidateModel;
 
-    public MyCookieValidationPresenter(ValidateCookiesView validateCookiesView){
-        this.validateCookiesView = validateCookiesView;
-        this.userCookieValidateModel = new UserCookieValidateModel(this);
+    public MyCookieValidationPresenter(Context context){
+        this.userCookieValidateModel = new UserCookieValidateModel(context);
+        userCookieValidateModel.setCookieValidateActionStatus(this);
     }
+    public void setValidateCookiesView(ValidateCookiesView validateCookiesView) {
+        this.validateCookiesView = validateCookiesView;
+    }
+
     public ValidateCookiesView getValidateCookiesView(){
         return this.validateCookiesView;
     }
@@ -25,7 +33,6 @@ public class MyCookieValidationPresenter  implements CookieValidateActionStatus,
     public void validateSuccess(String msg) {
         getValidateCookiesView().switchToAccountLayout(msg);
     }
-
     @Override
     public void validateFail() {
         getValidateCookiesView().validateFail();

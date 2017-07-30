@@ -20,65 +20,50 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Created by xunhu on 6/12/2017.
  */
 
 public class CookieValidateTask extends AsyncTask<String,Void,String> {
     CookieValidateActionStatus cookieValidateActionStatus;
-    String restfulURL = MainActivity.VALIDATE_LOGIN;
-    public CookieValidateTask(CookieValidateActionStatus cookieValidateActionStatus){
+    OkHttpClient client = new OkHttpClient();
+    String restfulURL = "";
+    public CookieValidateTask(CookieValidateActionStatus cookieValidateActionStatus, String restfulURL){
         this.cookieValidateActionStatus = cookieValidateActionStatus;
+        this.restfulURL=restfulURL;
     }
 
     @Override
     protected String doInBackground(String... params) {
         String username = params[0];
         String password = params[1];
-        HttpURLConnection httpURLConnection = null;
+        JSONObject object = new JSONObject();
         try {
-            URL url = new URL(restfulURL);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(5000);
-            JSONObject object = new JSONObject();
             object.put("username",username);
             object.put("password",password);
-
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
-            String postData =  URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");
-            writer.write(postData);
-            writer.flush();
-            writer.close();
-            outputStream.close();
-
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-            String result="";
-            String line;
-            while ((line=bufferedReader.readLine())!=null){
-                result+=line;
+            RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
+            okhttp3.Request request =new  okhttp3.Request.Builder().
+                    url(restfulURL).
+                    post(requestBody).build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()){
+                String feedback =  response.body().string();
+                return feedback;
+            }else {
+                return "connection timed out";
             }
-            bufferedReader.close();
-            inputStream.close();
-            return result;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "connect timed out";
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            if (httpURLConnection!=null){
-                httpURLConnection.disconnect();
-            }
+            return "connection timed out";
+        } catch (IOException e) {
+            e.printStackTrace();
+           return "connection timed out";
         }
-        return null;
     }
 
     @Override

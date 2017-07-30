@@ -59,7 +59,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     @ViewById(R.id.iv_chat_activity_back) ImageView ivBack;
     @ViewById(R.id.tv_remark) TextView tvRemark;
     @ViewById(R.id.lv_message) ListView lvMessage;
-    @ViewById(R.id.ib_add) ImageButton ibAdd;
+    @ViewById(R.id.ib_camera) ImageButton ibCamera;
     @ViewById(R.id.et_message) EditText etMessage;
     @ViewById(R.id.ib_emoji) ImageButton ibEmoji;
     @ViewById(R.id.ib_voice) ImageButton ibVoice;
@@ -229,7 +229,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         }
         return new byte[0];
     }
-    @Click({R.id.iv_chat_activity_back,R.id.ib_sending,R.id.et_message})
+    @Click({R.id.iv_chat_activity_back,R.id.ib_sending,R.id.et_message,R.id.ib_camera})
     public void onClickView(View view){
         switch (view.getId()){
             case R.id.iv_chat_activity_back:
@@ -237,6 +237,9 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                 break;
             case R.id.ib_sending:
                 sendMessageAndStoreMessage();
+                break;
+            case R.id.ib_camera:
+                PhotoTakenActivity_.intent(this).start();
                 break;
             default:
                 break;

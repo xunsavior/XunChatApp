@@ -1,22 +1,30 @@
 package com.example.xunhu.xunchat.Presenter;
 
+import android.content.Context;
+
 import com.example.xunhu.xunchat.Model.UserRegisterModel;
 import com.example.xunhu.xunchat.Presenter.Interfaces.RegisterActionStatus;
 import com.example.xunhu.xunchat.Presenter.Interfaces.RegisterPresenterAction;
 import com.example.xunhu.xunchat.View.Interfaces.RegisterView;
 
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EBean;
+
 /**
  * Created by xunhu on 6/10/2017.
  */
-
+@EBean
 public class MyRegisterPresenter implements RegisterPresenterAction,RegisterActionStatus {
     private RegisterView registerView;
-    private UserRegisterModel userModel;
-
-    public MyRegisterPresenter(RegisterView registerView){
-        this.registerView=registerView;
-        this.userModel = new UserRegisterModel(this);
+    @Bean UserRegisterModel userModel;
+    public MyRegisterPresenter(Context context){
+        this.userModel = new UserRegisterModel(context);
+        userModel.setRegisterActionStatus(this);
     }
+    public void setRegisterView(RegisterView registerView) {
+        this.registerView = registerView;
+    }
+
     public RegisterView getRegisterView(){
         return registerView;
     }

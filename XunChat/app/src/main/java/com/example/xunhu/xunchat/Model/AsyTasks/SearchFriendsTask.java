@@ -20,6 +20,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Created by xunhu on 6/21/2017.
  */
@@ -27,42 +32,28 @@ import java.net.URLEncoder;
 public class SearchFriendsTask extends AsyncTask<String,Void,String>{
     SearchFriendsActionStatus searchFriendsActionStatus;
     String restfulURL = MainActivity.SEARCH_FRIEND;
+    OkHttpClient client = new OkHttpClient();
     public SearchFriendsTask(SearchFriendsActionStatus searchFriendsActionStatus){
         this.searchFriendsActionStatus=searchFriendsActionStatus;
     }
     @Override
     protected String doInBackground(String... params) {
         String targetUsername=params[0];
-        HttpURLConnection httpURLConnection = null;
         try {
-            URL url = new URL(restfulURL);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(5000);
-
             JSONObject object = new JSONObject();
             object.put("targetUsername",targetUsername);
             object.put("my_id",MainActivity.me.getId());
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
-            String postData =  URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");
-            bufferedWriter.write(postData);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            outputStream.close();
-
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-            String result="";
-            String line;
-            while ((line=bufferedReader.readLine())!=null){
-                result+=line;
+            RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
+            okhttp3.Request request =new  okhttp3.Request.Builder().
+                    url(restfulURL).
+                    post(requestBody).build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()){
+                String feedback =  response.body().string();
+                return feedback;
+            }else {
+                return "network error";
             }
-            bufferedReader.close();
-            inputStream.close();
-            return result;
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -71,10 +62,6 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
             return "Network Error";
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            if (httpURLConnection!=null){
-                httpURLConnection.disconnect();
-            }
         }
         return null;
     }

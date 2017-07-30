@@ -21,20 +21,25 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Calendar;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Created by xunhu on 6/10/2017.
  */
 
 public class RegisterTask extends AsyncTask<String,Void,String> {
        RegisterActionStatus actionStatus;
-       String restfulURL = MainActivity.REGISTER;
-
-    public RegisterTask(RegisterActionStatus actionStatus){
+       String restfulURL = "";
+       OkHttpClient client = new OkHttpClient();
+    public RegisterTask(RegisterActionStatus actionStatus,String restfulURL){
         this.actionStatus=actionStatus;
+        this.restfulURL=restfulURL;
     }
     @Override
     protected String doInBackground(String... params) {
-        HttpURLConnection httpURLConnection = null;
         String username = params[0];
         String nickname = params[1];
         String password = params[2];
@@ -49,13 +54,6 @@ public class RegisterTask extends AsyncTask<String,Void,String> {
         int birthYear = Integer.parseInt(birthday.split("/")[2]);
         int age = currentYear - birthYear;
         try {
-            URL url = new URL(restfulURL);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setDoInput(true);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setConnectTimeout(8000);
-
             JSONObject object = new JSONObject();
             object.put("username",username);
             object.put("nickname",nickname);
@@ -68,26 +66,17 @@ public class RegisterTask extends AsyncTask<String,Void,String> {
             object.put("gender",gender);
             object.put("region",region);
             object.put("QRCode",QRCode);
-
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));
-            String postData = URLEncoder.encode("json","UTF-8")+"="+URLEncoder.encode(object.toString(),"UTF-8");
-            bufferedWriter.write(postData);
-            bufferedWriter.flush();
-            bufferedWriter.close();
-            outputStream.close();
-
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream,"iso-8859-1"));
-            String result="";
-            String line;
-            while ((line=bufferedReader.readLine())!=null){
-                result+=line;
+            RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
+            okhttp3.Request request =new  okhttp3.Request.Builder().
+                    url(restfulURL).
+                    post(requestBody).build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()){
+                String feedback =  response.body().string();
+                return feedback;
+            }else {
+                return "network error";
             }
-            bufferedReader.close();
-            inputStream.close();
-            return result;
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -95,14 +84,9 @@ public class RegisterTask extends AsyncTask<String,Void,String> {
             return "Network Error";
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            if (httpURLConnection!=null){
-                httpURLConnection.disconnect();
-            }
         }
         return null;
     }
-
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
@@ -112,7 +96,6 @@ public class RegisterTask extends AsyncTask<String,Void,String> {
             actionStatus.registerFail(s);
         }
     }
-
     @Override
     protected void onPreExecute() {
         super.onPreExecute();

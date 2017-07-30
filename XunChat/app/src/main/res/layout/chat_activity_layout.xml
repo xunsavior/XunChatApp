@@ -58,8 +58,8 @@
         <ImageButton
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/ib_add"
-            android:background="@drawable/add_icon"
+            android:id="@+id/ib_camera"
+            android:background="@drawable/gray_camera_icon"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="5dp"
@@ -68,7 +68,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ib_add"
+            android:layout_toRightOf="@+id/ib_camera"
             android:layout_toLeftOf="@+id/ib_sending"
             android:backgroundTint="@color/SkyBlue"
             android:id="@+id/et_message"

@@ -20,6 +20,10 @@
         android:theme="@style/AppTheme">
         <meta-data android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode"></meta-data>
+
+        <activity android:name=".View.Activities.SplashActivity_">
+        </activity>
+
         <activity android:name=".View.MainActivity_"
                    android:screenOrientation="portrait">
             <intent-filter>
@@ -27,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".View.Activities.ProfileThemeActivity_"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog"
             android:screenOrientation="portrait"
@@ -57,6 +62,10 @@
         <activity android:name=".View.Activities.ChatBoardActivity_"
             android:screenOrientation="portrait"
             ></activity>
+        <activity android:name=".View.Activities.PhotoTakenActivity_"
+            android:screenOrientation="portrait"
+            >
+        </activity>
         <service android:name=".Model.Services.XunChatGetTokenService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>

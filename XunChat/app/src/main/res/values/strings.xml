@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">XunChat</string>
-    <string name="VALIDATE_LOGIN">http://xunsavior.com/xunchat/cookie_validate.php</string>
+    <string name="register_url">http://xunsavior.com/xunchat/register.php</string>
+    <string name="login_url">http://xunsavior.com/xunchat/login.php</string>
+    <string name="validate_login">http://xunsavior.com/xunchat/cookie_validate.php</string>
+    <string name="logout">http://xunsavior.com/xunchat/logout.php</string>
     <string name="FRIEND_REQUEST_RESPOND">http://xunsavior.com/xunchat/friend_request_respond.php</string>
 </resources>
