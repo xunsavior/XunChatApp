@@ -1,10 +1,13 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.app.Activity;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ import com.example.xunhu.xunchat.R;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,12 +86,25 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
             case MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE:
                 return MediaStore.Images.Thumbnails.getThumbnail(activity.getContentResolver(),
                         mMediaStoreCursor.getLong(idIndex),
-                        MediaStore.Images.Thumbnails.MINI_KIND,
+                       MediaStore.Images.Thumbnails.MINI_KIND,
                         null
                 );
             default:
                 return null;
         }
+    }
+    private Bitmap getOriginBitmap(int position){
+        int idIndex = mMediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
+        mMediaStoreCursor.moveToPosition(position);
+        Uri imageUri= ContentUris
+                        .withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                mMediaStoreCursor.getInt(idIndex));
+        try {
+            return MediaStore.Images.Media.getBitmap(activity.getContentResolver(),imageUri);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView ivPhotoGallery;
@@ -102,9 +119,10 @@ public class PhotoGalleryAdapter extends RecyclerView.Adapter<PhotoGalleryAdapte
 
         @Override
         public void onClick(View v) {
-            BitmapDrawable drawable = (BitmapDrawable) ivPhotoGallery.getDrawable();
-            bitmap = drawable.getBitmap();
-            photoSelectListener.photoSelected(bitmap);
+            Bitmap bitmap =getOriginBitmap(getPosition());
+            if (bitmap!=null){
+                photoSelectListener.photoSelected(bitmap);
+            }
         }
     }
     public interface PhotoSelectListener{

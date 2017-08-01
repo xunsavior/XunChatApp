@@ -63,6 +63,34 @@
                     android:scaleType="fitXY"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_image_left_layout"
+                android:orientation="vertical"
+                android:background="@drawable/rounded_textview_green"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                >
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/ic_loading"
+                    android:id="@+id/ivLeftPhoto"
+                    android:scaleType="centerCrop"
+                    android:layout_margin="5dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:text="Loading..."
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/tvLeftCaption"
+                    />
+            </LinearLayout>
         </FrameLayout>
     </RelativeLayout>
     <RelativeLayout
@@ -108,8 +136,35 @@
                     android:scaleType="fitXY"
                     />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_image_right_layout"
+                android:orientation="vertical"
+                android:background="@drawable/rounded_textview_blue"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                >
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/ic_loading"
+                    android:id="@+id/ivRightPhoto"
+                    android:scaleType="centerCrop"
+                    android:layout_margin="5dp"
+                    />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="15dp"
+                    android:text="Loading..."
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/tvRightCaption"
+                    />
+            </LinearLayout>
         </FrameLayout>
-
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="50dp"
             android:layout_height="50dp"

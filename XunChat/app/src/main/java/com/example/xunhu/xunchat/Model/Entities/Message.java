@@ -1,5 +1,7 @@
 package com.example.xunhu.xunchat.Model.Entities;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by xunhu on 7/18/2017.
  */
@@ -11,7 +13,7 @@ public class Message {
     String messageContent;
     String time;
     int isError=1;
-
+    String caption = "";
     public Message(String senderURL,int messageType,int from, String messageContent,String time){
         this.senderURL=senderURL;
         this.messageType=messageType;
@@ -63,5 +65,13 @@ public class Message {
 
     public void setMessageType(int messageType) {
         this.messageType = messageType;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public String getCaption() {
+        return caption;
     }
 }

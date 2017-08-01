@@ -32,4 +32,8 @@ public class SendMessagePresenter implements SendMessageAction,SendMessageAction
     public void sendMessageSuccessful(long timestamp) {
         sendChatView.sendingMessageSuccessful(timestamp);
     }
+    @Override
+    public void sendImageSuccessful(long timestamp, String msg) {
+        sendChatView.sendingImageSuccessful(timestamp,msg);
+    }
 }

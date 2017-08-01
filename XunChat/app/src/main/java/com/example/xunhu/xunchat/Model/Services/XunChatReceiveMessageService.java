@@ -92,7 +92,6 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                         chatMessageNotification.createRequestRespondNotification(friendNickname+":",friendURL,chatMessageTicker,"[audio]");
                         break;
                 }
-
                 storeLatestChatMessage(friendID,friendUsername,friendNickname,friendURL,message,time,messageType);
                 break;
             default:

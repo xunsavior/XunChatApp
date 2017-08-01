@@ -7,4 +7,5 @@ package com.example.xunhu.xunchat.View.Interfaces;
 public interface SendChatView {
     void sendingMessageFail(long timestamp,String msg);
     void sendingMessageSuccessful(long timestamp);
+    void sendingImageSuccessful(long timestamp,String msg);
 }

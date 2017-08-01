@@ -21,6 +21,9 @@ import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -74,6 +77,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                 case 0:
                     holder.tvRightMessage.setVisibility(View.VISIBLE);
                     holder.llAudioMessage.setVisibility(View.GONE);
+                    holder.llImageRightLayout.setVisibility(View.GONE);
                     if (message.getIsSentSuccess()==0){
                         holder.tvRightMessage.setText(messageContent);
                         holder.tvRightMessage.setError("fail to send your message"+
@@ -83,10 +87,16 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                     }
                     break;
                 case 1:
+                    holder.tvRightMessage.setVisibility(View.GONE);
+                    holder.llAudioMessage.setVisibility(View.GONE);
+                    holder.llImageRightLayout.setVisibility(View.VISIBLE);
+                    PicassoClient.downloadImage(context,messageContent,holder.ivRightPhoto);
+                    holder.tvRightCaption.setText(message.getCaption());
                     break;
                 case 2:
                     holder.tvRightMessage.setVisibility(View.GONE);
                     holder.llAudioMessage.setVisibility(View.VISIBLE);
+                    holder.llImageRightLayout.setVisibility(View.GONE);
                     holder.llAudioMessage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -110,24 +120,31 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                 case 0:
                     holder.tvLeftMessage.setVisibility(View.VISIBLE);
                     holder.LlLeftAudioMessage.setVisibility(View.GONE);
-
+                    holder.llImageLeftLayout.setVisibility(View.GONE);
                     holder.tvLeftMessage.setText(messageContent);
                     break;
                 case 1:
+                    holder.tvLeftMessage.setVisibility(View.GONE);
+                    holder.LlLeftAudioMessage.setVisibility(View.GONE);
+                    holder.llImageLeftLayout.setVisibility(View.VISIBLE);
+                    try {
+                        JSONObject object = new JSONObject(message.getMessageContent());
+                        String caption = object.getString("image_caption");
+                        String imageUrl = MainActivity.domain_url+object.getString("image_url");
+                        holder.tvLeftCaption.setText(caption);
+                        System.out.println("@ url "+imageUrl);
+                        PicassoClient.downloadImage(context,imageUrl,holder.ivLeftPhoto);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case 2:
                     holder.tvLeftMessage.setVisibility(View.GONE);
                     holder.LlLeftAudioMessage.setVisibility(View.VISIBLE);
-
+                    holder.llImageLeftLayout.setVisibility(View.GONE);
                     holder.LlLeftAudioMessage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-//                            String filename = message.getTime()+".3gp";
-//                            String audioOutput = Environment.getExternalStorageDirectory()+
-//                                    File.separator+ MainActivity.me.getUsername()+
-//                                    File.separator+user.getUsername()+
-//                                    File.separator+filename;
-//                            playAudio(message.getMessageContent(),audioOutput);
                             playAudioFromURL(MainActivity.domain_url+message.getMessageContent());
                         }
                     });
@@ -165,7 +182,6 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             byte[] bytes = Base64.decode(base64Code,0);
             fileOutputStream.write(bytes);
             fileOutputStream.close();
-
             MediaPlayer mediaPlayer = new MediaPlayer();
             mediaPlayer.setDataSource(filename);
             mediaPlayer.prepare();
@@ -187,24 +203,22 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         return false;
     }
     class ViewHolder{
-        @BindView(R.id.tv_message_time)
-        TextView tvMessageTime;
-        @BindView(R.id.rl_friend_left)
-        RelativeLayout rlFriendLeft;
-        @BindView(R.id.iv_message_left_image)
-        CircleImageView ivLeftImage;
-        @BindView(R.id.tv_left_message)
-        TextView tvLeftMessage;
-        @BindView(R.id.rl_friend_right)
-        RelativeLayout rlFriendRight;
-        @BindView(R.id.tv_right_message)
-        TextView tvRightMessage;
-        @BindView(R.id.iv_message_right_image)
-        CircleImageView ivRightImage;
-        @BindView(R.id.ll_audio_right_layout)
-        LinearLayout llAudioMessage;
-        @BindView(R.id.ll_audio_left_layout)
-        LinearLayout LlLeftAudioMessage;
+        @BindView(R.id.tv_message_time) TextView tvMessageTime;
+        @BindView(R.id.rl_friend_left) RelativeLayout rlFriendLeft;
+        @BindView(R.id.iv_message_left_image) CircleImageView ivLeftImage;
+        @BindView(R.id.tv_left_message) TextView tvLeftMessage;
+        @BindView(R.id.rl_friend_right) RelativeLayout rlFriendRight;
+        @BindView(R.id.tv_right_message) TextView tvRightMessage;
+        @BindView(R.id.iv_message_right_image) CircleImageView ivRightImage;
+        @BindView(R.id.ll_audio_right_layout) LinearLayout llAudioMessage;
+        @BindView(R.id.ll_audio_left_layout) LinearLayout LlLeftAudioMessage;
+        @BindView(R.id.ll_image_left_layout) LinearLayout llImageLeftLayout;
+        @BindView(R.id.ivLeftPhoto) ImageView ivLeftPhoto;
+        @BindView(R.id.tvLeftCaption) TextView tvLeftCaption;
+        @BindView(R.id.ll_image_right_layout) LinearLayout llImageRightLayout;
+        @BindView(R.id.ivRightPhoto) ImageView ivRightPhoto;
+        @BindView(R.id.tvRightCaption) TextView tvRightCaption;
+
         public ViewHolder(View view){
             ButterKnife.bind(this,view);
         }

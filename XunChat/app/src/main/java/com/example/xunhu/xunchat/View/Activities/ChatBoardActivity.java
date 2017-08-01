@@ -10,6 +10,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
+import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.SendMessagePresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
@@ -41,6 +44,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -65,7 +70,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     @ViewById(R.id.ib_voice) ImageButton ibVoice;
     @ViewById(R.id.ib_sending) ImageButton ibSending;
     MediaRecorder mediaRecorder;
-    private User user;
+    public static User user;
     boolean isRecordingStart=false;
     List<Message> messages = new ArrayList<>();
     ChatMessageAdapter adapter;
@@ -75,6 +80,8 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     private MyDialog myDialog;
     private static final int ACCESS_RECORDER = 10;
     public static final int UPDATE_DB = 11;
+    public static final int SENDING_IMAGE= 9;
+    private MyDialog myLoadingDialog=null;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -239,7 +246,8 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                 sendMessageAndStoreMessage();
                 break;
             case R.id.ib_camera:
-                PhotoTakenActivity_.intent(this).start();
+                Intent intent = new Intent(this,PhotoTakenActivity_.class);
+                startActivityForResult(intent,SENDING_IMAGE);
                 break;
             default:
                 break;
@@ -363,6 +371,17 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     }
 
     @Override
+    public void sendingImageSuccessful(long timestamp, String msg) {
+        try {
+            JSONObject object = new JSONObject(msg);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("@ json error "+e.getMessage());
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         intentFilter.addAction(XunChatReceiveMessageService.REFRESH_CHAT_BOARD);
@@ -399,6 +418,25 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                 Toast.makeText(getApplicationContext().getApplicationContext(),"we need access to your location",Toast.LENGTH_SHORT).show();
             }else {
                 establishRecorder();
+            }
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode==SENDING_IMAGE && resultCode==RESULT_OK){
+            if (data!=null){
+                String bitmap = data.getStringExtra("bitmap");
+                String caption = data.getStringExtra("caption");
+                long timestamp = System.currentTimeMillis();
+                presenter = new SendMessagePresenter(this);
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("image_code",bitmap);
+                    object.put("image_caption",caption);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                presenter.sendingMessage(MainActivity.me,user.getUsername(),user.getUserID(),1,object.toString(),timestamp);
             }
         }
     }

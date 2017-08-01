@@ -11,4 +11,41 @@
         android:id="@+id/ivCapturedPhoto"
         android:src="@drawable/ic_bg"
         />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:alpha="0.7"
+        android:background="@color/black"
+        >
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:background="@color/black"
+            android:id="@+id/etCaption"
+            android:hint="Add a caption..."
+            android:textColorHint="@color/white"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:inputType="text"
+            android:textSize="25dp"
+            android:layout_margin="10dp"
+            android:backgroundTint="@null"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/ibSendImage"
+            />
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="70dp"
+            android:id="@+id/ibSendImage"
+            android:scaleType="fitXY"
+            android:background="@drawable/ic_send_photo"
+            android:layout_alignParentRight="true"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="25dp"
+            android:layout_gravity="right"
+            />
+    </RelativeLayout>
+
 </FrameLayout>
