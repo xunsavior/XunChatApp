@@ -78,7 +78,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 String friendNickname = object.getString("sender_nickname");
                 int messageType = object.getInt("sending_message_type");
                 String message = object.getString("message");
-                String time = String.valueOf(System.currentTimeMillis());
+                String time = object.getString("timestamp");
                 MyNotification chatMessageNotification = new MyNotification(CHAT_MESSAGE_NOTIFICATION_ID);
                 String chatMessageTicker = friendNickname+" has sent you a message.";
                 switch (messageType){

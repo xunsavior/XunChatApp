@@ -44,7 +44,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
         int target_id =  Integer.parseInt(strings[8]);
         String extras = strings[9];
         String remark = strings[10];
-
+        long timestamp = System.currentTimeMillis();
         HttpURLConnection httpURLConnection = null;
         try {
             URL url = new URL(restfulURL);
@@ -66,7 +66,7 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
             object.put("target_id",target_id);
             object.put("sender_extras",extras);
             object.put("sender_remark",remark);
-            System.out.println("@ object "+object.toString());
+            object.put("timestamp",String.valueOf(timestamp));
 
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream,"UTF-8"));

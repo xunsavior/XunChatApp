@@ -26,7 +26,6 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
     public SendMessageTask(SendMessageActionStatus sendMessageActionStatus){
         this.sendMessageActionStatus=sendMessageActionStatus;
     }
-
     @Override
     protected String doInBackground(String... strings) {
         int senderID = Integer.parseInt(strings[0]);
@@ -46,7 +45,7 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
             object.put("target_id",targetID);
             object.put("sending_message_type",messageType);
             object.put("message",message);
-            System.out.println("@ object "+object.toString());
+            object.put("timestamp",String.valueOf(timestamp));
             RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
             okhttp3.Request request =new  okhttp3.Request.Builder().
                     url(MainActivity.SEND_MESSAGE).
@@ -65,7 +64,6 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
             return "network error";
         }
     }
-
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
