@@ -12,7 +12,7 @@ public class Message {
     int from;
     String messageContent;
     String time;
-    int isError=1;
+    int isSuccess=1;
     String caption = "";
     public Message(String senderURL,int messageType,int from, String messageContent,String time){
         this.senderURL=senderURL;
@@ -22,10 +22,10 @@ public class Message {
         this.time =time;
     }
     public int getIsSentSuccess(){
-        return this.isError;
+        return this.isSuccess;
     }
-    public void setIsSentSuccess(int isError){
-        this.isError=isError;
+    public void setIsSentSuccess(int isSuccess){
+        this.isSuccess=isSuccess;
     }
     public String getTime() {
         return time;

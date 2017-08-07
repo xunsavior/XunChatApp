@@ -27,7 +27,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
@@ -38,9 +37,6 @@ import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SendChatView;
 import com.example.xunhu.xunchat.View.MainActivity;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
@@ -349,7 +345,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     }
     @Override
     public void sendingMessageFail(long timestamp,String msg) {
-
         for (int i=0;i<messages.size();i++){
             if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
                 messages.get(i).setIsSentSuccess(0);

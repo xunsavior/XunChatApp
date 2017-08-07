@@ -81,12 +81,10 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                     holder.llAudioMessage.setVisibility(View.GONE);
                     holder.llImageRightLayout.setVisibility(View.GONE);
                     if (message.getIsSentSuccess()==0){
-                        holder.tvRightMessage.setText(messageContent);
                         holder.tvRightMessage.setError("fail to send your message"+
                                 "\n caused by network error or the user is not your friend now!");
-                    }else {
-                        holder.tvRightMessage.setText(messageContent);
                     }
+                    holder.tvRightMessage.setText(messageContent);
                     break;
                 case 1:
                     holder.tvRightMessage.setVisibility(View.GONE);
@@ -96,6 +94,10 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                         JSONObject object = new JSONObject(messageContent);
                         String caption = object.getString("image_caption");
                         final String imageUrl = MainActivity.domain_url+object.getString("image_url");
+                        if (message.getIsSentSuccess()==0){
+                            holder.tvRightCaption.setError("fail to send this message"+
+                                    "\n caused by network error or the user is not your friend now!");
+                        }
                         holder.tvRightCaption.setText(caption);
                         PicassoClient.downloadImage(context,imageUrl,holder.ivRightPhoto);
                         holder.ivRightPhoto.setOnClickListener(new View.OnClickListener() {
