@@ -1,6 +1,7 @@
 package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.R;
+import com.example.xunhu.xunchat.View.Activities.ProfileThemeActivity_;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.json.JSONException;
@@ -54,7 +56,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view;
-        ViewHolder holder;
+        final ViewHolder holder;
         final Message message = getItem(position);
         if (convertView==null){
             view = LayoutInflater.from(getContext()).inflate(resourceId,null);
@@ -90,8 +92,21 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                     holder.tvRightMessage.setVisibility(View.GONE);
                     holder.llAudioMessage.setVisibility(View.GONE);
                     holder.llImageRightLayout.setVisibility(View.VISIBLE);
-                    PicassoClient.downloadImage(context,messageContent,holder.ivRightPhoto);
-                    holder.tvRightCaption.setText(message.getCaption());
+                    try {
+                        JSONObject object = new JSONObject(messageContent);
+                        String caption = object.getString("image_caption");
+                        final String imageUrl = MainActivity.domain_url+object.getString("image_url");
+                        holder.tvRightCaption.setText(caption);
+                        PicassoClient.downloadImage(context,imageUrl,holder.ivRightPhoto);
+                        holder.ivRightPhoto.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                enlargePhoto(imageUrl);
+                            }
+                        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case 2:
                     holder.tvRightMessage.setVisibility(View.GONE);
@@ -130,9 +145,14 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
                     try {
                         JSONObject object = new JSONObject(message.getMessageContent());
                         String caption = object.getString("image_caption");
-                        String imageUrl = MainActivity.domain_url+object.getString("image_url");
+                        final String imageUrl = MainActivity.domain_url+object.getString("image_url");
                         holder.tvLeftCaption.setText(caption);
-                        System.out.println("@ url "+imageUrl);
+                        holder.ivLeftPhoto.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                enlargePhoto(imageUrl);
+                            }
+                        });
                         PicassoClient.downloadImage(context,imageUrl,holder.ivLeftPhoto);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -171,12 +191,10 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             e.printStackTrace();
         } catch (RuntimeException e){
             e.printStackTrace();
-            System.out.println("@ runtime "+e.getMessage());
         }
     }
     public void playAudio(String base64Code,String filename){
         File file = new File(filename);
-        System.out.print("@ code "+base64Code);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file,true);
             byte[] bytes = Base64.decode(base64Code,0);
@@ -188,10 +206,15 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             mediaPlayer.start();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("@ io "+e.getMessage());
         } catch (RuntimeException e){
             e.printStackTrace();
-            System.out.println("@ runtime "+e.getMessage());
+        }
+    }
+    void enlargePhoto(String url){
+        if (!url.isEmpty()){
+            Intent intent = new Intent(getContext(), ProfileThemeActivity_.class);
+            intent.putExtra("url",url);
+            getContext().startActivity(intent);
         }
     }
     @Override
@@ -218,6 +241,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
         @BindView(R.id.ll_image_right_layout) LinearLayout llImageRightLayout;
         @BindView(R.id.ivRightPhoto) ImageView ivRightPhoto;
         @BindView(R.id.tvRightCaption) TextView tvRightCaption;
+
 
         public ViewHolder(View view){
             ButterKnife.bind(this,view);

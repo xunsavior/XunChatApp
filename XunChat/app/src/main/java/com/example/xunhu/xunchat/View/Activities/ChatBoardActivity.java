@@ -38,6 +38,8 @@ import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SendChatView;
 import com.example.xunhu.xunchat.View.MainActivity;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -82,6 +84,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     public static final int UPDATE_DB = 11;
     public static final int SENDING_IMAGE= 9;
     private MyDialog myLoadingDialog=null;
+
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -108,7 +111,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         lvMessage.setStackFromBottom(false);
         tvRemark.setText(user.getRemark());
         myDialog = new MyDialog(this);
-
         if (Build.VERSION.SDK_INT>Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(getApplicationContext(),
                     Manifest.permission.RECORD_AUDIO)== PackageManager.PERMISSION_GRANTED &&
@@ -369,15 +371,28 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     public void sendingMessageSuccessful(long timestamp) {
 
     }
-
     @Override
     public void sendingImageSuccessful(long timestamp, String msg) {
-        try {
-            JSONObject object = new JSONObject(msg);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            System.out.println("@ json error "+e.getMessage());
+        int index = msg.indexOf("}{");
+        String subString = msg.substring(index+1);
+        SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("message_type",1);
+        contentValues.put("me_or_friend",0);
+        contentValues.put("message_content",subString);
+        contentValues.put("username",MainActivity.me.getUsername());
+        contentValues.put("is_sent",1);
+        contentValues.put("friend_username",ChatBoardActivity.user.getUsername());
+        database.update("message",
+                contentValues,
+                "(username=?) and (friend_username=?) and (time=?)",
+                new String[]{MainActivity.me.getUsername(),user.getUsername(),String.valueOf(timestamp)});
+        for (int i=0;i<messages.size();i++){
+            if (messages.get(i).getTime().equals(String.valueOf(timestamp))){
+                messages.get(i).setMessageContent(subString);
+                adapter.notifyDataSetChanged();
+                break;
+            }
         }
     }
 
@@ -427,7 +442,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
             if (data!=null){
                 String bitmap = data.getStringExtra("bitmap");
                 String caption = data.getStringExtra("caption");
-                long timestamp = System.currentTimeMillis();
+                long timestamp = data.getLongExtra("timestamp",0);
                 presenter = new SendMessagePresenter(this);
                 JSONObject object = new JSONObject();
                 try {

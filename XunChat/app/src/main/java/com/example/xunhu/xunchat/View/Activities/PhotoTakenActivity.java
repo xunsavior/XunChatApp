@@ -17,13 +17,18 @@ import com.example.xunhu.xunchat.View.Fragments.CapturedPhotoFragment;
 import com.example.xunhu.xunchat.View.Fragments.CapturedPhotoFragment_;
 import com.example.xunhu.xunchat.View.MainActivity;
 import com.google.android.gms.vision.CameraSource;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Fullscreen;
 import org.androidannotations.annotations.WindowFeature;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 
 /**
@@ -57,7 +62,6 @@ public class PhotoTakenActivity extends AppCompatActivity implements
         capturedPhotoFragment.setSelectedPhoto(bitmap);
         flipFragment();
     }
-
     private void flipFragment(){
         if (isBackShowing){
             getFragmentManager().popBackStack();
@@ -75,7 +79,6 @@ public class PhotoTakenActivity extends AppCompatActivity implements
         isBackShowing=false;
         super.onBackPressed();
     }
-
     @Override
     public void sendPhoto(Bitmap bitmap,String caption,long timestamp) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -83,10 +86,17 @@ public class PhotoTakenActivity extends AppCompatActivity implements
         byte[] imageBytes = byteArrayOutputStream.toByteArray();
         String imageCode = Base64.encodeToString(imageBytes,Base64.DEFAULT);
         SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
+        JSONObject object = new JSONObject();
+        try {
+            object.put("image_caption",caption);
+            object.put("image_url","");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ContentValues contentValues = new ContentValues();
         contentValues.put("message_type",1);
         contentValues.put("me_or_friend",0);
-        contentValues.put("message_content","");
+        contentValues.put("message_content",object.toString());
         contentValues.put("time",String.valueOf(timestamp));
         contentValues.put("username",MainActivity.me.getUsername());
         contentValues.put("is_sent",1);
@@ -97,6 +107,7 @@ public class PhotoTakenActivity extends AppCompatActivity implements
         Intent intent = new Intent();
         intent.putExtra("bitmap",imageCode);
         intent.putExtra("caption",caption);
+        intent.putExtra("timestamp",timestamp);
         setResult(RESULT_OK,intent);
         finish();
     }
