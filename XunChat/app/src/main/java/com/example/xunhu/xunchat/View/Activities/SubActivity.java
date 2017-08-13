@@ -9,12 +9,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,7 +77,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 break;
         }
     }
-    @Click({R.id.iv_moment_back,R.id.iv_new_friends_back})
+    @Click({R.id.iv_moment_back,R.id.iv_new_friends_back,R.id.iv_post_photo})
     void onSubActivityClickRespond(View view){
         switch (view.getId()){
             case R.id.iv_moment_back:
@@ -83,6 +85,9 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                 break;
             case R.id.iv_new_friends_back:
                 onBackPressed();
+                break;
+            case R.id.iv_post_photo:
+                createCameraPopupMenu(view);
                 break;
             default:
                 break;
@@ -99,6 +104,25 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     }
     private void createMomentView(){
         setContentView(R.layout.moments_display_layout);
+    }
+    void createCameraPopupMenu(View view){
+        PopupMenu popupMenu = new PopupMenu(this,view);
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.take_photo:
+                        return true;
+                    case R.id.photo_gallery:
+                        PhotoGalleryActivity_.intent(getApplicationContext()).start();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        popupMenu.inflate(R.menu.photo_selection_menu);
+        popupMenu.show();
     }
 
     @Override

@@ -1,12 +1,18 @@
 package com.example.xunhu.xunchat.View.Activities;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.xunhu.xunchat.Model.Entities.Me;
@@ -18,6 +24,8 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+
+import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,11 +42,18 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
     @ViewById(R.id.et_edit_moment) EditText edMoment;
     @ViewById(R.id.iv_get_current_location) ImageView ivCurrentLocation;
     @ViewById(R.id.tv_display_current_location) TextView tvDisplayLocation;
-    @ViewById(R.id.iv_selected_post_image) ImageView ivSelectedImage;
+    @ViewById
+    ImageView ivSelectedOne,ivSelectedTwo,ivSelectedThree;
+    @ViewById
+    LinearLayout selectedImageLayout;
+    String uriOne,uriTwo,uriThree;
     @AfterViews void setEditMomentActivityViews(){
         boolean hasImage = getIntent().getExtras().getBoolean("image");
-        System.out.println("@ image "+hasImage);
-        checkImagePostOrNot(hasImage);
+        try {
+            checkImagePostOrNot(hasImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     @Click({R.id.iv_edit_moment_back,R.id.btn_edit_moment_send,R.id.iv_get_current_location})
     public void respond(View view){
@@ -56,9 +71,29 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
                 break;
         }
     }
-    public void checkImagePostOrNot(boolean hasImage){
+    public void postImages(){
+       Bitmap bitmapOne = resizeBitmap(((BitmapDrawable)ivSelectedOne.getDrawable()).getBitmap());
+       if (uriTwo!=null){
+
+       }
+       if (uriThree!=null){
+
+       }
+    }
+    public void checkImagePostOrNot(boolean hasImage) throws IOException {
         if (!hasImage){
-            ivSelectedImage.setVisibility(View.GONE);
+            selectedImageLayout.setVisibility(View.GONE);
+        }else {
+             uriOne = getIntent().getStringExtra("image_0");
+             uriTwo = getIntent().getStringExtra("image_1");
+             uriThree = getIntent().getStringExtra("image_2");
+            ivSelectedOne.setImageURI(Uri.parse(uriOne));
+            if (uriTwo!=null){
+                ivSelectedTwo.setImageURI(Uri.parse(uriTwo));
+            }
+            if (uriThree!=null){
+                ivSelectedThree.setImageURI(Uri.parse(uriThree));
+            }
         }
     }
     @Override
@@ -69,5 +104,16 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
     @Override
     public void setEditLocation(String title, String content) {
 
+    }
+    Bitmap resizeBitmap(Bitmap bitmap){
+        float ratio = (float) bitmap.getByteCount()/(float) 1024/(float)1024;
+        if (ratio>=1){
+            float originalWidth = bitmap.getWidth();
+            float originalHeight = bitmap.getHeight();
+            float resizeWidth = (float) (originalWidth/Math.sqrt(ratio));
+            float resizeHeight = (float) (originalHeight/Math.sqrt(ratio));
+            bitmap=Bitmap.createScaledBitmap(bitmap, (int) resizeWidth, (int) resizeHeight, true);
+        }
+        return bitmap;
     }
 }

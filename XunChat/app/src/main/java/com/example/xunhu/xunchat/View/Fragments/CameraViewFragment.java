@@ -156,7 +156,6 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
             }
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode==CameraViewActivity.ACCESS_CAMERA){
@@ -167,7 +166,6 @@ public class CameraViewFragment extends Fragment implements SurfaceHolder.Callba
             }
         }
     }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         //details of each column we are looking

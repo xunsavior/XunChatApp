@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#3E3E40"
+        android:background="@color/darkGrey"
         android:id="@+id/topEditMomentBar"
         >
         <ImageView
@@ -26,16 +26,11 @@
             android:textColor="#fff"
             android:textSize="20dp"
             android:layout_alignParentRight="true"
-            android:background="#1E90FF"
+            android:background="@drawable/rounded_button"
             android:layout_margin="5dp"
             android:id="@+id/btn_edit_moment_send"
             />
     </RelativeLayout>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/iv_selected_post_image"
-        />
      <LinearLayout
          android:layout_width="match_parent"
          android:layout_height="wrap_content"
@@ -47,10 +42,42 @@
              android:layout_height="wrap_content"
              android:hint="Say something here..."
              android:lines="5"
+             android:layout_margin="5dp"
+             android:textColor="@color/gray"
              android:gravity="top"
-             android:textColorHint="#B2B2B2"
+             android:textColorHint="@color/gray"
              android:id="@+id/et_edit_moment"
+             android:textStyle="bold"
              />
+         <LinearLayout
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:orientation="horizontal"
+             android:id="@+id/selectedImageLayout"
+             android:layout_gravity="center_horizontal"
+             >
+             <ImageView
+                 android:layout_width="100dp"
+                 android:layout_height="100dp"
+                 android:scaleType="centerCrop"
+                 android:id="@+id/ivSelectedOne"
+                 android:layout_margin="5dp"
+                 />
+             <ImageView
+                 android:layout_width="100dp"
+                 android:layout_height="100dp"
+                 android:scaleType="centerCrop"
+                 android:id="@+id/ivSelectedTwo"
+                 android:layout_margin="5dp"
+                 />
+             <ImageView
+                 android:layout_width="100dp"
+                 android:layout_height="100dp"
+                 android:scaleType="centerCrop"
+                 android:id="@+id/ivSelectedThree"
+                 android:layout_margin="5dp"
+                 />
+         </LinearLayout>
          <LinearLayout
              android:layout_width="match_parent"
              android:layout_height="wrap_content">
