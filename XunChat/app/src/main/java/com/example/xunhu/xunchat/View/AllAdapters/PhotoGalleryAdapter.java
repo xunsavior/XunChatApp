@@ -2,7 +2,6 @@ package com.example.xunhu.xunchat.View.AllAdapters;
 
 import android.app.Activity;
 import android.content.ContentUris;
-import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -12,17 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
-import com.example.xunhu.xunchat.Model.Entities.GalleryPhoto;
 import com.example.xunhu.xunchat.R;
-
-import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.ViewById;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 

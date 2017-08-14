@@ -61,7 +61,7 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
             return "JSON error";
         } catch (IOException e) {
             e.printStackTrace();
-            return "network error";
+            return "network error "+e.getMessage();
         }
     }
     @Override
