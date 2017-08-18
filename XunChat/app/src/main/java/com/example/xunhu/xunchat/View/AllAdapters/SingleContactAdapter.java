@@ -107,7 +107,9 @@ public class SingleContactAdapter extends ArrayAdapter<Friend> implements Search
             String gender = object.getString("gender");
             String region = object.getString("region");
             int relationshipType = object.getInt("relationship_type");
+            String images = object.getString("images");
             User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
+            user.setImages(images);
             user.setRemark(globalFriend.getNickname());
             ProfileActivity_.intent(getContext()).extra("user",user).start();
         } catch (JSONException e) {

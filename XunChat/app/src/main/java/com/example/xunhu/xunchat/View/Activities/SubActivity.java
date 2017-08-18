@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +23,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xunhu.xunchat.Model.Entities.Me;
+import com.example.xunhu.xunchat.Model.Entities.Post;
 import com.example.xunhu.xunchat.Model.Entities.Request;
 import com.example.xunhu.xunchat.Model.Entities.User;
+import com.example.xunhu.xunchat.Presenter.LoadPostPresenter;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.FriendRequestAdapter;
+import com.example.xunhu.xunchat.View.AllAdapters.SingePostAdapter;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
+import com.example.xunhu.xunchat.View.Interfaces.LoadPostView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.MainActivity;
 
@@ -34,6 +40,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.LongClick;
 import org.androidannotations.annotations.ViewById;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,20 +51,24 @@ import java.util.List;
  * Created by xunhu on 6/19/2017.
  */
 @EActivity
-public class SubActivity extends Activity implements SearchFriendInterface {
+public class SubActivity extends Activity implements SearchFriendInterface,LoadPostView {
     public static Me me = MainActivity.me;
     @ViewById(R.id.iv_moment_back) ImageView ivBackImage;
     @ViewById(R.id.iv_post_photo) ImageView ivCreatePost;
     @ViewById(R.id.iv_new_friends_back) ImageView ivNewRequestBack;
     @ViewById(R.id.lv_new_requests) ListView lvNewRequests;
     @ViewById(R.id.et_search_username) EditText etSearchFriends;
+    @ViewById(R.id.rvImagePost) RecyclerView rvImagePost;
     MySearchFriendPresenter presenter;
+    LoadPostPresenter loadPostPresenter;
     private String viewType = "";
     private static final String NEW_FRIEND = "new friends";
     private static final String MOMENT = "moments";
     List<Request> list = new ArrayList<>();
+    List<Post> posts = new ArrayList<>();
     FriendRequestAdapter adapter;
     MyDialog myDialog;
+    SingePostAdapter singePostAdapter;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +115,15 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     }
     private void createMomentView(){
         setContentView(R.layout.moments_display_layout);
+        singePostAdapter = new SingePostAdapter(this,posts);
+        rvImagePost.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        rvImagePost.setHasFixedSize(true);
+        rvImagePost.setAdapter(singePostAdapter);
+        int id = getIntent().getIntExtra("id",-1);
+        if (id!=-1){
+            loadPostPresenter  = new LoadPostPresenter(this);
+            loadPostPresenter.loadPosts(id);
+        }
     }
     void createCameraPopupMenu(View view){
         PopupMenu popupMenu = new PopupMenu(this,view);
@@ -114,7 +134,7 @@ public class SubActivity extends Activity implements SearchFriendInterface {
                     case R.id.take_photo:
                         return true;
                     case R.id.photo_gallery:
-                        PhotoGalleryActivity_.intent(getApplicationContext()).start();
+                        PhotoGalleryActivity_.intent(SubActivity.this).start();
                         return true;
                     default:
                         return false;
@@ -201,7 +221,9 @@ public class SubActivity extends Activity implements SearchFriendInterface {
               String gender = object.getString("gender");
               String region = object.getString("region");
               int relationshipType = object.getInt("relationship_type");
+              String images = object.getString("images");
               User user = new User(user_id,username,nickname,url,gender,region,whatsup,age,relationshipType);
+              user.setImages(images);
               ProfileActivity_.intent(this).extra("user",user).start();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -210,5 +232,33 @@ public class SubActivity extends Activity implements SearchFriendInterface {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    @Override
+    public void loadingPostSuccess(String msg) {
+        try {
+            posts.clear();
+            JSONArray jsonArray = new JSONArray(msg);
+            for (int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String nickname = getIntent().getStringExtra("nickname");
+                String imageURL = jsonObject.getString("image_url");
+                String postContent = jsonObject.getString("post_content");
+                String caption = jsonObject.getString("caption");
+                int postType = jsonObject.getInt("post_type");
+                String timestamp = jsonObject.getString("timestamp");
+                String location = jsonObject.getString("location");
+                Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
+                posts.add(post);
+            }
+            singePostAdapter.notifyDataSetChanged();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            System.out.println("@ json error "+e.getMessage());
+        }
+    }
+    @Override
+    public void loadingPostFail(String msg) {
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 }

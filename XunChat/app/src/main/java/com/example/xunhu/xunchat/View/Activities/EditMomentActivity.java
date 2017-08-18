@@ -139,7 +139,7 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
     @Override
     public void postFail(String msg) {
         myDialog.cancelLoadingGifDialog();
-        Toast.makeText(getApplicationContext(),"fail to post",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT).show();
     }
 
      class ImageToCodeTask extends AsyncTask<List<String>,Void,List<String>> {

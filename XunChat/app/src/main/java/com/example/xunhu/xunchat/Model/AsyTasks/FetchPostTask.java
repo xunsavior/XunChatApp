@@ -1,67 +1,63 @@
 package com.example.xunhu.xunchat.Model.AsyTasks;
+
 import android.os.AsyncTask;
-import com.example.xunhu.xunchat.Presenter.Interfaces.PostActionStatus;
+
+import com.example.xunhu.xunchat.Presenter.Interfaces.LoadPostActionStatus;
 import com.example.xunhu.xunchat.View.MainActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
+
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by xunhu on 8/14/2017.
+ * Created by xunhu on 8/18/2017.
  */
 
-public class PostPhotoTask extends AsyncTask<String,Void,String> {
-    PostActionStatus postActionStatus;
+public class FetchPostTask extends AsyncTask<Integer,Void,String> {
+    LoadPostActionStatus loadPostActionStatus;
     OkHttpClient client = new OkHttpClient();
-    long timestamp=0;
-    public PostPhotoTask(PostActionStatus postActionStatus){
-       this.postActionStatus=postActionStatus;
+    public FetchPostTask(LoadPostActionStatus loadPostActionStatus){
+        this.loadPostActionStatus=loadPostActionStatus;
     }
     @Override
-    protected String doInBackground(String... strings) {
-        int userID = Integer.parseInt(strings[0]);
-        int postType = Integer.parseInt(strings[1]);
-        String postContent = strings[2];
-        String time = strings[3];
-        String location = strings[4];
-        this.timestamp = Long.parseLong(time);
+    protected String doInBackground(Integer... integers) {
+        int userID = integers[0];
         JSONObject object = new JSONObject();
         try {
             object.put("user_id",userID);
-            object.put("post_type",postType);
-            object.put("post_content",postContent);
-            object.put("timestamp",timestamp);
-            object.put("location",location);
             RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
             okhttp3.Request request =new  okhttp3.Request.Builder().
-                    url(MainActivity.POST).
+                    url(MainActivity.FETCH_POSTS).
                     post(requestBody).build();
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()){
                 return response.body().string();
             }else {
-                return "post fail";
+                return "fail to load posts";
             }
         } catch (JSONException e) {
             e.printStackTrace();
-            return "Json Error";
+            return "Json error";
         } catch (IOException e) {
             e.printStackTrace();
-            return "Network Error "+e.getMessage();
+            return "network error";
         }
     }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         System.out.println("@ respond "+s);
-        if (s.contains("success")){
-            postActionStatus.postSuccess(s);
+        if (s.contains("post_content")){
+            loadPostActionStatus.loadPostSuccess(s);
         }else {
-            postActionStatus.postFail(s);
+            loadPostActionStatus.loadPostFail(s);
         }
     }
 }

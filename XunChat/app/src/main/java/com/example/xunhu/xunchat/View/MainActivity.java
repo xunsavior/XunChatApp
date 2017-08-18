@@ -92,6 +92,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static final String DELETE_FRIEND = "http://xunsavior.com/xunchat/delete_friend.php";
     public static final String SEND_MESSAGE = "http://xunsavior.com/xunchat/send_message.php";
     public static final String POST = "http://xunsavior.com/xunchat/post.php";
+    public static final String FETCH_POSTS = "http://xunsavior.com/xunchat/fetch_posts.php";
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     MyPagerAdapter adapter;

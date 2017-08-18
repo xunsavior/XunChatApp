@@ -28,6 +28,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
+import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.DeleteFriendActionPresenter;
 import com.example.xunhu.xunchat.Presenter.RequestRespondPresenter;
@@ -45,6 +46,9 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,6 +72,7 @@ public class ProfileActivity extends Activity implements RequestRespondView,
     @ViewById(R.id.llAlbum) LinearLayout llAlbum;
     @ViewById(R.id.btn_send_or_add) Button btnSendOrAdd;
     @ViewById(R.id.ib_profile_menu) ImageButton ivMenu;
+    @ViewById ImageView ivOne,ivTwo,ivThree;
     RemarkDialogFragment remarkDialogFragment;
     SetRemarkPresenter setRemarkPresenter;
     DeleteFriendActionPresenter deleteFriendActionPresenter;
@@ -142,6 +147,29 @@ public class ProfileActivity extends Activity implements RequestRespondView,
         }else {
             ivGender.setImageResource(R.drawable.male_icon);
         }
+        if (!user.getImages().isEmpty()){
+            try {
+                JSONObject imageObjects = new JSONObject(user.getImages());
+                String images = imageObjects.getString("images");
+                JSONArray jsonArray = new JSONArray(images);
+                switch (jsonArray.length()){
+                    case 1:
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(0),ivOne);
+                        break;
+                    case 2:
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(0),ivOne);
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(1),ivTwo);
+                        break;
+                    case 3:
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(0),ivOne);
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(1),ivTwo);
+                        PicassoClient.downloadImage(this,MainActivity.domain_url+jsonArray.getString(2),ivThree);
+                        break;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         ImageRequest imageRequest = new ImageRequest(profile_url, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
@@ -156,7 +184,7 @@ public class ProfileActivity extends Activity implements RequestRespondView,
         MySingleton.getmInstance(getApplicationContext()).addImageRequestToRequestQueue(imageRequest);
     }
     @Click({R.id.btn_send_or_add,R.id.iv_profile_activity_back,R.id.iv_profile_activity_image,
-    R.id.ib_profile_menu})
+    R.id.ib_profile_menu,R.id.llAlbum})
     public void onRespond(View view){
         switch (view.getId()){
             case R.id.iv_profile_activity_back:
@@ -181,6 +209,10 @@ public class ProfileActivity extends Activity implements RequestRespondView,
                 if (btnSendOrAdd.getText().toString().equals("Message")){
                     createPopupMenu(view);
                 }
+                break;
+            case R.id.llAlbum:
+                SubActivity_.intent(this).extra("type","moments").
+                        extra("id",user.getUserID()).extra("nickname",user.getNickname()).start();
                 break;
             default:
                 break;

@@ -26,8 +26,11 @@ import com.example.xunhu.xunchat.Model.AsyTasks.MySingleton;
 import com.example.xunhu.xunchat.Model.Entities.Me;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.QRCodeActivity;
+import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.EditProfileLayout;
 import com.example.xunhu.xunchat.View.MainActivity;
+
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OnActivityResult;
@@ -47,6 +50,7 @@ public class MeFragment extends Fragment  {
     @ViewById(R.id.profile_layout) LinearLayout linearLayoutProfile;
     @ViewById(R.id.MeLayout) FrameLayout meFrameLayout;
     @ViewById(R.id.tv_my_age) TextView tvMyAge;
+    @ViewById LinearLayout llMyPosts;
     String url ="";
     MeFragmentInterface conn;
     private Me me;
@@ -59,7 +63,26 @@ public class MeFragment extends Fragment  {
         super.onAttach(activity);
         conn = (MeFragmentInterface) activity;
     }
-    @Click({R.id.iv_my_profile,R.id.profile_layout})
+    @AfterViews void setMeFragmentViews(){
+        llMyPosts.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        llMyPosts.setBackgroundColor(getResources().getColor(R.color.SkyBlue));
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        llMyPosts.setBackgroundColor(getResources().getColor(R.color.white));
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        llMyPosts.setBackgroundColor(getResources().getColor(R.color.white));
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+    @Click({R.id.iv_my_profile,R.id.profile_layout,R.id.llMyPosts})
     public void onRespond(View view){
         switch (view.getId()){
             case R.id.iv_my_profile:
@@ -241,6 +264,10 @@ public class MeFragment extends Fragment  {
                         startActivity(intent);
                     }
                 });
+                break;
+            case R.id.llMyPosts:
+                SubActivity_.intent(this).extra("type","moments").
+                        extra("id",MainActivity.me.getId()).extra("nickname",MainActivity.me.getNickname()).start();
                 break;
             default:
                 break;

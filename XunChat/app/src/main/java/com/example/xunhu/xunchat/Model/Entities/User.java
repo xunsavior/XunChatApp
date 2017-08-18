@@ -17,7 +17,7 @@ public class User implements Serializable {
     private String nickname;
     private int relationship_type;
     private String remark= "";
-
+    private String images = "";
     public User(int userID,String username,String nickname,String url,String gender,String region,
                 String whatsup,int age, int relationship_type){
         this.userID=userID;
@@ -29,6 +29,14 @@ public class User implements Serializable {
         this.age=age;
         this.nickname=nickname;
         this.relationship_type=relationship_type;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
+    }
+
+    public String getImages() {
+        return images;
     }
 
     public String getRemark() {

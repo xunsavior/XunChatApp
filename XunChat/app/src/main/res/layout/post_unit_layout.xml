@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:background="#ffff"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#ffff">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/ll_post_basic_information"
         android:orientation="horizontal"
         >
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/iv_post_user_image"
+            android:id="@+id/civPostProfileImage"
             android:layout_margin="10dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/initial_profie_image"
@@ -27,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_post_username"
+                android:id="@+id/tvPostUsername"
                 android:textSize="20dp"
                 android:textColor="#000"
                 android:textStyle="bold"
@@ -44,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tv_post_time"
+                    android:id="@+id/tvPostTime"
                     android:textColor="#A7ADBA"
                     android:text="loading..."
                     android:textSize="15dp"
@@ -63,7 +64,7 @@
                     android:text="not public"
                     android:textColor="#A7ADBA"
                     android:layout_gravity="center_vertical"
-                    android:id="@+id/tv_post_location"
+                    android:id="@+id/tvPostLocation"
                     />
             </LinearLayout>
         </LinearLayout>
@@ -82,15 +83,23 @@
             android:textSize="20dp"
             android:layout_marginLeft="10dp"
             android:textColor="#000"
-            android:id="@+id/tv_post_content"
+            android:id="@+id/tvPostContent"
             />
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:src="@drawable/ic_loading"
-            android:scaleType="fitCenter"
-            android:id="@+id/iv_post_url"
-            />
+        <com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cycledView"
+            app:icvp_interpolator="@android:anim/accelerate_decelerate_interpolator"
+            app:icvp_scroll_duration="250"
+            app:icvp_center_page_scale_offset="5dp"
+            app:icvp_min_page_scale_offset="5dp"
+            app:icvp_max_page_scale="0.9"
+            app:icvp_min_page_scale="0.85"
+            app:icvp_medium_scaled="false"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            >
+        </com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -112,13 +121,14 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_vertical"
+                android:id="@+id/ivThumbsUp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Loading..."
                 android:textColor="#2570C3"
-                android:id="@+id/tv_post_num_of_likes"
+                android:id="@+id/tvNumOfLikes"
                 android:textSize="15dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="5dp"
