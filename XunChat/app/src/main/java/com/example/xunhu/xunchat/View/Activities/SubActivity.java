@@ -115,7 +115,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     }
     private void createMomentView(){
         setContentView(R.layout.moments_display_layout);
-        singePostAdapter = new SingePostAdapter(this,posts);
+        singePostAdapter = new SingePostAdapter(this.getBaseContext(),posts);
         rvImagePost.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         rvImagePost.setHasFixedSize(true);
         rvImagePost.setAdapter(singePostAdapter);

@@ -85,21 +85,35 @@
             android:textColor="#000"
             android:id="@+id/tvPostContent"
             />
-        <com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/cycledView"
-            app:icvp_interpolator="@android:anim/accelerate_decelerate_interpolator"
-            app:icvp_scroll_duration="250"
-            app:icvp_center_page_scale_offset="5dp"
-            app:icvp_min_page_scale_offset="5dp"
-            app:icvp_max_page_scale="0.9"
-            app:icvp_min_page_scale="0.85"
-            app:icvp_medium_scaled="false"
-            android:layout_centerHorizontal="true"
+            android:orientation="horizontal"
             android:visibility="gone"
+            android:id="@+id/llImageLayout"
             >
-        </com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager>
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/ivPostOne"
+                android:layout_margin="5dp"
+                />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/ivPostTwo"
+                android:layout_margin="5dp"
+                />
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:id="@+id/ivPostThree"
+                android:layout_margin="5dp"
+                />
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

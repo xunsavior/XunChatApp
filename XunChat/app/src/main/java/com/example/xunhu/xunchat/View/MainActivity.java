@@ -639,6 +639,20 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             }
     }
 
+    public static String timeGap(long timestamp){
+        long currentTime = System.currentTimeMillis();
+        long timeGap = currentTime-timestamp;
+        if (timeGap/1000/60<1){
+            return String.valueOf(timeGap/1000)+"s ago";
+        }else if (timeGap/1000/60<60 && timeGap/1000/60>0){
+            return String.valueOf(timeGap/1000/60)+"min ago";
+        }else if (timeGap/1000/60/60>0 && timeGap/1000/60/60<60){
+            return String.valueOf(timeGap/1000/60/60)+"hrs ago";
+        }else{
+            return String.valueOf(timeGap/1000/60/60/24)+"day(s) ago";
+        }
+    }
+
     class MyPagerAdapter extends FragmentStatePagerAdapter{
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
