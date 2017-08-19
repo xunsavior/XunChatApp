@@ -58,5 +58,10 @@ public class ScrollLoadingPostTask extends AsyncTask<String,Void,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         System.out.println("@ respond "+s);
+        if (s.contains("post_content")){
+            scrollLoadingPostActionStatus.scrollLoadingSuccess(s,1);
+        }else {
+            scrollLoadingPostActionStatus.scrollLoadingFail(s);
+        }
     }
 }

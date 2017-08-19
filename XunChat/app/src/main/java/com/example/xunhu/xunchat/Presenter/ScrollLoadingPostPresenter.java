@@ -23,11 +23,11 @@ public class ScrollLoadingPostPresenter implements ScrollLoadPostAction,ScrollLo
 
     @Override
     public void scrollLoadingSuccess(String msg, int type) {
-
+        scrollLoadingPostView.scrollLoadingSuccess(msg,type);
     }
 
     @Override
     public void scrollLoadingFail(String msg) {
-
+        scrollLoadingPostView.scrollLoadingFail(msg);
     }
 }

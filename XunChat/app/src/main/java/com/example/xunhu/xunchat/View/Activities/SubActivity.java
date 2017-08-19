@@ -309,12 +309,34 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     }
 
     @Override
-    public void scrollLoadingSuccess(String msg, String timestamp, int type) {
-
+    public void scrollLoadingSuccess(String msg, int type) {
+            if (type==1){
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = new JSONArray(msg);
+                    for (int i=0;i<jsonArray.length();i++){
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        String nickname = getIntent().getStringExtra("nickname");
+                        String imageURL = jsonObject.getString("image_url");
+                        String postContent = jsonObject.getString("post_content");
+                        String caption = jsonObject.getString("caption");
+                        int postType = jsonObject.getInt("post_type");
+                        String timestamp = jsonObject.getString("timestamp");
+                        String location = jsonObject.getString("location");
+                        Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
+                        posts.add(post);
+                    }
+                    singePostAdapter.notifyDataSetChanged();
+                    loading=true;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    System.out.println("@ json error "+e.getMessage());
+                }
+            }
     }
 
     @Override
     public void scrollLoadingFail(String msg) {
-
+        loading=true;
     }
 }
