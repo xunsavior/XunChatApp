@@ -19,11 +19,10 @@
             android:src="@drawable/initial_profie_image"
             android:scaleType="centerCrop"
             />
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:orientation="vertical"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -35,39 +34,17 @@
                 android:layout_margin="5dp"
                 android:text="loading..."
                 />
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/ll_location_layout"
-                android:orientation="horizontal"
-                android:layout_gravity="bottom"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvPostTime"
-                    android:textColor="#A7ADBA"
-                    android:text="loading..."
-                    android:textSize="15dp"
-                    android:layout_margin="5dp"
-                    />
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_gray_location"
-                    android:layout_gravity="center_vertical"
-                    android:layout_margin="5dp"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="not public"
-                    android:textColor="#A7ADBA"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/tvPostLocation"
-                    />
-            </LinearLayout>
-        </LinearLayout>
+                android:id="@+id/tvPostTime"
+                android:textColor="#A7ADBA"
+                android:text="loading..."
+                android:textSize="15dp"
+                android:layout_margin="5dp"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -86,11 +63,12 @@
             android:id="@+id/tvPostContent"
             />
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:visibility="gone"
             android:id="@+id/llImageLayout"
+            android:layout_gravity="center_horizontal"
             >
             <ImageView
                 android:layout_width="100dp"
@@ -112,6 +90,29 @@
                 android:scaleType="centerCrop"
                 android:id="@+id/ivPostThree"
                 android:layout_margin="5dp"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/llLocationLayout"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            >
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/ic_gray_location"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="not public"
+                android:textColor="#A7ADBA"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/tvPostLocation"
                 />
         </LinearLayout>
         <View

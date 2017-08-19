@@ -47,10 +47,10 @@ public class MyDialog {
         View view = activity.getLayoutInflater().inflate(R.layout.gif_dialog,null);
         pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) view.findViewById(R.id.iv_gif);
         gifImageView.setBackgroundColor(Color.TRANSPARENT);
-        gifImageView.setBackgroundResource(R.drawable.loading);
+        gifImageView.setBackgroundResource(R.drawable.moment_loading_gif);
         builder.setView(view);
         loadingDialog = builder.create();
-        loadingDialog.getWindow().setDimAmount(0);
+        //loadingDialog.getWindow().setDimAmount(0);
         loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         loadingDialog.show();
     }

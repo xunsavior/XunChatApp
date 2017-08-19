@@ -6,15 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.MainActivity;
-
 import java.util.ArrayList;
-import java.util.List;
-
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * Created by xunhu on 8/18/2017.

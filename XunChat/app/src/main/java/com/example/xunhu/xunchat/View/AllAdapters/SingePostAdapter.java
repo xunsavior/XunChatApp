@@ -53,14 +53,15 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
         PicassoClient.downloadImage(context,MainActivity.domain_url+post.getImageURL(),holder.civPostProfileImage);
         holder.tvPostUsername.setText(post.getNickName());
         holder.tvPostTime.setText(MainActivity.timeGap(Long.parseLong(post.getTimestamp())));
+        if (post.getLocation().isEmpty()){
+            holder.llLocationLayout.setVisibility(View.GONE);
+        }else {
+            holder.llLocationLayout.setVisibility(View.VISIBLE);
+            holder.tvPostLocation.setText(post.getLocation());
+        }
         switch (post.getPostType()){
             case 0:
                 holder.llImageLayout.setVisibility(View.GONE);
-                if (post.getLocation().isEmpty()){
-                    holder.tvPostLocation.setText("not public");
-                }else {
-                    holder.tvPostLocation.setText(post.getLocation());
-                }
                 holder.tvPostContent.setText(post.getPostContent());
                 break;
             case 1:
@@ -81,15 +82,20 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
                         switch (i){
                             case 0:
                                 PicassoClient.downloadImage(context,MainActivity.domain_url+urls.get(0),holder.ivPostOne);
+                                holder.ivPostTwo.setVisibility(View.INVISIBLE);
+                                holder.ivPostThree.setVisibility(View.INVISIBLE);
                                 break;
                             case 1:
+                                holder.ivPostTwo.setVisibility(View.VISIBLE);
                                 PicassoClient.downloadImage(context,MainActivity.domain_url+urls.get(1),holder.ivPostTwo);
                                 break;
                             default:
+                                holder.ivPostThree.setVisibility(View.VISIBLE);
                                 PicassoClient.downloadImage(context,MainActivity.domain_url+urls.get(2),holder.ivPostThree);
                                 break;
                         }
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -124,6 +130,8 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
         ImageView ivPostTwo;
         @BindView(R.id.ivPostThree)
         ImageView ivPostThree;
+        @BindView(R.id.llLocationLayout)
+        LinearLayout llLocationLayout;
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);

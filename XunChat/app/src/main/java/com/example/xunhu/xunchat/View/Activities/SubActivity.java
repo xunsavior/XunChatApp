@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
@@ -28,12 +31,14 @@ import com.example.xunhu.xunchat.Model.Entities.Request;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Presenter.LoadPostPresenter;
 import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
+import com.example.xunhu.xunchat.Presenter.ScrollLoadingPostPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.FriendRequestAdapter;
 import com.example.xunhu.xunchat.View.AllAdapters.SingePostAdapter;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.LoadPostView;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
+import com.example.xunhu.xunchat.View.Interfaces.scrollLoadingPostView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
 import org.androidannotations.annotations.Click;
@@ -51,7 +56,7 @@ import java.util.List;
  * Created by xunhu on 6/19/2017.
  */
 @EActivity
-public class SubActivity extends Activity implements SearchFriendInterface,LoadPostView {
+public class SubActivity extends Activity implements SearchFriendInterface,LoadPostView,scrollLoadingPostView {
     public static Me me = MainActivity.me;
     @ViewById(R.id.iv_moment_back) ImageView ivBackImage;
     @ViewById(R.id.iv_post_photo) ImageView ivCreatePost;
@@ -59,8 +64,12 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     @ViewById(R.id.lv_new_requests) ListView lvNewRequests;
     @ViewById(R.id.et_search_username) EditText etSearchFriends;
     @ViewById(R.id.rvImagePost) RecyclerView rvImagePost;
+    @ViewById(R.id.slRefreshPost)
+    SwipeRefreshLayout slRefreshPost;
     MySearchFriendPresenter presenter;
     LoadPostPresenter loadPostPresenter;
+    ScrollLoadingPostPresenter scrollLoadingPostPresenter;
+    MyDialog loadingPostDialog;
     private String viewType = "";
     private static final String NEW_FRIEND = "new friends";
     private static final String MOMENT = "moments";
@@ -69,6 +78,10 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     FriendRequestAdapter adapter;
     MyDialog myDialog;
     SingePostAdapter singePostAdapter;
+    LoadPostView loadPostView = this;
+    scrollLoadingPostView scrollLoadingPostView = this;
+    private boolean loading = true;
+    int pastVisibleItems, visibleItemCount, totalItemCount;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,13 +128,44 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     }
     private void createMomentView(){
         setContentView(R.layout.moments_display_layout);
+        final int id = getIntent().getIntExtra("id",-1);
+        loadingPostDialog = new MyDialog(this);
+        loadingPostDialog.createLoadingGifDialog();
         singePostAdapter = new SingePostAdapter(this.getBaseContext(),posts);
-        rvImagePost.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        slRefreshPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadPostPresenter  = new LoadPostPresenter(loadPostView);
+                loadPostPresenter.loadPosts(id);
+            }
+        });
+        slRefreshPost.setColorSchemeResources(R.color.SkyBlue);
+        slRefreshPost.setProgressBackgroundColorSchemeResource(R.color.white);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        rvImagePost.setLayoutManager(linearLayoutManager);
+        rvImagePost.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy>0){
+                    visibleItemCount = linearLayoutManager.getChildCount();
+                    totalItemCount = linearLayoutManager.getItemCount();
+                    pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
+                    if (loading)
+                    {
+                        if ( (visibleItemCount + pastVisibleItems) >= totalItemCount)
+                        {
+                            loading = false;
+                            scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                            scrollLoadingPostPresenter.operateScrollLoadingPost(id,posts.get(posts.size()-1).getTimestamp(),1);
+                        }
+                    }
+                }
+            }
+        });
         rvImagePost.setHasFixedSize(true);
         rvImagePost.setAdapter(singePostAdapter);
-        int id = getIntent().getIntExtra("id",-1);
         if (id!=-1){
-            loadPostPresenter  = new LoadPostPresenter(this);
+            loadPostPresenter  = new LoadPostPresenter(loadPostView);
             loadPostPresenter.loadPosts(id);
         }
     }
@@ -197,7 +241,6 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
             }while (cursor.moveToNext());
         }
         lvNewRequests.setAdapter(adapter);
-        //update is read
         database.update("request",contentValues,"username=? AND isRead=?",new String[]{MainActivity.me.getUsername(),"0"});
         cursor.close();
     }
@@ -237,7 +280,9 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     @Override
     public void loadingPostSuccess(String msg) {
         try {
+            loadingPostDialog.cancelLoadingGifDialog();
             posts.clear();
+            slRefreshPost.setRefreshing(false);
             JSONArray jsonArray = new JSONArray(msg);
             for (int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -259,6 +304,17 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     }
     @Override
     public void loadingPostFail(String msg) {
+        loadingPostDialog.cancelLoadingGifDialog();
         Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void scrollLoadingSuccess(String msg, String timestamp, int type) {
+
+    }
+
+    @Override
+    public void scrollLoadingFail(String msg) {
+
     }
 }
