@@ -3,13 +3,10 @@ package com.example.xunhu.xunchat.View.Activities;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,7 +54,8 @@ import java.util.List;
  * Created by xunhu on 6/19/2017.
  */
 @EActivity
-public class SubActivity extends Activity implements SearchFriendInterface,LoadPostView,scrollLoadingPostView {
+public class SubActivity extends Activity implements SearchFriendInterface,LoadPostView,
+        scrollLoadingPostView,SingePostAdapter.SinglePostAdapterInterface {
     public static Me me = MainActivity.me;
     @ViewById(R.id.iv_moment_back) ImageView ivBackImage;
     @ViewById(R.id.iv_post_photo) ImageView ivCreatePost;
@@ -136,7 +134,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
         momentType = getIntent().getIntExtra("moment_type",-1);
         loadingPostDialog = new MyDialog(this);
         loadingPostDialog.createLoadingGifDialog();
-        singePostAdapter = new SingePostAdapter(this,posts);
+        singePostAdapter = new SingePostAdapter(this,posts,this);
         slRefreshPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -311,6 +309,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
             JSONArray jsonArray = new JSONArray(msg);
             for (int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int postID = jsonObject.getInt("post_id");
                 String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
                 String imageURL = jsonObject.getString("image_url");
                 String postContent = jsonObject.getString("post_content");
@@ -318,12 +317,17 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                 int postType = jsonObject.getInt("post_type");
                 String timestamp = jsonObject.getString("timestamp");
                 String location = jsonObject.getString("location");
-                Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
+                int numOfLikes = jsonObject.getInt("num_of_likes");
+                //int likedPostID = jsonObject.getInt("liked_post_id");
+                Post post = new Post(postID,nickname,imageURL,postContent,caption,postType,timestamp,location);
+                post.setNumberLikes(numOfLikes);
                 posts.add(post);
             }
+
             singePostAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
+            System.out.println("@ json error "+e.getMessage());
         }
     }
     @Override
@@ -347,6 +351,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
             JSONArray jsonArray =  new JSONArray(msg);
             for (int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                int postID = jsonObject.getInt("post_id");
                 String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
                 String imageURL = jsonObject.getString("image_url");
                 String postContent = jsonObject.getString("post_content");
@@ -354,7 +359,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                 int postType = jsonObject.getInt("post_type");
                 String timestamp = jsonObject.getString("timestamp");
                 String location = jsonObject.getString("location");
-                Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
+                Post post = new Post(postID,nickname,imageURL,postContent,caption,postType,timestamp,location);
                 posts.add(post);
             }
             singePostAdapter.notifyDataSetChanged();
@@ -368,8 +373,19 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     @Override
     public void scrollLoadingFail(String msg) {
         if (msg.equals("the user has not yet posted anything!")){
-            tvLoadingBottomPosts.setText("我有底线的！");
+            tvLoadingBottomPosts.setText(":) I have a bottom line!");
         }
         loading=true;
+    }
+
+    @Override
+    public void addLike(int postID) {
+        for (int i=0;i<posts.size();i++){
+            if (posts.get(i).getPostID()==postID) {
+                posts.get(i).setIsLiked(1);
+                break;
+            }
+        }
+        singePostAdapter.notifyDataSetChanged();
     }
 }

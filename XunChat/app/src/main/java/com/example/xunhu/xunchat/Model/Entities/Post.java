@@ -5,6 +5,7 @@ package com.example.xunhu.xunchat.Model.Entities;
  */
 
 public class Post {
+    int postID;
     String nickName;
     String imageURL;
     String postContent;
@@ -13,8 +14,11 @@ public class Post {
     String timestamp;
     String location;
     int numberLikes;
-    public Post(String nickName,String imageURL,String postContent,String caption,int postType,
-                String timestamp,String location){
+    int isLiked=0;
+    public Post(int postID,String nickName,
+                String imageURL,String postContent,String caption,int postType
+                ,String timestamp,String location){
+            this.postID=postID;
             this.nickName=nickName;
             this.imageURL=imageURL;
             this.postContent=postContent;
@@ -24,8 +28,24 @@ public class Post {
             this.location=location;
     }
 
+    public int getIsLiked() {
+        return isLiked;
+    }
+    public void setIsLiked(int isLiked) {
+        this.isLiked = isLiked;
+    }
+    public int getPostID() {
+        return postID;
+    }
+    public int getNumberLikes() {
+        return numberLikes;
+    }
     public String getCaption() {
         return caption;
+    }
+
+    public void setNumberLikes(int numberLikes) {
+        this.numberLikes = numberLikes;
     }
 
     public String getTimestamp() {
