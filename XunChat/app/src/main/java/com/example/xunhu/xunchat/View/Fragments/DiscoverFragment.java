@@ -18,6 +18,8 @@ import com.example.xunhu.xunchat.View.Activities.SubActivity;
 import com.example.xunhu.xunchat.View.Activities.SubActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
+import com.example.xunhu.xunchat.View.MainActivity;
+
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Touch;
@@ -42,7 +44,8 @@ public class DiscoverFragment extends Fragment implements SearchFriendInterface 
     public void onDiscoverFragmentClick(View view){
         switch (view.getId()){
             case R.id.ll_moments:
-                SubActivity_.intent(getActivity()).extra("type","moments").start();
+                SubActivity_.intent(getActivity()).extra("type","moments").
+                        extra("moment_type",100).extra("id", MainActivity.me.getId()).start();
                 break;
             case R.id.llScanQRCode:
                launchScannerCamera();

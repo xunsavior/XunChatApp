@@ -20,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -64,8 +65,11 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     @ViewById(R.id.lv_new_requests) ListView lvNewRequests;
     @ViewById(R.id.et_search_username) EditText etSearchFriends;
     @ViewById(R.id.rvImagePost) RecyclerView rvImagePost;
-    @ViewById(R.id.slRefreshPost)
-    SwipeRefreshLayout slRefreshPost;
+    @ViewById(R.id.slRefreshPost) SwipeRefreshLayout slRefreshPost;
+    @ViewById(R.id.tvLoadingBottomPosts) TextView tvLoadingBottomPosts;
+    @ViewById(R.id.ll)
+    LinearLayout ll;
+    int momentType = -1;
     MySearchFriendPresenter presenter;
     LoadPostPresenter loadPostPresenter;
     ScrollLoadingPostPresenter scrollLoadingPostPresenter;
@@ -129,14 +133,21 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     private void createMomentView(){
         setContentView(R.layout.moments_display_layout);
         final int id = getIntent().getIntExtra("id",-1);
+        momentType = getIntent().getIntExtra("moment_type",-1);
         loadingPostDialog = new MyDialog(this);
         loadingPostDialog.createLoadingGifDialog();
-        singePostAdapter = new SingePostAdapter(this.getBaseContext(),posts);
+        singePostAdapter = new SingePostAdapter(this,posts);
         slRefreshPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadPostPresenter  = new LoadPostPresenter(loadPostView);
-                loadPostPresenter.loadPosts(id);
+                if (momentType==100){
+                    scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                    scrollLoadingPostPresenter.operateScrollLoadingPost(id,String.valueOf(System.currentTimeMillis()),100);
+                }else {
+                    loadPostPresenter  = new LoadPostPresenter(loadPostView);
+                    loadPostPresenter.loadPosts(id);
+                }
+
             }
         });
         slRefreshPost.setColorSchemeResources(R.color.SkyBlue);
@@ -150,23 +161,37 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                     visibleItemCount = linearLayoutManager.getChildCount();
                     totalItemCount = linearLayoutManager.getItemCount();
                     pastVisibleItems = linearLayoutManager.findFirstVisibleItemPosition();
-                    if (loading)
-                    {
                         if ( (visibleItemCount + pastVisibleItems) >= totalItemCount)
                         {
-                            loading = false;
-                            scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
-                            scrollLoadingPostPresenter.operateScrollLoadingPost(id,posts.get(posts.size()-1).getTimestamp(),1);
+                            ll.setVisibility(View.VISIBLE);
+                            tvLoadingBottomPosts.setText("Loading...");
+                            if(loading){
+                                loading = false;
+                                if (momentType==100){
+                                    scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                                    scrollLoadingPostPresenter.operateScrollLoadingPost(id,posts.get(posts.size()-1).getTimestamp(),101);
+                                }else {
+                                    scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                                    scrollLoadingPostPresenter.operateScrollLoadingPost(id,posts.get(posts.size()-1).getTimestamp(),1);
+                                }
+                            }
                         }
-                    }
+                }else {
+                    ll.setVisibility(View.GONE);
                 }
+
             }
         });
         rvImagePost.setHasFixedSize(true);
         rvImagePost.setAdapter(singePostAdapter);
         if (id!=-1){
-            loadPostPresenter  = new LoadPostPresenter(loadPostView);
-            loadPostPresenter.loadPosts(id);
+            if (momentType==100){
+                scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                scrollLoadingPostPresenter.operateScrollLoadingPost(id,String.valueOf(System.currentTimeMillis()),100);
+            }else {
+                loadPostPresenter  = new LoadPostPresenter(loadPostView);
+                loadPostPresenter.loadPosts(id);
+            }
         }
     }
     void createCameraPopupMenu(View view){
@@ -286,7 +311,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
             JSONArray jsonArray = new JSONArray(msg);
             for (int i=0;i<jsonArray.length();i++){
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String nickname = getIntent().getStringExtra("nickname");
+                String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
                 String imageURL = jsonObject.getString("image_url");
                 String postContent = jsonObject.getString("post_content");
                 String caption = jsonObject.getString("caption");
@@ -299,7 +324,6 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
             singePostAdapter.notifyDataSetChanged();
         } catch (JSONException e) {
             e.printStackTrace();
-            System.out.println("@ json error "+e.getMessage());
         }
     }
     @Override
@@ -310,33 +334,42 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
 
     @Override
     public void scrollLoadingSuccess(String msg, int type) {
-            if (type==1){
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = new JSONArray(msg);
-                    for (int i=0;i<jsonArray.length();i++){
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        String nickname = getIntent().getStringExtra("nickname");
-                        String imageURL = jsonObject.getString("image_url");
-                        String postContent = jsonObject.getString("post_content");
-                        String caption = jsonObject.getString("caption");
-                        int postType = jsonObject.getInt("post_type");
-                        String timestamp = jsonObject.getString("timestamp");
-                        String location = jsonObject.getString("location");
-                        Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
-                        posts.add(post);
-                    }
-                    singePostAdapter.notifyDataSetChanged();
-                    loading=true;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    System.out.println("@ json error "+e.getMessage());
-                }
+        switch (type){
+            case 1:
+                break;
+            case 100:
+                posts.clear();
+                loadingPostDialog.cancelLoadingGifDialog();
+                slRefreshPost.setRefreshing(false);
+                break;
+        }
+        try {
+            JSONArray jsonArray =  new JSONArray(msg);
+            for (int i=0;i<jsonArray.length();i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
+                String imageURL = jsonObject.getString("image_url");
+                String postContent = jsonObject.getString("post_content");
+                String caption = jsonObject.getString("caption");
+                int postType = jsonObject.getInt("post_type");
+                String timestamp = jsonObject.getString("timestamp");
+                String location = jsonObject.getString("location");
+                Post post = new Post(nickname,imageURL,postContent,caption,postType,timestamp,location);
+                posts.add(post);
             }
+            singePostAdapter.notifyDataSetChanged();
+            ll.setVisibility(View.GONE);
+            loading=true;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void scrollLoadingFail(String msg) {
+        if (msg.equals("the user has not yet posted anything!")){
+            tvLoadingBottomPosts.setText("我有底线的！");
+        }
         loading=true;
     }
 }

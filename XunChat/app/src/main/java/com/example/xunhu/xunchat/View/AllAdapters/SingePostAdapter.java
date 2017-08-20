@@ -120,8 +120,6 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
         TextView tvPostLocation;
         @BindView(R.id.tvPostContent)
         TextView tvPostContent;
-        @BindView(R.id.ivThumbsUp)
-        ImageView ivThumbsUp;
         @BindView(R.id.tvNumOfLikes)
         TextView tvNumOfLikes;
         @BindView(R.id.ivPostOne)

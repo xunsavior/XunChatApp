@@ -646,7 +646,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             return String.valueOf(timeGap/1000)+"s ago";
         }else if (timeGap/1000/60<60 && timeGap/1000/60>0){
             return String.valueOf(timeGap/1000/60)+"min ago";
-        }else if (timeGap/1000/60/60>0 && timeGap/1000/60/60<60){
+        }else if (timeGap/1000/60/60>0 && timeGap/1000/60/60<24){
             return String.valueOf(timeGap/1000/60/60)+"hrs ago";
         }else{
             return String.valueOf(timeGap/1000/60/60/24)+"day(s) ago";

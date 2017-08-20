@@ -127,7 +127,9 @@ public class MyDialog {
         logoutDialog.cancel();
     }
     public void cancelLoadingGifDialog(){
-        loadingDialog.cancel();
+        if (loadingDialog!=null){
+            loadingDialog.cancel();
+        }
     }
     public void cancelBottomGifDialog(){
         searchDialog.cancel();

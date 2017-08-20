@@ -130,88 +130,23 @@
             android:orientation="horizontal"
             >
             <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@drawable/ic_thumbs_up"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:scaleType="fitXY"
+                android:id="@+id/ivLike"
+                android:src="@drawable/like_icon"
+                android:layout_margin="5dp"
                 android:layout_gravity="center_vertical"
-                android:id="@+id/ivThumbsUp"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Loading..."
-                android:textColor="#2570C3"
+                android:layout_gravity="center_vertical"
+                android:textStyle="bold"
+                android:text="loading..."
+                android:textColor="@color/red"
                 android:id="@+id/tvNumOfLikes"
-                android:textSize="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_gravity="center_vertical"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#2570C3"
-                android:textSize="15dp"
-                android:id="@+id/tv_post_num_of_comments"
-                android:text="Loading..."
-                android:layout_marginTop="5dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="20dp"
                 />
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#A7ADBA"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"
-            >
-        </View>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_gray_like"
-                android:id="@+id/iv_post_like"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="50dp"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Like"
-                android:textStyle="bold"
-                android:textSize="15dp"
-                android:textColor="#545859"
-                android:layout_toRightOf="@+id/iv_post_like"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                />
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_comment"
-                android:id="@+id/iv_post_comment"
-                android:layout_centerInParent="true"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Comment"
-                android:layout_toRightOf="@+id/iv_post_comment"
-                android:textColor="#545859"
-                android:textStyle="bold"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                />
-        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

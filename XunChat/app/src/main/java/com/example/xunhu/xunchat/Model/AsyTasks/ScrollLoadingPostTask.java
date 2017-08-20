@@ -21,6 +21,7 @@ import okhttp3.Response;
 
 public class ScrollLoadingPostTask extends AsyncTask<String,Void,String> {
     ScrollLoadingPostActionStatus scrollLoadingPostActionStatus;
+    int type = -1;
     OkHttpClient client = new OkHttpClient();
     public ScrollLoadingPostTask(ScrollLoadingPostActionStatus scrollLoadingPostActionStatus){
         this.scrollLoadingPostActionStatus=scrollLoadingPostActionStatus;
@@ -29,7 +30,7 @@ public class ScrollLoadingPostTask extends AsyncTask<String,Void,String> {
     protected String doInBackground(String... strings) {
         int userID = Integer.parseInt(strings[0]);
         long timestamp = Long.parseLong(strings[1]);
-        int type = Integer.parseInt(strings[2]);
+         type = Integer.parseInt(strings[2]);
         JSONObject object = new JSONObject();
         try {
             object.put("user_id",userID);
@@ -59,7 +60,7 @@ public class ScrollLoadingPostTask extends AsyncTask<String,Void,String> {
         super.onPostExecute(s);
         System.out.println("@ respond "+s);
         if (s.contains("post_content")){
-            scrollLoadingPostActionStatus.scrollLoadingSuccess(s,1);
+            scrollLoadingPostActionStatus.scrollLoadingSuccess(s,type);
         }else {
             scrollLoadingPostActionStatus.scrollLoadingFail(s);
         }

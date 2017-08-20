@@ -13,6 +13,7 @@
     <application
         android:allowBackup="false"
         android:name=".View.XunApplication"
+        android:largeHeap="true"
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
