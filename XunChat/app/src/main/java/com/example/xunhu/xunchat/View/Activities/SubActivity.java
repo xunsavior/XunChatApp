@@ -401,6 +401,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     }
     @Override
     public void scrollLoadingFail(String msg) {
+        slRefreshPost.setRefreshing(false);
         loadingPostDialog.cancelLoadingGifDialog();
         if (msg.equals("the user has not yet posted anything!")){
             tvLoadingBottomPosts.setText(":) I have a bottom line!");

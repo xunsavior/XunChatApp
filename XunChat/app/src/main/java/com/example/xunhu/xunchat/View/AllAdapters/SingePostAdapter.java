@@ -19,6 +19,7 @@ import com.example.xunhu.xunchat.Presenter.LikePostPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity_;
+import com.example.xunhu.xunchat.View.Activities.WhoLikePostActivity_;
 import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.DeletePostView;
 import com.example.xunhu.xunchat.View.Interfaces.LikePostView;
@@ -66,6 +67,14 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final Post post = posts.get(position);
+        holder.tvNumOfLikes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (post.getNumberLikes()>0){
+                    WhoLikePostActivity_.intent(context).extra("post_id",post.getPostID()).start();
+                }
+            }
+        });
         if (post.getIsLiked()==0){
             holder.ivLike.setImageResource(R.drawable.like_icon);
         }else {
@@ -100,6 +109,7 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
                 }
             }
         });
+
         if (post.getLocation().isEmpty()){
             holder.llLocationLayout.setVisibility(View.GONE);
         }else {

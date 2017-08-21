@@ -95,6 +95,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static final String FETCH_POSTS = "http://xunsavior.com/xunchat/fetch_posts.php";
     public static final String LIKE_POST = "http://xunsavior.com/xunchat/like_post.php";
     public static final String DELETE_POST = "http://xunsavior.com/xunchat/delete_post.php";
+    public static final String LOAD_WHO_LIKE_POST = "http://xunsavior.com/xunchat/load_who_like_post.php";
     private static final String FRIEND_REQUEST = "friend_request";
     private static final String NETWORK_STATE_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE";
     MyPagerAdapter adapter;
@@ -644,6 +645,8 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static String timeGap(long timestamp){
         long currentTime = System.currentTimeMillis();
         long timeGap = currentTime-timestamp;
+        System.out.println("@ current "+currentTime);
+        System.out.println("@ timestamp "+timestamp);
         if (timeGap/1000/60<1){
             return String.valueOf(timeGap/1000)+"s ago";
         }else if (timeGap/1000/60<60 && timeGap/1000/60>0){
