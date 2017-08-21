@@ -6,4 +6,5 @@ package com.example.xunhu.xunchat.Presenter.Interfaces;
 
 public interface LikePostAction {
     void likePost(int postID, int userID);
+    void cancelLikedPost(int postID, int userID);
 }

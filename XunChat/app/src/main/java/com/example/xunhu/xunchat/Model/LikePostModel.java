@@ -10,12 +10,15 @@ import com.example.xunhu.xunchat.Presenter.Interfaces.LikePostActionStatus;
 
 public class LikePostModel implements CRUDLikePostOptions {
     LikePostActionStatus likePostActionStatus;
-
     public LikePostModel(LikePostActionStatus likePostActionStatus){
         this.likePostActionStatus=likePostActionStatus;
     }
     @Override
     public void likePost(int postID, int userID) {
-        new LikePostTask(likePostActionStatus).execute(postID,userID);
+        new LikePostTask(likePostActionStatus).execute(postID,userID,0);
+    }
+    @Override
+    public void cancelDislikedPost(int postID, int userID) {
+        new LikePostTask(likePostActionStatus).execute(postID,userID,1);
     }
 }

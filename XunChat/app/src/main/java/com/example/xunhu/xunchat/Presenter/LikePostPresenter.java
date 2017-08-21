@@ -16,14 +16,20 @@ public class LikePostPresenter implements LikePostAction,LikePostActionStatus {
         this.likePostView=likePostView;
         likePostModel = new LikePostModel(this);
     }
+
     @Override
     public void likePost(int postID, int userID) {
         likePostModel.likePost(postID,userID);
     }
 
     @Override
-    public void likedSuccess(String msg, int postID) {
-        likePostView.likeSuccess(msg,postID);
+    public void cancelLikedPost(int postID, int userID) {
+        likePostModel.cancelDislikedPost(postID,userID);
+    }
+
+    @Override
+    public void likedSuccess(String msg, int postID,int type) {
+        likePostView.likeSuccess(msg,postID,type);
     }
 
     @Override

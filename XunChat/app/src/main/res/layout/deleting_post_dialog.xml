@@ -6,12 +6,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_centerInParent="true"
         >
         <pl.droidsonroids.gif.GifImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/gifDelete"
             android:src="@drawable/deleting_loading_icon"
+            android:scaleType="fitXY"
             />
         <TextView
             android:layout_width="wrap_content"

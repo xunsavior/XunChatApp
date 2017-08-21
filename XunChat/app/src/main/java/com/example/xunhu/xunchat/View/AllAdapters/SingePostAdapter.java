@@ -93,7 +93,11 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
             @Override
             public void onClick(View v) {
                 likePostPresenter = new LikePostPresenter(likePostView);
-                likePostPresenter.likePost(post.getPostID(),MainActivity.me.getId());
+                if (post.getIsLiked()==0){
+                    likePostPresenter.likePost(post.getPostID(),MainActivity.me.getId());
+                }else {
+                    likePostPresenter.cancelLikedPost(post.getPostID(),MainActivity.me.getId());
+                }
             }
         });
         if (post.getLocation().isEmpty()){
@@ -151,9 +155,13 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
     }
 
     @Override
-    public void likeSuccess(String msg, int postID) {
+    public void likeSuccess(String msg, int postID,int type) {
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
+        if (type==0){
             comm.addLike(postID);
+        }else {
+            comm.cancelLike(postID);
+        }
     }
     @Override
     public void likedFail(String msg) {
@@ -175,6 +183,7 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
 
     public interface SinglePostAdapterInterface{
         void addLike(int postID);
+        void cancelLike(int postID);
         void deletePost(Post post);
     }
     public class ViewHolder extends RecyclerView.ViewHolder {

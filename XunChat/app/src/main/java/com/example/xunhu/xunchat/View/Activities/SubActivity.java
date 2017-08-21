@@ -420,6 +420,19 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
         }
         singePostAdapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void cancelLike(int postID) {
+        for (int i=0;i<posts.size();i++){
+            if (posts.get(i).getPostID()==postID) {
+                posts.get(i).setIsLiked(0);
+                posts.get(i).setNumberLikes(posts.get(i).getNumberLikes()-1);
+                break;
+            }
+        }
+        singePostAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void deletePost(Post post) {
         posts.remove(post);

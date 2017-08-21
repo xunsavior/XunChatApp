@@ -5,6 +5,6 @@ package com.example.xunhu.xunchat.Presenter.Interfaces;
  */
 
 public interface LikePostActionStatus {
-    void likedSuccess(String msg, int postID);
+    void likedSuccess(String msg, int postID,int type);
     void likedFail(String msg);
 }

@@ -23,6 +23,7 @@ public class LikePostTask extends AsyncTask<Integer,Void,String> {
     LikePostActionStatus likePostActionStatus;
     OkHttpClient client = new OkHttpClient();
     int postID= -1;
+    int type=-1;
     public LikePostTask(LikePostActionStatus likePostActionStatus){
         this.likePostActionStatus = likePostActionStatus;
     }
@@ -30,11 +31,13 @@ public class LikePostTask extends AsyncTask<Integer,Void,String> {
     protected String doInBackground(Integer... integers) {
         int postID = integers[0];
         int userID = integers[1];
+        this.type=integers[2];
         this.postID = postID;
         JSONObject object = new JSONObject();
         try {
             object.put("post_id",postID);
             object.put("user_id",userID);
+            object.put("type",type);
             RequestBody requestBody = new FormBody.Builder().add("json",object.toString()).build();
             okhttp3.Request request =new  okhttp3.Request.Builder().
                     url(MainActivity.LIKE_POST).
@@ -59,7 +62,7 @@ public class LikePostTask extends AsyncTask<Integer,Void,String> {
         super.onPostExecute(s);
         System.out.println("@ respond "+s);
         if (s.contains("successful")){
-            likePostActionStatus.likedSuccess(s,postID);
+            likePostActionStatus.likedSuccess(s,postID,type);
         }else {
             likePostActionStatus.likedFail(s);
         }

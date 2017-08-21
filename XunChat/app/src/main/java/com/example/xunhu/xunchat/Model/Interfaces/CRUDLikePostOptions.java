@@ -6,4 +6,5 @@ package com.example.xunhu.xunchat.Model.Interfaces;
 
 public interface CRUDLikePostOptions {
     void likePost(int postID, int userID);
+    void cancelDislikedPost(int postID, int userID);
 }
