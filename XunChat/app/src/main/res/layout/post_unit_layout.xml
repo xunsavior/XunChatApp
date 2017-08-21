@@ -124,10 +124,9 @@
             android:layout_marginTop="5dp"
             >
         </View>
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             >
             <ImageView
                 android:layout_width="25dp"
@@ -136,17 +135,30 @@
                 android:id="@+id/ivLike"
                 android:src="@drawable/like_icon"
                 android:layout_margin="5dp"
-                android:layout_gravity="center_vertical"
+                android:layout_centerVertical="true"
                 />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
                 android:textStyle="bold"
                 android:text=""
                 android:textColor="@color/red"
                 android:id="@+id/tvNumOfLikes"
+                android:layout_toRightOf="@+id/ivLike"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
                 />
-        </LinearLayout>
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/icon_delete"
+                android:layout_gravity="center_vertical"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/ivDeletePost"
+                />
+        </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

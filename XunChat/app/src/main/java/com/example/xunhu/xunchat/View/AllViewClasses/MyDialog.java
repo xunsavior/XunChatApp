@@ -24,6 +24,7 @@ public class MyDialog {
     AlertDialog loadingDialog;
     AlertDialog searchDialog;
     AlertDialog microphoneDialog;
+    AlertDialog deletePostDialog;
     View view0;
     View view1;
     View view2;
@@ -84,6 +85,23 @@ public class MyDialog {
         microphoneDialog.getWindow().setDimAmount(0);
         microphoneDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         microphoneDialog.show();
+    }
+    public void createDeletePostDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View view = activity.getLayoutInflater().inflate(R.layout.deleting_post_dialog,null);
+        pl.droidsonroids.gif.GifImageView gifImageView = (pl.droidsonroids.gif.GifImageView) view.findViewById(R.id.gifDelete);
+        gifImageView.setBackgroundColor(Color.TRANSPARENT);
+        gifImageView.setBackgroundResource(R.drawable.deleting_loading_icon);
+        builder.setView(view);
+        deletePostDialog = builder.create();
+        //loadingDialog.getWindow().setDimAmount(0);
+        deletePostDialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        deletePostDialog.show();
+    }
+    public void cancelDeletePostDialog(){
+        if (deletePostDialog!=null){
+            deletePostDialog.cancel();
+        }
     }
     public void cancelVoiceLevelDialog(){
         microphoneDialog.cancel();

@@ -13,10 +13,12 @@ import android.widget.Toast;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.PicassoClient;
 import com.example.xunhu.xunchat.Model.Entities.Post;
+import com.example.xunhu.xunchat.Presenter.DeletePostPresenter;
 import com.example.xunhu.xunchat.Presenter.LikePostPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity_;
+import com.example.xunhu.xunchat.View.Interfaces.DeletePostView;
 import com.example.xunhu.xunchat.View.Interfaces.LikePostView;
 import com.example.xunhu.xunchat.View.MainActivity;
 import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
@@ -38,11 +40,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.ViewHolder>
-        implements LikePostView{
+        implements LikePostView,DeletePostView{
     Context context;
     List<Post> posts = new ArrayList<>();
     LikePostPresenter likePostPresenter;
+    DeletePostPresenter deletePostPresenter;
     LikePostView likePostView = this;
+    DeletePostView deletePostView = this;
     SinglePostAdapterInterface comm;
     public SingePostAdapter(Context context,List<Post> posts,SinglePostAdapterInterface singlePostAdapterInterface){
            this.context=context;
@@ -62,6 +66,18 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
             holder.ivLike.setImageResource(R.drawable.like_icon);
         }else {
             holder.ivLike.setImageResource(R.drawable.liked_icon);
+        }
+        if (post.getPosterID()==MainActivity.me.getId()){
+            holder.ivDeletePost.setVisibility(View.VISIBLE);
+            holder.ivDeletePost.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deletePostPresenter = new DeletePostPresenter(deletePostView);
+                    deletePostPresenter.deletePostAction(post.getPostID(),post.getPosterID());
+                }
+            });
+        }else {
+            holder.ivDeletePost.setVisibility(View.GONE);
         }
         PicassoClient.downloadImage(context,MainActivity.domain_url+post.getImageURL(),holder.civPostProfileImage);
         holder.tvPostUsername.setText(post.getNickName());
@@ -138,6 +154,17 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
     public void likedFail(String msg) {
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void deleteSuccess(String msg) {
+
+    }
+
+    @Override
+    public void deleteFail(String msg) {
+
+    }
+
     public interface SinglePostAdapterInterface{
         void addLike(int postID);
     }
@@ -166,6 +193,8 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
         LinearLayout llLocationLayout;
         @BindView(R.id.ivLike)
         ImageView ivLike;
+        @BindView(R.id.ivDeletePost)
+        ImageView ivDeletePost;
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);

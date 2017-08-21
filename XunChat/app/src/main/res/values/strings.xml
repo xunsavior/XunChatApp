@@ -6,4 +6,5 @@
     <string name="logout">http://xunsavior.com/xunchat/logout.php</string>
     <string name="FRIEND_REQUEST_RESPOND">http://xunsavior.com/xunchat/friend_request_respond.php</string>
     <string name="done">Done</string>
+    <string name="deletePost">Deleting the post...</string>
 </resources>

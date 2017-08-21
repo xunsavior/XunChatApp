@@ -302,13 +302,20 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
 
     @Override
     public void loadingPostSuccess(String msg) {
+        Post post = null;
+        loadingPostDialog.cancelLoadingGifDialog();
+        posts.clear();
+        slRefreshPost.setRefreshing(false);
+        JSONArray jsonArray = null;
         try {
-            loadingPostDialog.cancelLoadingGifDialog();
-            posts.clear();
-            slRefreshPost.setRefreshing(false);
-            JSONArray jsonArray = new JSONArray(msg);
-            for (int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            jsonArray = new JSONArray(msg);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        for (int i=0;i<jsonArray.length();i++){
+            JSONObject jsonObject = null;
+            try {
+                jsonObject = jsonArray.getJSONObject(i);
                 int postID = jsonObject.getInt("post_id");
                 String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
                 String imageURL = jsonObject.getString("image_url");
@@ -318,26 +325,30 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                 String timestamp = jsonObject.getString("timestamp");
                 String location = jsonObject.getString("location");
                 int numOfLikes = jsonObject.getInt("num_of_likes");
-                //int likedPostID = jsonObject.getInt("liked_post_id");
-                Post post = new Post(postID,nickname,imageURL,postContent,caption,postType,timestamp,location);
+                int posterID = jsonObject.getInt("poster_id");
+                post = new Post(postID,posterID,nickname,imageURL,postContent,caption,postType,timestamp,location);
                 post.setNumberLikes(numOfLikes);
+                int likedPostID = jsonObject.getInt("liked_post_id");
+                post.setIsLiked(1);
                 posts.add(post);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                if (post!=null){
+                    post.setIsLiked(0);
+                    posts.add(post);
+                }
             }
-
-            singePostAdapter.notifyDataSetChanged();
-        } catch (JSONException e) {
-            e.printStackTrace();
-            System.out.println("@ json error "+e.getMessage());
         }
+        singePostAdapter.notifyDataSetChanged();
     }
     @Override
     public void loadingPostFail(String msg) {
         loadingPostDialog.cancelLoadingGifDialog();
         Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
-
     @Override
     public void scrollLoadingSuccess(String msg, int type) {
+        Post post = null;
         switch (type){
             case 1:
                 break;
@@ -348,41 +359,55 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                 break;
         }
         try {
-            JSONArray jsonArray =  new JSONArray(msg);
+            JSONArray jsonArray = new JSONArray(msg);
             for (int i=0;i<jsonArray.length();i++){
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                int postID = jsonObject.getInt("post_id");
-                String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
-                String imageURL = jsonObject.getString("image_url");
-                String postContent = jsonObject.getString("post_content");
-                String caption = jsonObject.getString("caption");
-                int postType = jsonObject.getInt("post_type");
-                String timestamp = jsonObject.getString("timestamp");
-                String location = jsonObject.getString("location");
-                Post post = new Post(postID,nickname,imageURL,postContent,caption,postType,timestamp,location);
-                posts.add(post);
+                try {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    int postID = jsonObject.getInt("post_id");
+                    String nickname = (momentType==100)? jsonObject.getString("nickname"):getIntent().getStringExtra("nickname");
+                    String imageURL = jsonObject.getString("image_url");
+                    String postContent = jsonObject.getString("post_content");
+                    String caption = jsonObject.getString("caption");
+                    int postType = jsonObject.getInt("post_type");
+                    String timestamp = jsonObject.getString("timestamp");
+                    String location = jsonObject.getString("location");
+                    int numOfLikes = jsonObject.getInt("num_of_likes");
+                    int posterID = jsonObject.getInt("poster_id");
+                    post = new Post(postID,posterID,nickname,imageURL,postContent,caption,postType,timestamp,location);
+                    post.setNumberLikes(numOfLikes);
+                    int likedPostID = jsonObject.getInt("liked_post_id");
+                    post.setIsLiked(1);
+                    posts.add(post);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    if (post!=null){
+                        post.setIsLiked(0);
+                        posts.add(post);
+                    }
+                }
             }
-            singePostAdapter.notifyDataSetChanged();
-            ll.setVisibility(View.GONE);
-            loading=true;
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        singePostAdapter.notifyDataSetChanged();
+        ll.setVisibility(View.GONE);
+        loading=true;
     }
-
     @Override
     public void scrollLoadingFail(String msg) {
+        loadingPostDialog.cancelLoadingGifDialog();
+        Toast.makeText(this,"No post has been found!",Toast.LENGTH_SHORT).show();
         if (msg.equals("the user has not yet posted anything!")){
             tvLoadingBottomPosts.setText(":) I have a bottom line!");
         }
         loading=true;
     }
-
     @Override
     public void addLike(int postID) {
         for (int i=0;i<posts.size();i++){
             if (posts.get(i).getPostID()==postID) {
                 posts.get(i).setIsLiked(1);
+                posts.get(i).setNumberLikes(posts.get(i).getNumberLikes()+1);
                 break;
             }
         }
