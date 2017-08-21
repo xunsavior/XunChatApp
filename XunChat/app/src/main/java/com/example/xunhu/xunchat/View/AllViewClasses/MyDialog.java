@@ -29,8 +29,8 @@ public class MyDialog {
     View view1;
     View view2;
     View view3;
-    public MyDialog(Activity activity){
-        this.activity = activity;
+    public MyDialog(Context context){
+        this.activity = (Activity) context;
     }
     public void createGifLogoutDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);

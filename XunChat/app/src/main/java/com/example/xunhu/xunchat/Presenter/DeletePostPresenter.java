@@ -1,6 +1,7 @@
 package com.example.xunhu.xunchat.Presenter;
 
 import com.example.xunhu.xunchat.Model.DeletePostModel;
+import com.example.xunhu.xunchat.Model.Entities.Post;
 import com.example.xunhu.xunchat.Presenter.Interfaces.DeletePostAction;
 import com.example.xunhu.xunchat.Presenter.Interfaces.DeletePostActionStatus;
 import com.example.xunhu.xunchat.View.Interfaces.DeletePostView;
@@ -17,15 +18,15 @@ public class DeletePostPresenter implements DeletePostAction,DeletePostActionSta
         deletePostModel = new DeletePostModel(this);
     }
     @Override
-    public void deletePostAction(int postID, int posterID) {
-        deletePostModel.performDeletePost(postID,posterID);
+    public void deletePostAction(Post post) {
+        deletePostModel.performDeletePost(post);
     }
     @Override
     public void deletePostFail(String msg) {
-
+        deletePostView.deleteFail(msg);
     }
     @Override
-    public void deletePostSuccess(String msg) {
-
+    public void deletePostSuccess(Post post) {
+        deletePostView.deleteSuccess(post);
     }
 }

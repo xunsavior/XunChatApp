@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.example.xunhu.xunchat.Presenter.LikePostPresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity;
 import com.example.xunhu.xunchat.View.Activities.ImagesActivity_;
+import com.example.xunhu.xunchat.View.AllViewClasses.MyDialog;
 import com.example.xunhu.xunchat.View.Interfaces.DeletePostView;
 import com.example.xunhu.xunchat.View.Interfaces.LikePostView;
 import com.example.xunhu.xunchat.View.MainActivity;
@@ -38,7 +40,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by xunhu on 8/18/2017.
  */
-
 public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.ViewHolder>
         implements LikePostView,DeletePostView{
     Context context;
@@ -48,10 +49,13 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
     LikePostView likePostView = this;
     DeletePostView deletePostView = this;
     SinglePostAdapterInterface comm;
+    MyDialog myDialog;
+    int deletePosition= -1;
     public SingePostAdapter(Context context,List<Post> posts,SinglePostAdapterInterface singlePostAdapterInterface){
            this.context=context;
            this.posts=posts;
            this.comm=singlePostAdapterInterface;
+           myDialog = new MyDialog(context);
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -60,7 +64,7 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final Post post = posts.get(position);
         if (post.getIsLiked()==0){
             holder.ivLike.setImageResource(R.drawable.like_icon);
@@ -72,8 +76,10 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
             holder.ivDeletePost.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    deletePosition = position;
                     deletePostPresenter = new DeletePostPresenter(deletePostView);
-                    deletePostPresenter.deletePostAction(post.getPostID(),post.getPosterID());
+                    deletePostPresenter.deletePostAction(post);
+                    myDialog.createDeletePostDialog();
                 }
             });
         }else {
@@ -149,24 +155,27 @@ public class SingePostAdapter extends RecyclerView.Adapter<SingePostAdapter.View
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
             comm.addLike(postID);
     }
-
     @Override
     public void likedFail(String msg) {
         Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void deleteSuccess(String msg) {
-
+    public void deleteSuccess(Post post) {
+        myDialog.cancelDeletePostDialog();
+        Toast.makeText(context,"The post has been deleted successfully!",Toast.LENGTH_SHORT).show();
+        comm.deletePost(post);
     }
 
     @Override
     public void deleteFail(String msg) {
-
+        myDialog.cancelDeletePostDialog();
+        Toast.makeText(context,msg,Toast.LENGTH_SHORT).show();
     }
 
     public interface SinglePostAdapterInterface{
         void addLike(int postID);
+        void deletePost(Post post);
     }
     public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.civPostProfileImage)

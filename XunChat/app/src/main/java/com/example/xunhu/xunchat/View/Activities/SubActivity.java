@@ -39,6 +39,7 @@ import com.example.xunhu.xunchat.View.Interfaces.SearchFriendInterface;
 import com.example.xunhu.xunchat.View.Interfaces.scrollLoadingPostView;
 import com.example.xunhu.xunchat.View.MainActivity;
 
+import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.LongClick;
@@ -89,6 +90,11 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
         super.onCreate(savedInstanceState);
         myDialog = new MyDialog(this);
         viewType = getIntent().getStringExtra("type");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         determineLayout(viewType);
     }
     private void determineLayout(String viewType){
@@ -396,9 +402,10 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     @Override
     public void scrollLoadingFail(String msg) {
         loadingPostDialog.cancelLoadingGifDialog();
-        Toast.makeText(this,"No post has been found!",Toast.LENGTH_SHORT).show();
         if (msg.equals("the user has not yet posted anything!")){
             tvLoadingBottomPosts.setText(":) I have a bottom line!");
+        }else {
+            Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
         }
         loading=true;
     }
@@ -411,6 +418,11 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
                 break;
             }
         }
+        singePostAdapter.notifyDataSetChanged();
+    }
+    @Override
+    public void deletePost(Post post) {
+        posts.remove(post);
         singePostAdapter.notifyDataSetChanged();
     }
 }

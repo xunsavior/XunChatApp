@@ -2,6 +2,7 @@ package com.example.xunhu.xunchat.Model;
 
 import com.example.xunhu.xunchat.Model.AsyTasks.DeleteFriendTask;
 import com.example.xunhu.xunchat.Model.AsyTasks.DeletePostTask;
+import com.example.xunhu.xunchat.Model.Entities.Post;
 import com.example.xunhu.xunchat.Model.Interfaces.CRUDDeletePostOptions;
 import com.example.xunhu.xunchat.Presenter.Interfaces.DeletePostActionStatus;
 
@@ -16,7 +17,7 @@ public class DeletePostModel implements CRUDDeletePostOptions{
     }
 
     @Override
-    public void performDeletePost(int postID, int posterID) {
-        new DeletePostTask(deletePostActionStatus).execute(postID,posterID);
+    public void performDeletePost(Post post) {
+        new DeletePostTask(deletePostActionStatus).execute(post);
     }
 }
