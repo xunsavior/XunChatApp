@@ -85,6 +85,7 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     scrollLoadingPostView scrollLoadingPostView = this;
     private boolean loading = true;
     int pastVisibleItems, visibleItemCount, totalItemCount;
+    public static boolean isRefreshNeeded=true;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +140,6 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
         final int id = getIntent().getIntExtra("id",-1);
         momentType = getIntent().getIntExtra("moment_type",-1);
         loadingPostDialog = new MyDialog(this);
-        loadingPostDialog.createLoadingGifDialog();
         singePostAdapter = new SingePostAdapter(this,posts,this);
         slRefreshPost.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -188,15 +188,19 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
         });
         rvImagePost.setHasFixedSize(true);
         rvImagePost.setAdapter(singePostAdapter);
-        if (id!=-1){
-            if (momentType==100){
-                scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
-                scrollLoadingPostPresenter.operateScrollLoadingPost(id,String.valueOf(System.currentTimeMillis()),100);
-            }else {
-                loadPostPresenter  = new LoadPostPresenter(loadPostView);
-                loadPostPresenter.loadPosts(id);
+        if (isRefreshNeeded){
+            loadingPostDialog.createLoadingGifDialog();
+            if (id!=-1){
+                if (momentType==100){
+                    scrollLoadingPostPresenter = new ScrollLoadingPostPresenter(scrollLoadingPostView);
+                    scrollLoadingPostPresenter.operateScrollLoadingPost(id,String.valueOf(System.currentTimeMillis()),100);
+                }else {
+                    loadPostPresenter  = new LoadPostPresenter(loadPostView);
+                    loadPostPresenter.loadPosts(id);
+                }
             }
         }
+
     }
     void createCameraPopupMenu(View view){
         PopupMenu popupMenu = new PopupMenu(this,view);
@@ -438,5 +442,11 @@ public class SubActivity extends Activity implements SearchFriendInterface,LoadP
     public void deletePost(Post post) {
         posts.remove(post);
         singePostAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isRefreshNeeded=true;
     }
 }

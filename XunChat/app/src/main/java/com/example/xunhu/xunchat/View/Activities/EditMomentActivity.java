@@ -58,6 +58,7 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
     Integer postText,postImage;
     boolean hasImage = false;
     @AfterViews void setEditMomentActivityViews(){
+        SubActivity.isRefreshNeeded=false;
         myDialog = new MyDialog(this);
         hasImage = getIntent().getExtras().getBoolean("image");
         try {
@@ -133,6 +134,7 @@ public class EditMomentActivity extends Activity implements LocationListDialog.L
     public void postSuccess(String msg) {
         myDialog.cancelLoadingGifDialog();
         Toast.makeText(getApplicationContext(),"post success",Toast.LENGTH_SHORT).show();
+        SubActivity.isRefreshNeeded=true;
         finish();
     }
 

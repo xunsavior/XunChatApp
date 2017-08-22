@@ -645,8 +645,6 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
     public static String timeGap(long timestamp){
         long currentTime = System.currentTimeMillis();
         long timeGap = currentTime-timestamp;
-        System.out.println("@ current "+currentTime);
-        System.out.println("@ timestamp "+timestamp);
         if (timeGap/1000/60<1){
             return String.valueOf(timeGap/1000)+"s ago";
         }else if (timeGap/1000/60<60 && timeGap/1000/60>0){

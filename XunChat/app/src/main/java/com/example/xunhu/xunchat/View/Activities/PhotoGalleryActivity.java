@@ -48,6 +48,7 @@ public class PhotoGalleryActivity extends Activity implements LoaderManager.Load
     List<Integer> items;
     @StringRes String done;
     @AfterViews void setPhotoGridViews(){
+        SubActivity.isRefreshNeeded=false;
         selectedPhoto=0;
         items = new ArrayList<>();
         adapter = new GalleryGridViewAdapter(this,this,images);
