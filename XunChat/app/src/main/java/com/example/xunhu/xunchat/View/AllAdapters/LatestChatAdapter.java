@@ -86,10 +86,7 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
         }
         holder.tvNickname.setText(latestMessage.getFriendNickname());
         Long timestamp = Long.parseLong(latestMessage.getTimestamp());
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String formattedDate = sdf.format(date);
-        holder.tvTimestamp.setText(formattedDate);
+        holder.tvTimestamp.setText(MainActivity.timeGap(timestamp));
         holder.llLatestChat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,6 +127,7 @@ public class LatestChatAdapter extends ArrayAdapter<LatestMessage> {
                 new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
         database.delete("message","username=? and friend_username=?",
                 new String[]{MainActivity.me.getUsername(),latestMessage.getFriendUsername()});
+        database.close();
        String dir = Environment.getExternalStorageDirectory()+
                 File.separator+MainActivity.me.getUsername()+
                 File.separator+latestMessage.getFriendUsername();

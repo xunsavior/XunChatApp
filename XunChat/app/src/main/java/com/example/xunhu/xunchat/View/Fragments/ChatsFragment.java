@@ -86,6 +86,8 @@ public class ChatsFragment extends Fragment {
                 latestMessages.add(latestMessage);
             }while (cursor.moveToNext());
         }
+        cursor.close();
+        database.close();
         adapter.notifyDataSetChanged();
     }
     @Override

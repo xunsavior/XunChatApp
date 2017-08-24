@@ -145,6 +145,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
                 values.put("username",MainActivity.me.getUsername());
                 database.insert("friend",null,values);
             }
+            database.close();
             Intent intent = new Intent(REFRESH_FRIEND_LIST);
             getContext().sendBroadcast(intent);
         } catch (JSONException e) {
@@ -159,6 +160,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
         if (msg.equals("you currently have no friend!")){
             SQLiteDatabase database = MainActivity.xunChatDatabaseHelper.getWritableDatabase();
             database.delete("friend","username=?",new String[]{MainActivity.me.getUsername()});
+            database.close();
             friends.clear();
             adapter.notifyDataSetChanged();
         }
@@ -213,6 +215,7 @@ public class ContactsFragment extends Fragment implements RetrieveFriendListView
                     }
                 }
         }
+        database.close();
         adapter.notifyDataSetChanged();
     }
     @Override

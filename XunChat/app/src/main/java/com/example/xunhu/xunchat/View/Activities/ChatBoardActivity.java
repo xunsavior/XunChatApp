@@ -276,6 +276,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         contentValues.put("unread",0);
         database.update("latest_message",contentValues,
                 "username=? and friend_username=?",new String[]{MainActivity.me.getUsername(),user.getUsername()});
+        database.close();
     }
 
     public void storeLatestMessage(int friendID, String friendUsername,String friendNickname,
@@ -318,6 +319,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         contentValues.put("time",timestamp);
         contentValues.put("is_sent",1);
         database.insert("message",null,contentValues);
+        database.close();
     }
     public void loadMessage(){
         messages.clear();
@@ -340,6 +342,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        database.close();
         adapter.notifyDataSetChanged();
         scrollMyListViewToBottom();
     }
@@ -360,6 +363,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         contentValues.put("is_sent",0);
         database.update("message",contentValues,"(username=?) and (friend_username=?) and (time=?)",
                 new String[]{myUsername,friendUsername,time});
+        database.close();
     }
 
     @Override
@@ -389,6 +393,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
                 break;
             }
         }
+        database.close();
     }
 
     @Override

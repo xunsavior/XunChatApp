@@ -176,10 +176,7 @@ public class ChatMessageAdapter extends ArrayAdapter<Message> {
             }
         }
         Long timestamp = Long.parseLong(time);
-        Date date = new Date(timestamp);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String formattedDate = sdf.format(date);
-        holder.tvMessageTime.setText(formattedDate);
+        holder.tvMessageTime.setText(MainActivity.timeGap(timestamp));
         return view;
     }
     public void playAudioFromURL(String url){

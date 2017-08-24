@@ -113,6 +113,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 do {
                     queryFriendName = cursor.getString(cursor.getColumnIndex("friend_username"));
                     unread = cursor.getInt(cursor.getColumnIndex("unread"));
+                    break;
                 }while (cursor.moveToNext());
                 cursor.close();
             }
@@ -144,6 +145,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             contentValues.put("time",timestamp);
             contentValues.put("is_sent",1);
             database.insert("message",null,contentValues);
+            database.close();
         }
         Intent intentLatestChat = new Intent(REFRESH_CHAT_FRAGMENT);
         getApplicationContext().sendBroadcast(intentLatestChat);
@@ -164,6 +166,8 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             values.put("username",currentUser);
             database.insert("friend",null,values);
         }
+        xunChatDatabaseHelper.close();
+        database.close();
     }
     public void sendFriendRequestBroadcast(String username){
         Intent intent = new Intent(FRIEND_REQUEST);
@@ -183,6 +187,8 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
             }while (cursor.moveToNext());
         }
         cursor.close();
+        database.close();
+        xunChatDatabaseHelper.close();
         return me;
     }
     public void storeFriendRequest(int senderID,String senderName,String senderNickname, String url,String extras,String time){
@@ -226,5 +232,7 @@ public class XunChatReceiveMessageService extends FirebaseMessagingService {
                 database.update("request",contentValues,"username=? AND sender=?",new String[]{me,senderName});
             }
         }
+        xunChatDatabaseHelper.close();
+        database.close();
     }
 }

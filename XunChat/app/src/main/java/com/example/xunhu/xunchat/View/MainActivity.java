@@ -438,7 +438,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             values.put("isActive","1");
             database.update("user",values,"username=?",new String[]{username});
         }
-
+        database.close();
     }
     public String readCookie(){
         String content = "";
@@ -462,6 +462,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
         cursor.close();
         content = object.toString();
         System.out.println("@ content "+content);
+        database.close();
         if (content.equals("{}")){
             return "";
         }else {
@@ -560,6 +561,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
             contentValues.put("password","");
             contentValues.put("isActive","0");
             database.update("user",contentValues,"username=?",new String[]{me.getUsername()});
+            database.close();
             finish();
             startActivity(getIntent());
     }
@@ -636,6 +638,7 @@ public class MainActivity extends FragmentActivity implements BottomNavigationVi
                     contactsFragment.getTvNumOfRequests().setText(String.valueOf(numberOfRequests));
                     contactsFragment.getTvNumOfRequests().setVisibility(View.VISIBLE);
                 }
+                database.close();
                 cursor.close();
             }catch (NullPointerException e){
                 e.printStackTrace();
