@@ -10,8 +10,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
@@ -30,7 +28,6 @@ import android.widget.Toast;
 import com.example.xunhu.xunchat.Model.Entities.Message;
 import com.example.xunhu.xunchat.Model.Entities.User;
 import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
-import com.example.xunhu.xunchat.Presenter.MySearchFriendPresenter;
 import com.example.xunhu.xunchat.Presenter.SendMessagePresenter;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.ChatMessageAdapter;
@@ -64,7 +61,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
     @ViewById(R.id.lv_message) ListView lvMessage;
     @ViewById(R.id.ib_camera) ImageButton ibCamera;
     @ViewById(R.id.et_message) EditText etMessage;
-    @ViewById(R.id.ib_emoji) ImageButton ibEmoji;
     @ViewById(R.id.ib_voice) ImageButton ibVoice;
     @ViewById(R.id.ib_sending) ImageButton ibSending;
     MediaRecorder mediaRecorder;
@@ -155,7 +151,7 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-        mediaRecorder.setAudioEncodingBitRate(5000);
+        mediaRecorder.setAudioEncodingBitRate(320000);
         mediaRecorder.setOutputFile(audioOutput);
     }
     public void startRecording(){
@@ -415,7 +411,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
         super.onPause();
         unregisterReceiver(broadcastReceiver);
     }
-
     private void scrollMyListViewToBottom() {
         lvMessage.post(new Runnable() {
             @Override
@@ -425,7 +420,6 @@ public class ChatBoardActivity extends Activity implements SendChatView {
             }
         });
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode==ACCESS_RECORDER){

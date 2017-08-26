@@ -67,7 +67,6 @@ public class LogoutTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s!=null){
             if (s.equals("logout successfully!")){
                 logoutActionStatus.LogoutSuccess(s);

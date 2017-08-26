@@ -6,30 +6,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
-
 import com.example.xunhu.xunchat.Model.Entities.LatestMessage;
 import com.example.xunhu.xunchat.Model.Services.XunChatReceiveMessageService;
 import com.example.xunhu.xunchat.R;
 import com.example.xunhu.xunchat.View.AllAdapters.LatestChatAdapter;
 import com.example.xunhu.xunchat.View.MainActivity;
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 
 /**
  * Created by xunhu on 6/7/2017.

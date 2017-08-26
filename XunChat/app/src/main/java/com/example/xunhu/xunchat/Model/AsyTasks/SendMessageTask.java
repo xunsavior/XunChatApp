@@ -67,7 +67,6 @@ public class SendMessageTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.contains("\"success\":1")){
             if (s.contains("image_url") && s.contains("image_caption")){
                 sendMessageActionStatus.sendImageSuccessful(timestamp,s);

@@ -58,7 +58,6 @@ public class DeleteFriendTask extends AsyncTask<Integer,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.equals("delete successful")){
             deleteFriendActionStatus.deleteSuccessful(s);
         }else {

@@ -58,7 +58,6 @@ public class SetRemarkTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ response "+s);
         if (s.equals("set remark successful")){
             setRemarkActionStatus.setRemarkDone(s);
         }else {

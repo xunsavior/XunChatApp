@@ -51,7 +51,6 @@ public class DeclineRequestTask extends AsyncTask<Integer,Void,String>{
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.equals("done")){
             declineRequestActionStatus.declineSuccessfully("You have declined the request!");
         }else {

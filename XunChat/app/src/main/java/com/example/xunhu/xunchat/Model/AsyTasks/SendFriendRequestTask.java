@@ -106,7 +106,6 @@ public class SendFriendRequestTask extends AsyncTask<String, Void,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         if (s!=null){
-            System.out.println("@ respond "+s);
             if (s.contains("\"success\":1")){
                 sendFriendRequestActionStatus.onSentSuccess("Your friend request has been sent successfully!");
             }else {

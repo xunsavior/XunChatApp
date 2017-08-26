@@ -56,7 +56,6 @@ public class DeletePostTask extends AsyncTask<Post,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.contains("The post has been deleted!")){
             deletePostActionStatus.deletePostSuccess(post);
         }else {

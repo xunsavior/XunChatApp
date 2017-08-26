@@ -53,7 +53,6 @@ public class RetrieveFriendListTask extends AsyncTask<Integer,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ response "+s);
         switch (s){
             case "Fail to load your friend list!":
                 retrieveFriendListActionStatus.retrieveFriendListFail(s);

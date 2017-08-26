@@ -60,7 +60,6 @@ public class LikePostTask extends AsyncTask<Integer,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.contains("successful")){
             likePostActionStatus.likedSuccess(s,postID,type);
         }else {

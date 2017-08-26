@@ -68,7 +68,6 @@ public class SearchFriendsTask extends AsyncTask<String,Void,String>{
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s!=null){
             if (s.equals("Network Error")){
                 searchFriendsActionStatus.searchFriendFail(s);

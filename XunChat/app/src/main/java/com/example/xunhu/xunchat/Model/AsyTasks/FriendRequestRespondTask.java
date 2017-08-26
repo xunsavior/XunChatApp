@@ -97,7 +97,6 @@ public class FriendRequestRespondTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s!=null){
             if (s.contains("\"success\":1")){
                 friendRespondActionStatus.respondSuccess("Friend Request Accepted Successfully");

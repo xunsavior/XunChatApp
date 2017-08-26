@@ -52,7 +52,6 @@ public class LoadWhoLikePostTask extends AsyncTask<Integer,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@respond "+s);
         if (s.contains("user_id")){
             loadWhoLikePostActionStatus.loadSuccess(s);
         }else {

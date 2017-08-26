@@ -57,7 +57,6 @@ public class PostPhotoTask extends AsyncTask<String,Void,String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        System.out.println("@ respond "+s);
         if (s.contains("success")){
             postActionStatus.postSuccess(s);
         }else {

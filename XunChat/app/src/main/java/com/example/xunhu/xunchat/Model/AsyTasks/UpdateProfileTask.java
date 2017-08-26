@@ -91,7 +91,6 @@ public class UpdateProfileTask extends AsyncTask<String,Void,String> {
 
     @Override
     protected void onPostExecute(String response) {
-        System.out.println("@ response "+response);
         if (response!=null){
             if (response.contains("title")){
                 updateProfileActionStatus.updateSuccess(response);
