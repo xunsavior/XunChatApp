@@ -34,15 +34,12 @@ public class LoginFragment extends android.app.Fragment {
     @ViewById(R.id.et_login_username) EditText etLoginUsername;
     @ViewById(R.id.et_login_password) EditText etLoginPassword;
     @ViewById(R.id.btn_login) Button btnLogin;
-    @ViewById(R.id.tv_sign_up) TextView tvSignUp;
-    @ViewById(R.id.tv_forget_password) TextView tvForgotPassword;
+    @ViewById Button btnSignUp;
     @SystemService InputMethodManager mgr;
     LoginInterface comm;
-    @Click({R.id.tv_sign_up,R.id.btn_login}) void onSignUpClick(View view){
+    @Click({R.id.btn_login,R.id.btnSignUp})
+    void onSignUpClick(View view){
         switch (view.getId()){
-            case R.id.tv_sign_up:
-                comm.switchToRegister();
-                break;
             case R.id.btn_login:
                 String username = etLoginUsername.getText().toString();
                 String password = etLoginPassword.getText().toString();
@@ -57,7 +54,9 @@ public class LoginFragment extends android.app.Fragment {
                 mgr.hideSoftInputFromWindow(etLoginPassword.getWindowToken(), 0);
                 mgr.hideSoftInputFromWindow(etLoginUsername.getWindowToken(), 1);
                 comm.operateLogin(username,password);
-            default:
+                break;
+            case R.id.btnSignUp:
+                comm.switchToRegister();
                 break;
         }
     }

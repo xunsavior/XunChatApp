@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,9 +12,9 @@
             android:id="@+id/iv_profile_image"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="5dp"
             android:src="@drawable/initial_profie_image"
             android:scaleType="fitXY"
+            android:layout_margin="5dp"
             />
         <EditText
             android:layout_width="match_parent"
@@ -24,7 +23,9 @@
             android:layout_below="@+id/iv_profile_image"
             android:hint="Username"
             android:textColorHint="#1E90FF"
-            android:layout_margin="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:maxLines="1"
             android:inputType="text"
             />
@@ -36,7 +37,10 @@
             android:hint="Password"
             android:layout_below="@id/et_register_username"
             android:textColorHint="#1E90FF"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:maxLines="1"
             />
         <EditText
@@ -46,7 +50,10 @@
             android:layout_below="@+id/et_register_password"
             android:hint="Nickname"
             android:textColorHint="#1E90FF"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:maxLines="1"
             android:inputType="text"
             />
@@ -57,7 +64,10 @@
             android:hint="Email"
             android:layout_below="@+id/et_register_nickname"
             android:textColorHint="#1E90FF"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:maxLines="1"
             android:inputType="text"
             />
@@ -68,7 +78,10 @@
             android:textColorHint="#1E90FF"
             android:id="@+id/et_register_gender"
             android:layout_below="@+id/et_email"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:editable="false"
             />
         <LinearLayout
@@ -76,7 +89,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/linearLocation"
             android:orientation="horizontal"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_below="@+id/et_register_gender"
             >
             <ImageView
@@ -104,15 +120,21 @@
             android:layout_below="@+id/linearLocation"
             android:textColorHint="#1E90FF"
             android:id="@+id/et_register_birth"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:editable="false"
             />
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/et_register_birth"
-            android:background="#1E90FF"
-            android:layout_margin="5dp"
+            android:background="@drawable/rounded_button"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:text="Register"
             android:textColor="#fff"
             android:id="@+id/btnRegister"
